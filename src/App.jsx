@@ -214,6 +214,18 @@ const DEMO_ACCOUNTS = [
   /* PAYMENT MODULE DISABLED — see primary app for premium subscriber demo account */
 ];
 
+const INIT_INSTITUTIONS = [
+  {id:1,name:"ARM Securities",code:"CHD-INST-ARM-001",seatLimit:12,seatsUsed:3,active:true,contact:"research@arm.com"},
+  {id:2,name:"Meristem",code:"CHD-INST-MER-001",seatLimit:8,seatsUsed:2,active:true,contact:"research@meristemng.com"},
+];
+
+const INIT_ACCESS_CODES = [
+  {id:1,code:"CHD-IND-2026-001",type:"individual",tier:"premium",assignedEmail:"",usedBy:"",usedAt:"",active:true,expiresAt:"2026-12-31"},
+  {id:2,code:"CHD-IND-2026-002",type:"individual",tier:"registered",assignedEmail:"",usedBy:"",usedAt:"",active:true,expiresAt:"2026-12-31"},
+  {id:3,code:"CHD-INST-ARM-001",type:"institution",tier:"premium",institutionId:1,seatLimit:12,seatsUsed:3,active:true,expiresAt:"2026-12-31"},
+  {id:4,code:"CHD-INST-MER-001",type:"institution",tier:"premium",institutionId:2,seatLimit:8,seatsUsed:2,active:true,expiresAt:"2026-12-31"},
+];
+
 /* ═══ HELPERS ═══ */
 const ga       = (id,analysts) => (analysts||INIT_ANALYSTS).find(a=>a.id===id);
 const gc       = id => CATS.find(c=>c.id===id);
@@ -234,6 +246,28 @@ const autoInitials = name => {
   if(!parts.length) return "";
   if(parts.length===1) return parts[0].slice(0,2).toUpperCase();
   return (parts[0][0]+parts[parts.length-1][0]).toUpperCase();
+};
+const humanAccessState = user => {
+  if (!user) return "Guest";
+  if (STAFF_TIERS.has(user.tier)) return tierLabel(user.tier);
+  if (user.accessState === "active") return user.institutionName ? `${tierLabel(user.tier)} · ${user.institutionName}` : tierLabel(user.tier);
+  return "Limited Access";
+};
+const normalizePortalUser = raw => raw ? ({
+  ...raw,
+  accessState: raw.accessState || (STAFF_TIERS.has(raw.tier) || raw.tier==="premium" ? "active" : raw.tier==="registered" ? "active" : "limited"),
+  institutionId: raw.institutionId || null,
+  institutionName: raw.institutionName || null,
+  activationHistory: raw.activationHistory || [],
+}) : raw;
+const premiumButton = {
+  padding:"12px 18px",
+  borderRadius:12,
+  fontSize:".84rem",
+  fontWeight:700,
+  cursor:"pointer",
+  fontFamily:sans,
+  border:"none",
 };
 const sparkPath= (pts,w=180,h=44,fill=false)=>{
   if(!pts||pts.length<2) return "";
@@ -263,6 +297,42 @@ function AnalystAvatar({analyst,size=80,fontSize="1.4rem"}) {
   );
 }
 
+function Surface({children,style}) {
+  return <div style={{background:"linear-gradient(180deg,#ffffff 0%,#fbfcfd 100%)",border:`1px solid ${C.g200}`,borderRadius:18,boxShadow:"0 18px 40px rgba(6,38,45,0.06)",...style}}>{children}</div>;
+}
+
+function Eyebrow({children,color=C.gold,style}) {
+  return <div style={{fontSize:".64rem",fontWeight:800,textTransform:"uppercase",letterSpacing:2.2,color,marginBottom:10,...style}}>{children}</div>;
+}
+
+function SectionFrame({title,sub,actions,children,style}) {
+  return (
+    <Surface style={{padding:"24px 24px 22px",...style}}>
+      {(title || sub || actions) && (
+        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:16,marginBottom:18}}>
+          <div>
+            {title && <h3 style={{fontFamily:serif,fontSize:"1.15rem",fontWeight:600,color:C.navy,marginBottom:6}}>{title}</h3>}
+            {sub && <p style={{fontSize:".82rem",lineHeight:1.7,color:C.g500,maxWidth:720}}>{sub}</p>}
+          </div>
+          {actions}
+        </div>
+      )}
+      {children}
+    </Surface>
+  );
+}
+
+function MetricTile({label,value,sub,accent=C.gold}) {
+  return (
+    <Surface style={{padding:"20px 18px"}}>
+      <div style={{width:44,height:4,borderRadius:999,background:`linear-gradient(90deg,${accent},rgba(185,114,49,0.14))`,marginBottom:16}}/>
+      <div style={{fontFamily:serif,fontSize:"1.8rem",fontWeight:600,color:C.navy,marginBottom:4,lineHeight:1}}>{value}</div>
+      <div style={{fontSize:".8rem",fontWeight:700,color:C.navy,marginBottom:3}}>{label}</div>
+      <div style={{fontSize:".73rem",lineHeight:1.6,color:C.g500}}>{sub}</div>
+    </Surface>
+  );
+}
+
 /* ═══ HOVER HELPER ═══ */
 const s = (base,hover) => ({
   onMouseEnter:e=>Object.assign(e.currentTarget.style,hover),
@@ -271,16 +341,67 @@ const s = (base,hover) => ({
 
 /* ═══ SHARED FORM INPUT ═══ */
 function Inp({label,value,onChange,type="text",placeholder,as,rows=4,required,options}) {
-  const base={width:"100%",padding:"10px 14px",border:`1px solid ${C.g200}`,borderRadius:8,fontSize:".86rem",fontFamily:sans,background:C.white,color:C.navy,transition:"border-color .15s"};
+  const base={width:"100%",padding:"13px 14px",border:`1px solid ${C.g200}`,borderRadius:12,fontSize:".86rem",fontFamily:sans,background:"linear-gradient(180deg,#ffffff 0%,#fbfcfd 100%)",color:C.navy,transition:"all .15s",boxShadow:"inset 0 1px 0 rgba(255,255,255,0.75)"};
   return (
     <div style={{marginBottom:14}}>
-      {label&&<label style={{display:"block",fontSize:".75rem",fontWeight:600,color:C.navy,marginBottom:5,textTransform:"uppercase",letterSpacing:.4}}>{label}{required&&<span style={{color:C.red}}> *</span>}</label>}
+      {label&&<label style={{display:"block",fontSize:".68rem",fontWeight:800,color:C.g500,marginBottom:7,textTransform:"uppercase",letterSpacing:1.6}}>{label}{required&&<span style={{color:C.red}}> *</span>}</label>}
       {as==="textarea"
         ?<textarea value={value} onChange={onChange} placeholder={placeholder} rows={rows} style={{...base,resize:"vertical"}}/>
         :as==="select"
           ?<select value={value} onChange={onChange} style={base}>{options.map(o=><option key={o.v} value={o.v}>{o.l}</option>)}</select>
           :<input type={type} value={value} onChange={onChange} placeholder={placeholder} style={base}/>}
     </div>
+  );
+}
+
+function LimitedAccessBanner({user,nav}) {
+  if (!user || STAFF_TIERS.has(user.tier) || user.accessState === "active" || user.tier === "premium") return null;
+  return (
+    <div style={{background:"linear-gradient(90deg, rgba(185,114,49,0.16), rgba(6,38,45,0.06))",borderBottom:`1px solid rgba(185,114,49,0.18)`}}>
+      <div style={{maxWidth:1320,margin:"0 auto",padding:"12px 40px",display:"flex",alignItems:"center",justifyContent:"space-between",gap:14,flexWrap:"wrap"}}>
+        <div>
+          <div style={{fontSize:".68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:1.7,color:C.gold,marginBottom:4}}>Limited access</div>
+          <div style={{fontSize:".82rem",lineHeight:1.6,color:C.navy}}>Your account is active, but full research access still requires an individual or institutional activation code from the research team.</div>
+        </div>
+        <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+          <button onClick={()=>nav("login")} style={{...premiumButton,background:C.navy,color:"#fff"}}>Enter activation code</button>
+          <button onClick={()=>nav("contact")} style={{...premiumButton,background:"transparent",color:C.navy,border:`1px solid ${C.g200}`}}>Contact research</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ActivationPanel({user,onActivate,nav,compact=false}) {
+  const [code,setCode]=useState("");
+  const [type,setType]=useState("individual");
+  const [error,setError]=useState("");
+  const submit=()=>{
+    const result=onActivate(code.trim(),type);
+    if(result?.ok){
+      setCode("");
+      setError("");
+      return;
+    }
+    setError(result?.message || "Unable to activate this code.");
+  };
+  return (
+    <SectionFrame
+      title={compact?"Activate full access":"Activate your research access"}
+      sub="Enter the code issued by the research team. Individual codes unlock one account. Institutional codes unlock access within your organisation's seat limit."
+      style={{padding:compact?"18px":"24px"}}
+    >
+      <div style={{display:"grid",gridTemplateColumns:compact?"1fr":"1fr 1fr",gap:12,marginBottom:12}}>
+        <Inp label="Activation path" value={type} onChange={e=>setType(e.target.value)} as="select" options={[{v:"individual",l:"Individual code"},{v:"institution",l:"Institutional master code"}]}/>
+        <Inp label="Activation code" value={code} onChange={e=>setCode(e.target.value.toUpperCase())} placeholder="e.g. CHD-IND-2026-001" required/>
+      </div>
+      {error&&<div style={{background:"#fef2f2",color:C.red,padding:"10px 12px",borderRadius:10,fontSize:".8rem",marginBottom:12}}>{error}</div>}
+      <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+        <button onClick={submit} style={{...premiumButton,background:C.gold,color:"#fff"}}>Activate access</button>
+        {!compact&&<button onClick={()=>nav("contact")} style={{...premiumButton,background:"transparent",color:C.navy,border:`1px solid ${C.g200}`}}>Contact research desk</button>}
+      </div>
+      {user&&<div style={{fontSize:".74rem",color:C.g500,marginTop:12}}>Current status: <strong style={{color:C.navy}}>{humanAccessState(user)}</strong></div>}
+    </SectionFrame>
   );
 }
 
@@ -307,8 +428,8 @@ function Header({page,nav,goBack,canGoBack,user,onLogout}) {
   const isAct = k => page===k||(k==="reports"&&page==="report")||(k==="analysts"&&(page==="analyst"));
 
   return (<>
-    <header style={{background:"linear-gradient(180deg,rgba(4,22,28,0.98) 0%,rgba(6,38,45,0.96) 100%)",position:"sticky",top:0,zIndex:100,borderBottom:"1px solid rgba(255,255,255,0.06)",backdropFilter:"blur(12px)"}}>
-      <div style={{maxWidth:1320,margin:"0 auto",padding:"0 40px",display:"grid",gridTemplateColumns:"auto 1fr auto",alignItems:"center",gap:20,height:78}}>
+    <header style={{background:"linear-gradient(180deg,rgba(4,22,28,0.98) 0%,rgba(6,38,45,0.96) 100%)",position:"sticky",top:0,zIndex:100,borderBottom:"1px solid rgba(255,255,255,0.06)",backdropFilter:"blur(16px)",boxShadow:"0 12px 36px rgba(3,17,22,0.24)"}}>
+      <div style={{maxWidth:1320,margin:"0 auto",padding:"0 40px",display:"grid",gridTemplateColumns:"auto 1fr auto",alignItems:"center",gap:20,height:86}}>
         <div style={{display:"flex",alignItems:"center",gap:10,minWidth:0}}>
           {canGoBack&&page!=="home"&&(
             <button onClick={goBack} title="Go back" style={{background:"rgba(255,255,255,0.04)",border:`1px solid rgba(255,255,255,0.08)`,color:"rgba(255,255,255,0.55)",cursor:"pointer",padding:"8px 10px",borderRadius:10,lineHeight:1,transition:"all .15s",display:"flex",alignItems:"center",...s({color:"rgba(255,255,255,0.55)",background:"rgba(255,255,255,0.04)",borderColor:"rgba(255,255,255,0.08)"},{color:"#fff",background:"rgba(255,255,255,0.08)",borderColor:"rgba(255,255,255,0.16)"})}}>
@@ -318,16 +439,16 @@ function Header({page,nav,goBack,canGoBack,user,onLogout}) {
           <button onClick={()=>nav("home")} style={{background:"none",border:"none",cursor:"pointer",display:"flex",alignItems:"center",gap:12,textAlign:"left"}}>
             <img src="/chd-logo.png" alt="CHD" style={{height:38,width:"auto",display:"block",filter:"brightness(0) invert(1) sepia(1) saturate(3) hue-rotate(5deg)"}}
               onError={e=>{e.currentTarget.style.display="none";}}/>
-            <div style={{borderLeft:"1px solid rgba(255,255,255,0.1)",paddingLeft:12}}>
-              <div style={{fontFamily:sans,color:C.white,fontSize:".72rem",fontWeight:700,letterSpacing:2.8,textTransform:"uppercase",lineHeight:1.2}}>Chapel Hill Denham</div>
-              <div style={{fontSize:".55rem",textTransform:"uppercase",letterSpacing:4.5,color:C.gold,fontWeight:600,marginTop:3,opacity:.9}}>Research Portal</div>
+            <div style={{borderLeft:"1px solid rgba(255,255,255,0.1)",paddingLeft:14}}>
+              <div style={{fontFamily:sans,color:C.white,fontSize:".74rem",fontWeight:800,letterSpacing:3,textTransform:"uppercase",lineHeight:1.2}}>Chapel Hill Denham</div>
+              <div style={{fontSize:".56rem",textTransform:"uppercase",letterSpacing:4.8,color:C.gold,fontWeight:700,marginTop:4,opacity:.95}}>Research Portal</div>
             </div>
           </button>
         </div>
         <div style={{display:"flex",alignItems:"center",justifyContent:"center"}}>
           <nav style={{display:"flex",alignItems:"center",gap:8,flexWrap:"wrap",justifyContent:"center"}}>
             {items.map(n=>(
-              <button key={n.k} onClick={()=>nav(n.k)} style={{background:isAct(n.k)?"rgba(185,114,49,0.14)":"rgba(255,255,255,0.03)",border:`1px solid ${isAct(n.k)?"rgba(185,114,49,0.28)":"rgba(255,255,255,0.06)"}`,borderRadius:999,color:isAct(n.k)?"#fff":n.k==="manage"||n.k==="myportal"?"rgba(255,223,175,0.92)":"rgba(255,255,255,0.72)",padding:"9px 14px",fontSize:".76rem",fontWeight:isAct(n.k)?700:500,cursor:"pointer",letterSpacing:.25,fontFamily:sans,transition:"all .15s",boxShadow:isAct(n.k)?"0 6px 18px rgba(185,114,49,0.12)":"none"}}>{n.l}</button>
+              <button key={n.k} onClick={()=>nav(n.k)} style={{background:isAct(n.k)?"rgba(185,114,49,0.14)":"rgba(255,255,255,0.03)",border:`1px solid ${isAct(n.k)?"rgba(185,114,49,0.28)":"rgba(255,255,255,0.06)"}`,borderRadius:999,color:isAct(n.k)?"#fff":n.k==="manage"||n.k==="myportal"?"rgba(255,223,175,0.92)":"rgba(255,255,255,0.72)",padding:"10px 15px",fontSize:".76rem",fontWeight:isAct(n.k)?700:500,cursor:"pointer",letterSpacing:.25,fontFamily:sans,transition:"all .15s",boxShadow:isAct(n.k)?"0 10px 24px rgba(185,114,49,0.12)":"none"}}>{n.l}</button>
             ))}
           </nav>
         </div>
@@ -342,7 +463,7 @@ function Header({page,nav,goBack,canGoBack,user,onLogout}) {
             <div style={{display:"flex",alignItems:"center",gap:10,marginLeft:6,paddingLeft:14,borderLeft:"1px solid rgba(255,255,255,0.1)"}}>
               <div style={{textAlign:"right",display:"flex",flexDirection:"column",gap:2}}>
                 <div style={{fontSize:".73rem",fontWeight:700,color:"#fff",lineHeight:1.2}}>{user.name}</div>
-                <div style={{fontSize:".62rem",color:"rgba(255,255,255,0.5)",textTransform:"uppercase",letterSpacing:.35}}>{tierLabel(user.tier)}</div>
+                <div style={{fontSize:".62rem",color:"rgba(255,255,255,0.5)",textTransform:"uppercase",letterSpacing:.35}}>{humanAccessState(user)}</div>
               </div>
               <button onClick={onLogout} style={{padding:"8px 14px",background:"rgba(255,255,255,0.08)",border:"1px solid rgba(255,255,255,0.14)",borderRadius:999,fontSize:".74rem",fontWeight:600,color:"#fff",cursor:"pointer",fontFamily:sans,transition:"all .15s",...s({background:"rgba(255,255,255,0.08)",borderColor:"rgba(255,255,255,0.14)"},{background:"rgba(255,255,255,0.14)",borderColor:"rgba(255,255,255,0.24)"})}}>Log Out</button>
             </div>
@@ -577,7 +698,7 @@ function GatedOverlay({access,user,nav}) {
         </p>
       </div>
       <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-        <button onClick={()=>nav("register")} style={{padding:"11px 16px",background:C.gold,color:"#fff",border:"none",borderRadius:999,fontSize:".8rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>Request access</button>
+        <button onClick={()=>nav("register")} style={{padding:"11px 16px",background:C.gold,color:"#fff",border:"none",borderRadius:999,fontSize:".8rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>Create account</button>
         <button onClick={()=>nav("login")} style={{padding:"11px 16px",background:"transparent",color:"rgba(255,255,255,0.82)",border:"1px solid rgba(255,255,255,0.16)",borderRadius:999,fontSize:".8rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>Sign in</button>
       </div>
     </div>
@@ -679,17 +800,22 @@ function DemoWidget({page,nav}) {
 
 /* ═══ LOGIN / REGISTER ═══ */
 function AuthPage({mode,nav,onLogin}) {
-  const {demoFill,setDemoFill,accessRequests,setAccessRequests}=useData();
+  const {demoFill,setDemoFill,user,activateAccessCode}=useData();
   const [isRequest,setIsRequest]=useState(mode==="register");
-  const [form,setForm]=useState({name:"",email:"",company:"",phone:"",requestedTier:"registered",contact:"",message:"",password:""});
+  const [form,setForm]=useState({name:"",email:"",company:"",phone:"",role:"Investor",password:"",confirmPassword:""});
   const [error,setError]=useState("");
-  const [sent,setSent]=useState(false);
   const [submitting,setSubmitting]=useState(false);
+  const normalizeUser = useCallback((raw)=>({
+    ...raw,
+    accessState: raw?.accessState || (STAFF_TIERS.has(raw?.tier) || raw?.tier==="premium" ? "active" : raw?.tier==="registered" ? "active" : "limited"),
+    institutionId: raw?.institutionId || null,
+    institutionName: raw?.institutionName || null,
+    activationHistory: raw?.activationHistory || [],
+  }),[]);
 
   useEffect(()=>{
     setIsRequest(mode==="register");
     setError("");
-    setSent(false);
   },[mode]);
 
   useEffect(()=>{
@@ -698,15 +824,34 @@ function AuthPage({mode,nav,onLogin}) {
 
   const handleSubmit=async()=>{
     if(isRequest){
-      if(!form.name.trim()||!form.email.trim()){setError("Please enter your name and email address.");return;}
+      if(!form.name.trim()||!form.email.trim()||!form.password.trim()){setError("Please complete the required fields.");return;}
+      if(form.password.length<8){setError("Password must be at least 8 characters.");return;}
+      if(form.password!==form.confirmPassword){setError("Passwords do not match.");return;}
       setSubmitting(true);
       setError("");
       try{
-        const request={id:Date.now(),name:form.name.trim(),email:form.email.trim(),company:form.company.trim(),phone:form.phone.trim(),requestedTier:form.requestedTier,contact:form.contact.trim(),message:form.message.trim(),status:"pending",createdAt:new Date().toISOString()};
-        const next=[request,...(accessRequests||[])];
-        setAccessRequests(next);
-        lsSet(LS.accessRequests,next);
-        setSent(true);
+        const existing=lsGet(LS.demoUsers)||[];
+        const email=form.email.trim().toLowerCase();
+        if(existing.some(u=>u.email===email) || DEMO_ACCOUNTS.some(u=>u.email===email)){setError("An account with this email already exists.");setSubmitting(false);return;}
+        const created={
+          id:Date.now(),
+          name:form.name.trim(),
+          email,
+          company:form.company.trim(),
+          phone:form.phone.trim(),
+          role:form.role.trim() || "Investor",
+          tier:"registered",
+          title:"Subscriber Account",
+          password:form.password,
+          accessState:"limited",
+          institutionId:null,
+          institutionName:null,
+          activationHistory:[],
+          createdAt:new Date().toISOString(),
+        };
+        lsSet(LS.demoUsers,[created,...existing]);
+        onLogin(normalizeUser(created));
+        nav("home");
       }catch(e){
         setError(e.message||"Something went wrong. Please try again.");
       }finally{
@@ -724,13 +869,13 @@ function AuthPage({mode,nav,onLogin}) {
       } catch(apiErr){
         const saved=lsGet(LS.demoUsers)||[];
         const lsUser=saved.find(d=>d.email===form.email&&d.password===form.password);
-        if(lsUser){onLogin({name:lsUser.name,email:lsUser.email,tier:lsUser.tier,analystId:lsUser.analystId||null,title:lsUser.title||null,id:lsUser.id,mustChange:lsUser.mustChange||false});nav("home");return;}
+        if(lsUser){onLogin(normalizeUser({name:lsUser.name,email:lsUser.email,tier:lsUser.tier,analystId:lsUser.analystId||null,title:lsUser.title||null,id:lsUser.id,mustChange:lsUser.mustChange||false,accessState:lsUser.accessState,institutionId:lsUser.institutionId,institutionName:lsUser.institutionName,activationHistory:lsUser.activationHistory}));nav("home");return;}
         const lsOverridden=saved.some(d=>d.email===form.email);
         const demo=!lsOverridden&&DEMO_ACCOUNTS.find(d=>d.email===form.email&&d.password===form.password);
-        if(demo){onLogin({name:demo.name,email:demo.email,tier:demo.tier,analystId:demo.analystId||null,title:demo.title||null});nav("home");return;}
+        if(demo){onLogin(normalizeUser({name:demo.name,email:demo.email,tier:demo.tier,analystId:demo.analystId||null,title:demo.title||null}));nav("home");return;}
         setError("Invalid email or password.");setSubmitting(false);return;
       }
-      onLogin(u);
+      onLogin(normalizeUser(u));
       nav("home");
     }catch(e){
       setError(e.message||"Something went wrong. Please try again.");
@@ -740,46 +885,46 @@ function AuthPage({mode,nav,onLogin}) {
   };
 
   return (
-    <div style={{minHeight:"80vh",display:"flex",alignItems:"center",justifyContent:"center",background:`linear-gradient(160deg,${C.navy} 0%,${C.navyMid} 100%)`,padding:"60px 20px"}}>
-      <div style={{background:C.white,borderRadius:16,padding:"42px 34px",maxWidth:440,width:"100%",boxShadow:"0 20px 60px rgba(0,0,0,0.3)"}}>
+    <div style={{minHeight:"82vh",display:"flex",alignItems:"center",justifyContent:"center",background:`radial-gradient(circle at 10% 10%, rgba(185,114,49,0.16), transparent 25%), linear-gradient(160deg,${C.navy} 0%,${C.navyMid} 52%,#091d24 100%)`,padding:"60px 20px"}}>
+      <div style={{maxWidth:1140,width:"100%",display:"grid",gridTemplateColumns:"1.08fr .92fr",gap:22,alignItems:"stretch"}}>
+        <Surface style={{padding:"42px 38px",background:"linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%)"}}>
         <div style={{textAlign:"center",marginBottom:24}}>
           <img src="/chd-logo.png" alt="Chapel Hill Denham" style={{height:52,width:"auto",margin:"0 auto 14px",display:"block"}} onError={e=>{e.currentTarget.style.display="none";}}/>
           <div style={{fontFamily:sans,fontSize:".58rem",fontWeight:700,letterSpacing:3.5,textTransform:"uppercase",color:C.gold,marginBottom:10,opacity:.9}}>Chapel Hill Denham · Research</div>
-          <h2 style={{fontFamily:serif,fontSize:"1.5rem",color:C.navy,marginBottom:3}}>{isRequest?"Request Access":"Welcome Back"}</h2>
-          <p style={{color:C.g500,fontSize:".85rem"}}>{isRequest?"Fill in the form and we’ll email the next steps once your request is reviewed":"Sign in to your research portal"}</p>
+          <h2 style={{fontFamily:serif,fontSize:"1.7rem",color:C.navy,marginBottom:5}}>{isRequest?"Create your account":"Sign in to the portal"}</h2>
+          <p style={{color:C.g500,fontSize:".85rem",lineHeight:1.7}}>{isRequest?"Create a basic account first. Full subscriber access is activated after the research team issues an individual or institutional code.":"Use your account details to enter the research portal and manage activation."}</p>
         </div>
-        {sent&&isRequest?(
-          <div style={{background:"#f0fdf4",border:"1px solid #bbf7d0",color:"#166534",padding:"14px 16px",borderRadius:10,marginBottom:16,fontSize:".84rem",lineHeight:1.65}}>
-            Thanks. Your request has been received. We’ll review it and send the next steps to your email.
-          </div>
-        ):error&&<div style={{background:"#fef2f2",color:C.red,padding:"9px 13px",borderRadius:7,fontSize:".81rem",marginBottom:14}}>{error}</div>}
+        {error&&<div style={{background:"#fef2f2",color:C.red,padding:"9px 13px",borderRadius:10,fontSize:".81rem",marginBottom:14}}>{error}</div>}
         {isRequest?(
           <>
-            <input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="Full Name *" style={{width:"100%",padding:"11px 14px",border:`1px solid ${C.g200}`,borderRadius:8,marginBottom:10,fontSize:".86rem",fontFamily:sans}}/>
-            <input value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder="Email Address *" type="email" style={{width:"100%",padding:"11px 14px",border:`1px solid ${C.g200}`,borderRadius:8,marginBottom:10,fontSize:".86rem",fontFamily:sans}}/>
-            <input value={form.company} onChange={e=>setForm({...form,company:e.target.value})} placeholder="Company Name" style={{width:"100%",padding:"11px 14px",border:`1px solid ${C.g200}`,borderRadius:8,marginBottom:10,fontSize:".86rem",fontFamily:sans}}/>
-            <input value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})} placeholder="Phone Number" style={{width:"100%",padding:"11px 14px",border:`1px solid ${C.g200}`,borderRadius:8,marginBottom:10,fontSize:".86rem",fontFamily:sans}}/>
-            <input value={form.contact} onChange={e=>setForm({...form,contact:e.target.value})} placeholder="Account Manager / Office Contact" style={{width:"100%",padding:"11px 14px",border:`1px solid ${C.g200}`,borderRadius:8,marginBottom:10,fontSize:".86rem",fontFamily:sans}}/>
-            <select value={form.requestedTier} onChange={e=>setForm({...form,requestedTier:e.target.value})} style={{width:"100%",padding:"11px 14px",border:`1px solid ${C.g200}`,borderRadius:8,marginBottom:10,fontSize:".86rem",fontFamily:sans,background:C.white}}>
-              <option value="registered">Member access</option>
-              <option value="premium">Premium access</option>
-            </select>
-            <textarea value={form.message} onChange={e=>setForm({...form,message:e.target.value})} placeholder="Tell us a little about how you’d like to use the portal" rows={4} style={{width:"100%",padding:"11px 14px",border:`1px solid ${C.g200}`,borderRadius:8,marginBottom:10,fontSize:".86rem",fontFamily:sans,resize:"vertical"}}/>
-            <div style={{background:"#f8fafc",border:`1px solid ${C.g200}`,borderRadius:10,padding:"11px 12px",marginBottom:10,fontSize:".76rem",color:C.g700,lineHeight:1.6}}>
-              Submit the form and we’ll email the steps needed to complete access.
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+              <Inp label="Full name" value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder="Full name" required/>
+              <Inp label="Work email" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder="name@company.com" type="email" required/>
             </div>
-            <button onClick={handleSubmit} disabled={submitting} style={{width:"100%",padding:"13px",background:submitting?C.goldHover:C.gold,color:"#fff",border:"none",borderRadius:8,fontSize:".9rem",fontWeight:600,cursor:submitting?"default":"pointer",fontFamily:sans,marginBottom:14,transition:"background .15s"}}>{submitting?"Submitting…":"Send Request"}</button>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+              <Inp label="Company" value={form.company} onChange={e=>setForm({...form,company:e.target.value})} placeholder="Company or institution"/>
+              <Inp label="Phone" value={form.phone} onChange={e=>setForm({...form,phone:e.target.value})} placeholder="+234..."/>
+            </div>
+            <Inp label="Role" value={form.role} onChange={e=>setForm({...form,role:e.target.value})} placeholder="Investor, treasury, CIO, analyst..."/>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
+              <Inp label="Password" value={form.password} onChange={e=>setForm({...form,password:e.target.value})} placeholder="At least 8 characters" type="password" required/>
+              <Inp label="Confirm password" value={form.confirmPassword} onChange={e=>setForm({...form,confirmPassword:e.target.value})} placeholder="Repeat password" type="password" required/>
+            </div>
+            <div style={{background:"#f8fafc",border:`1px solid ${C.g200}`,borderRadius:14,padding:"14px 14px",marginBottom:12,fontSize:".77rem",color:C.g700,lineHeight:1.7}}>
+              Create the account first. Once signed in, you can enter an individual code from the research team or an institutional code from your organisation administrator.
+            </div>
+            <button onClick={handleSubmit} disabled={submitting} style={{width:"100%",padding:"13px",background:submitting?C.goldHover:C.gold,color:"#fff",border:"none",borderRadius:12,fontSize:".9rem",fontWeight:700,cursor:submitting?"default":"pointer",fontFamily:sans,marginBottom:14,transition:"background .15s"}}>{submitting?"Creating account...":"Create account"}</button>
             <p style={{textAlign:"center",fontSize:".82rem",color:C.g500}}>
-              Already have access? <button onClick={()=>{setIsRequest(false);setError("");setSent(false);}} style={{background:"none",border:"none",color:C.gold,fontWeight:600,cursor:"pointer",fontFamily:sans}}>Sign In</button>
+              Already have access? <button onClick={()=>{setIsRequest(false);setError("");}} style={{background:"none",border:"none",color:C.gold,fontWeight:600,cursor:"pointer",fontFamily:sans}}>Sign In</button>
             </p>
           </>
         ):(
           <>
-            <input value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder="Email Address *" type="email" style={{width:"100%",padding:"11px 14px",border:`1px solid ${C.g200}`,borderRadius:8,marginBottom:10,fontSize:".86rem",fontFamily:sans}}/>
-            <input value={form.password} onChange={e=>setForm({...form,password:e.target.value})} placeholder="Password *" type="password" style={{width:"100%",padding:"11px 14px",border:`1px solid ${C.g200}`,borderRadius:8,marginBottom:18,fontSize:".86rem",fontFamily:sans}}/>
-            <button onClick={handleSubmit} disabled={submitting} style={{width:"100%",padding:"13px",background:submitting?C.goldHover:C.gold,color:"#fff",border:"none",borderRadius:8,fontSize:".9rem",fontWeight:600,cursor:submitting?"default":"pointer",fontFamily:sans,marginBottom:14,transition:"background .15s"}}>{submitting?"Signing in…":"Sign In"}</button>
+            <Inp label="Email address" value={form.email} onChange={e=>setForm({...form,email:e.target.value})} placeholder="name@company.com" type="email" required/>
+            <Inp label="Password" value={form.password} onChange={e=>setForm({...form,password:e.target.value})} placeholder="Password" type="password" required/>
+            <button onClick={handleSubmit} disabled={submitting} style={{width:"100%",padding:"13px",background:submitting?C.goldHover:C.gold,color:"#fff",border:"none",borderRadius:12,fontSize:".9rem",fontWeight:700,cursor:submitting?"default":"pointer",fontFamily:sans,marginBottom:14,transition:"background .15s"}}>{submitting?"Signing in...":"Sign In"}</button>
             <p style={{textAlign:"center",fontSize:".82rem",color:C.g500}}>
-              Need access? <button onClick={()=>{setIsRequest(true);setError("");setSent(false);}} style={{background:"none",border:"none",color:C.gold,fontWeight:600,cursor:"pointer",fontFamily:sans}}>Request access</button>
+              Need an account? <button onClick={()=>{setIsRequest(true);setError("");}} style={{background:"none",border:"none",color:C.gold,fontWeight:600,cursor:"pointer",fontFamily:sans}}>Create one</button>
             </p>
             <p style={{textAlign:"center",fontSize:".74rem",color:C.g500,marginTop:10,opacity:.6}}>Use the "Demo Logins" button (bottom-right) to test customer, staff, and administrator flows</p>
             <p style={{textAlign:"center",fontSize:".8rem",color:C.g500,marginTop:14}}>
@@ -787,6 +932,27 @@ function AuthPage({mode,nav,onLogin}) {
             </p>
           </>
         )}
+      </Surface>
+      <div style={{display:"grid",gap:22}}>
+        <Surface style={{padding:"34px 30px",background:"linear-gradient(180deg, rgba(8,26,34,0.94) 0%, rgba(6,38,45,0.94) 100%)",color:"#fff",border:"1px solid rgba(185,114,49,0.16)"}}>
+          <Eyebrow style={{marginBottom:12}}>Access model</Eyebrow>
+          <h3 style={{fontFamily:serif,fontSize:"1.6rem",fontWeight:600,marginBottom:12}}>Controlled subscriber onboarding</h3>
+          <p style={{fontSize:".88rem",lineHeight:1.8,color:"rgba(255,255,255,0.68)",marginBottom:18}}>Create the account now, then complete access with the right code from the research team. Individual codes unlock one person. Institutional codes unlock approved users within a seat limit.</p>
+          <div style={{display:"grid",gap:10}}>
+            {[
+              "Create a basic account with work details.",
+              "Sign in and enter the code issued by research or your institution.",
+              "Move from limited access to the full research library.",
+            ].map((item,i)=>(
+              <div key={i} style={{display:"flex",gap:12,alignItems:"flex-start",padding:"12px 0",borderTop:i?`1px solid rgba(255,255,255,0.08)`:"none"}}>
+                <div style={{width:26,height:26,borderRadius:"50%",background:"rgba(185,114,49,0.16)",display:"flex",alignItems:"center",justifyContent:"center",color:C.gold,fontSize:".74rem",fontWeight:800,flexShrink:0}}>{i+1}</div>
+                <div style={{fontSize:".82rem",lineHeight:1.7,color:"rgba(255,255,255,0.82)"}}>{item}</div>
+              </div>
+            ))}
+          </div>
+        </Surface>
+        <ActivationPanel user={user} onActivate={activateAccessCode} nav={nav} compact/>
+      </div>
       </div>
     </div>
   );
@@ -1033,8 +1199,8 @@ function Home({nav,user}) {
       bgB:"rgba(13,44,52,0.96)",
       bgC:"rgba(10,16,19,0.94)",
       streamTitle:"Access workflow",
-      excerpt:"Request access through your account contact, then sign in to unlock the right report tier and your library.",
-      ctaLabel:"Request access",
+      excerpt:"Create an account first, then activate the right subscriber tier with a code from research or your institution administrator.",
+      ctaLabel:"Create account",
       ctaRoute:"register",
       duration:10,
       metrics:[{l:"Published",v:published.length},{l:"Analysts",v:analysts.filter(a=>a.role!=="intern").length},{l:"Funds",v:funds.length}],
@@ -1083,23 +1249,28 @@ function Home({nav,user}) {
   ],[published, deskReports, analysts, funds, user]);
   const slides = useMemo(()=>mergeBannerMedia(carouselSlides,bannerMedia),[carouselSlides,bannerMedia]);
   return (<>
-    <section style={{background:`radial-gradient(circle at 14% 18%, rgba(185,114,49,0.18) 0%, transparent 25%), linear-gradient(145deg,#04161f 0%,${C.navy} 45%,${C.navyMid} 100%)`,padding:"54px 0 28px",position:"relative",overflow:"hidden"}}>
+    <section style={{background:`radial-gradient(circle at 14% 18%, rgba(185,114,49,0.16) 0%, transparent 24%), linear-gradient(145deg,#04161f 0%,${C.navy} 45%,${C.navyMid} 100%)`,padding:"60px 0 40px",position:"relative",overflow:"hidden"}}>
       <div style={{position:"absolute",inset:0,opacity:.05,backgroundImage:"linear-gradient(rgba(255,255,255,0.65) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.65) 1px, transparent 1px)",backgroundSize:"84px 84px",pointerEvents:"none"}}/>
       <div style={{maxWidth:1320,margin:"0 auto",padding:"0 40px",position:"relative",zIndex:1}}>
-        <div className="home-hero-grid" style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:28,alignItems:"start"}}>
-          <div style={{paddingTop:14}}>
+        <div className="home-hero-grid" style={{display:"grid",gridTemplateColumns:"1fr 1.02fr",gap:30,alignItems:"start"}}>
+          <div style={{paddingTop:18}}>
             <div style={{display:"inline-flex",alignItems:"center",gap:8,background:"rgba(185,114,49,0.12)",border:"1px solid rgba(185,114,49,0.24)",color:C.gold,fontSize:".62rem",fontWeight:800,textTransform:"uppercase",letterSpacing:2.6,padding:"6px 14px",borderRadius:999,marginBottom:20}}>
               <span style={{width:5,height:5,borderRadius:"50%",background:C.gold}}/>
               Independent research since 2005
             </div>
-            <h1 style={{fontFamily:serif,fontSize:"2.9rem",color:C.white,fontWeight:500,lineHeight:1.08,marginBottom:14,maxWidth:640}}>
-              <span style={{display:"block"}}>Insights that move</span>
-              <span style={{display:"block",fontStyle:"italic",color:C.gold,marginTop:2}}>markets forward</span>
+            <h1 style={{fontFamily:serif,fontSize:"3.05rem",color:C.white,fontWeight:500,lineHeight:1.04,marginBottom:16,maxWidth:680}}>
+              <span style={{display:"block"}}>A premium research</span>
+              <span style={{display:"block",fontStyle:"italic",color:C.gold,marginTop:2}}>workspace for market conviction</span>
             </h1>
-            <p style={{fontSize:".95rem",color:"rgba(255,255,255,0.68)",lineHeight:1.8,maxWidth:520,marginBottom:20}}>In-depth equity, fixed income, and macroeconomic research across Nigerian and African capital markets.</p>
-            <div style={{display:"flex",gap:12,flexWrap:"wrap",marginBottom:18}}>
-              <button onClick={()=>nav("reports")} style={{padding:"12px 18px",background:C.gold,color:"#fff",border:"none",borderRadius:8,fontSize:".84rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>Browse reports</button>
-              <button onClick={()=>nav("analysts")} style={{padding:"12px 18px",background:"rgba(255,255,255,0.04)",color:"#fff",border:"1px solid rgba(255,255,255,0.12)",borderRadius:8,fontSize:".84rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>Meet the team</button>
+            <p style={{fontSize:".95rem",color:"rgba(255,255,255,0.68)",lineHeight:1.85,maxWidth:560,marginBottom:24}}>Institutional-grade equity, macroeconomic, and fixed-income coverage presented with the clarity of an editorial product and the discipline of a working research desk.</p>
+            <div style={{display:"flex",gap:12,flexWrap:"wrap",marginBottom:20}}>
+              <button onClick={()=>nav("reports")} style={{...premiumButton,background:C.gold,color:"#fff"}}>Browse research</button>
+              <button onClick={()=>nav(user?.tier==="premium"?"library":"register")} style={{...premiumButton,background:"rgba(255,255,255,0.04)",color:"#fff",border:"1px solid rgba(255,255,255,0.12)"}}>{user?.tier==="premium"?"Open library":"Create account"}</button>
+            </div>
+            <div style={{display:"grid",gridTemplateColumns:"repeat(3,minmax(0,1fr))",gap:12,maxWidth:680}}>
+              <MetricTile label="Published reports" value={published.length} sub="Live market notes and sector views" accent={C.gold}/>
+              <MetricTile label="Analyst coverage" value={analysts.filter(a=>a.role!=="intern").length} sub="Named coverage across key sectors" accent="#7dd3fc"/>
+              <MetricTile label="Access status" value={user ? humanAccessState(user) : "Open"} sub="Subscribers unlock deeper library access" accent="#86efac"/>
             </div>
           </div>
           <HeroCarousel slides={slides} nav={nav}/>
@@ -1107,23 +1278,39 @@ function Home({nav,user}) {
       </div>
     </section>
 
-    <section style={{padding:"24px 0 58px"}}>
+    <section style={{padding:"34px 0 58px",background:"linear-gradient(180deg,#f5f7fa 0%,#ffffff 34%)"}}>
       <div style={{maxWidth:1320,margin:"0 auto",padding:"0 40px"}}>
-        <SH title="Latest reports" sub="Current reports and desk-led items in one view." link="View archive" onLink={()=>nav("reports")}/>
-        <div className="report-grid-mobile" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:22}}>
-          {published.slice(0,6).map(r=><RC key={r.id} r={r} nav={nav} user={user}/>)}
+        <div style={{display:"grid",gridTemplateColumns:"1.15fr .85fr",gap:22,marginBottom:28}}>
+          <SectionFrame title="Research desk highlights" sub="The most useful path for clients starts with featured notes, then moves into deeper category-specific coverage.">
+            <div className="report-grid-mobile" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:18}}>
+              {published.slice(0,4).map(r=><RC key={r.id} r={r} nav={nav} user={user}/>)}
+            </div>
+          </SectionFrame>
+          <SectionFrame title="Access and reading" sub="Guide prospects cleanly into activation while keeping active subscribers close to what they last opened.">
+            <div style={{display:"grid",gap:12}}>
+              <div style={{padding:"14px 16px",background:C.offWhite,borderRadius:14}}>
+                <Eyebrow style={{marginBottom:6}}>Subscriber path</Eyebrow>
+                <div style={{fontSize:".88rem",fontWeight:700,color:C.navy,marginBottom:5}}>Create account, then activate</div>
+                <div style={{fontSize:".79rem",lineHeight:1.7,color:C.g500}}>The portal now supports limited access first, then individual or institutional code activation issued by the research team.</div>
+              </div>
+              <div style={{padding:"14px 16px",background:C.offWhite,borderRadius:14}}>
+                <Eyebrow style={{marginBottom:6}}>For live subscribers</Eyebrow>
+                <div style={{fontSize:".88rem",fontWeight:700,color:C.navy,marginBottom:5}}>Continue from your library</div>
+                <div style={{fontSize:".79rem",lineHeight:1.7,color:C.g500}}>Recent reading, saved reports, and shelf-based browsing are surfaced more clearly inside the premium library.</div>
+              </div>
+            </div>
+          </SectionFrame>
         </div>
       </div>
     </section>
 
-    <section style={{padding:"10px 0 66px",background:C.offWhite}}>
+    <section style={{padding:"0 0 68px",background:C.offWhite}}>
       <div style={{maxWidth:1320,margin:"0 auto",padding:"0 40px"}}>
-        <div className="analyst-grid-mobile" style={{display:"grid",gridTemplateColumns:"1fr .9fr",gap:28,alignItems:"start"}}>
-          <div>
-            <SH title="Analysts" sub="The desk sits alongside the live analysts and supports intern publication." link="Analyst directory" onLink={()=>nav("analysts")}/>
+        <div className="analyst-grid-mobile" style={{display:"grid",gridTemplateColumns:"1fr .92fr",gap:24,alignItems:"start"}}>
+          <SectionFrame title="Analyst coverage" sub="The desk sits alongside the live analysts and supports intern publication." actions={<button onClick={()=>nav("analysts")} style={{...premiumButton,background:"transparent",color:C.navy,border:`1px solid ${C.g200}`}}>Analyst directory</button>}>
             <div className="analyst-grid-mobile" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:18}}>
               {analysts.filter(a=>a.role!=="intern").slice(0,4).map(a=>(
-                <div key={a.id} onClick={()=>nav("analyst",{id:a.id})} style={{background:C.white,border:`1px solid ${C.g200}`,borderRadius:16,padding:"22px 20px",cursor:"pointer",boxShadow:"0 1px 4px rgba(6,38,45,0.04)"}}>
+                <div key={a.id} onClick={()=>nav("analyst",{id:a.id})} style={{padding:"20px",borderRadius:16,background:C.offWhite,border:`1px solid ${C.g200}`,cursor:"pointer"}}>
                   <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:12}}>
                     <AnalystAvatar analyst={a} size={50} fontSize="1rem"/>
                     <div>
@@ -1135,15 +1322,14 @@ function Home({nav,user}) {
                 </div>
               ))}
             </div>
-          </div>
-          <div>
-            <SH title="Funds" sub="Calibri now applies here too, with a lighter card treatment." link="View funds" onLink={()=>nav("funds")}/>
+          </SectionFrame>
+          <SectionFrame title="Funds and mandates" sub="A tighter summary of current vehicles without overwhelming the front page.">
             <div className="analyst-grid-mobile" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14}}>
               {funds.map(f=>{
                 const ret=(f.perf&&f.perf["YTD"])||0;
                 const pos=ret>=0;
                 return (
-                  <div key={f.id} style={{background:C.white,borderRadius:16,border:`1px solid ${C.g200}`,padding:"18px"}}>
+                  <div key={f.id} style={{background:C.offWhite,borderRadius:16,border:`1px solid ${C.g200}`,padding:"18px"}}>
                     <div style={{fontSize:".6rem",color:C.g500,textTransform:"uppercase",letterSpacing:1.8,marginBottom:6,fontWeight:800}}>{f.type}</div>
                     <div style={{fontFamily:serif,fontSize:"1.02rem",color:C.navy,fontWeight:600,lineHeight:1.25,marginBottom:10}}>{f.abbr}</div>
                     <div style={{fontFamily:serif,fontSize:"1.45rem",color:pos?"#16a34a":"#dc2626",fontWeight:600,lineHeight:1}}>{pos?"+":""}{ret.toFixed(1)}%</div>
@@ -1152,7 +1338,7 @@ function Home({nav,user}) {
                 );
               })}
             </div>
-          </div>
+          </SectionFrame>
         </div>
       </div>
     </section>
@@ -2922,6 +3108,8 @@ function ManagePage({nav}) {
     {k:"addanalyst",l:"Add Analyst"},
     {k:"addintern",l:"Add Intern"},
     {k:"users",l:"User Accounts"},
+    {k:"subscribers",l:"Subscriber Access"},
+    {k:"codes",l:"Access Codes"},
     {k:"access",l:"Paywalls"},
     {k:"funds",l:"Funds"},
     {k:"settings",l:"Portal Settings"},
@@ -2930,7 +3118,8 @@ function ManagePage({nav}) {
     {l:"Dashboard",items:[tabs[0],tabs[1]]},
     {l:"Content",items:[tabs[2],tabs[3],tabs[4],tabs[5]]},
     {l:"People",items:[tabs[6],tabs[7],tabs[8],tabs[9]]},
-    {l:"Governance",items:[tabs[10],tabs[11],tabs[12]]},
+    {l:"Access",items:[tabs[10],tabs[11],tabs[12]]},
+    {l:"Governance",items:[tabs[13],tabs[14]]},
   ];
 
   return (
@@ -2961,6 +3150,8 @@ function ManagePage({nav}) {
         {tab==="addanalyst"&&<AddAnalystTab analysts={analysts} setAnalysts={setAnalysts} showToast={showToast} onDone={()=>setTab('analysts')}/>}
         {tab==="addintern"&&<AddInternTab analysts={analysts} setAnalysts={setAnalysts} showToast={showToast} onDone={()=>setTab('analysts')}/>}
         {tab==="users"&&<UsersTab showToast={showToast}/>}
+        {tab==="subscribers"&&<SubscriberAccessTab showToast={showToast}/>}
+        {tab==="codes"&&<AccessCodesTab showToast={showToast}/>}
         {tab==="access"&&<AccessRulesTab categoryRules={categoryRules} setCategoryRules={setCategoryRules}/>}
         {tab==="funds"&&<FundsAdminTab funds={funds} setFunds={setFunds} showToast={showToast}/>}
         {tab==="settings"&&<SettingsTab showToast={showToast}/>}
@@ -3825,6 +4016,133 @@ function UsersTab({showToast}) {
   );
 }
 
+function SubscriberAccessTab({showToast}) {
+  const {institutions,setInstitutions}=useData();
+  const [demoUsers,setDemoUsersState]=useState(()=>lsGet(LS.demoUsers)||[]);
+  const limitedUsers = demoUsers.filter(u=>!STAFF_TIERS.has(u.tier) && u.accessState !== "active" && u.tier !== "premium");
+  const activateManually = (id,tier="premium")=>{
+    const updated=demoUsers.map(u=>u.id===id?{...u,tier,accessState:"active"}:u);
+    lsSet(LS.demoUsers,updated);
+    setDemoUsersState(updated);
+    showToast("Subscriber access updated.");
+  };
+  const revokeUser = id=>{
+    const updated=demoUsers.map(u=>u.id===id?{...u,tier:"registered",accessState:"limited",institutionId:null,institutionName:null}:u);
+    lsSet(LS.demoUsers,updated);
+    setDemoUsersState(updated);
+    showToast("Access returned to limited state.");
+  };
+  const updateSeats = (id,delta)=>{
+    setInstitutions(prev=>prev.map(inst=>inst.id===id?{...inst,seatsUsed:Math.max(0,Math.min(inst.seatLimit,(inst.seatsUsed||0)+delta))}:inst));
+  };
+  return (
+    <div>
+      <SH title="Subscriber Access" sub="Review limited accounts, adjust access state, and watch institutional seat usage."/>
+      <div style={{display:"grid",gridTemplateColumns:"1.05fr .95fr",gap:20}}>
+        <SectionFrame title="Accounts awaiting full access" sub="These users created accounts but have not completed activation.">
+          {limitedUsers.length===0 ? <div style={{padding:"14px 0",fontSize:".82rem",color:C.g500}}>No limited-access subscriber accounts at the moment.</div> : (
+            <div style={{display:"grid",gap:10}}>
+              {limitedUsers.map(u=>(
+                <div key={u.id} style={{display:"grid",gridTemplateColumns:"1fr auto",gap:12,alignItems:"center",padding:"14px 16px",background:C.offWhite,border:`1px solid ${C.g200}`,borderRadius:14}}>
+                  <div>
+                    <div style={{fontSize:".86rem",fontWeight:700,color:C.navy,marginBottom:3}}>{u.name}</div>
+                    <div style={{fontSize:".75rem",color:C.g500,marginBottom:2}}>{u.email}</div>
+                    <div style={{fontSize:".73rem",color:C.g500}}>{u.company || "Prospect account"} · {u.role || "Subscriber"}</div>
+                  </div>
+                  <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"flex-end"}}>
+                    <button onClick={()=>activateManually(u.id,"registered")} style={{padding:"8px 12px",background:"#eff6ff",color:"#2563eb",border:"1px solid #bfdbfe",borderRadius:999,fontSize:".72rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>Member</button>
+                    <button onClick={()=>activateManually(u.id,"premium")} style={{padding:"8px 12px",background:"#fef3c7",color:"#b45309",border:"1px solid #fcd34d",borderRadius:999,fontSize:".72rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>Premium</button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </SectionFrame>
+        <SectionFrame title="Institutional seats" sub="Seat usage should stay visible without making the admin workspace noisy.">
+          <div style={{display:"grid",gap:12}}>
+            {institutions.map(inst=>(
+              <div key={inst.id} style={{padding:"15px 16px",background:C.offWhite,border:`1px solid ${C.g200}`,borderRadius:14}}>
+                <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center",marginBottom:8}}>
+                  <div>
+                    <div style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>{inst.name}</div>
+                    <div style={{fontSize:".72rem",color:C.g500}}>{inst.code}</div>
+                  </div>
+                  <div style={{fontSize:".78rem",fontWeight:700,color:C.navy}}>{inst.seatsUsed}/{inst.seatLimit}</div>
+                </div>
+                <div style={{height:7,background:"#e7ebef",borderRadius:999,overflow:"hidden",marginBottom:10}}>
+                  <div style={{height:"100%",width:`${(inst.seatsUsed/inst.seatLimit)*100}%`,background:`linear-gradient(90deg,${C.gold},${C.navyLight})`}}/>
+                </div>
+                <div style={{display:"flex",gap:8}}>
+                  <button onClick={()=>updateSeats(inst.id,1)} style={{padding:"7px 12px",background:C.navy,color:"#fff",border:"none",borderRadius:999,fontSize:".72rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>Use seat</button>
+                  <button onClick={()=>updateSeats(inst.id,-1)} style={{padding:"7px 12px",background:C.g100,color:C.g700,border:"none",borderRadius:999,fontSize:".72rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>Release seat</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </SectionFrame>
+      </div>
+      <div style={{height:20}}/>
+      <SectionFrame title="Activated subscriber accounts" sub="Review and reset access when needed.">
+        <div style={{display:"grid",gap:10}}>
+          {demoUsers.filter(u=>!STAFF_TIERS.has(u.tier) && (u.accessState === "active" || u.tier==="premium")).map(u=>(
+            <div key={u.id} style={{display:"grid",gridTemplateColumns:"1fr auto",gap:12,alignItems:"center",padding:"14px 16px",background:C.offWhite,border:`1px solid ${C.g200}`,borderRadius:14}}>
+              <div>
+                <div style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>{u.name}</div>
+                <div style={{fontSize:".72rem",color:C.g500}}>{u.email} · {humanAccessState(u)}</div>
+              </div>
+              <button onClick={()=>revokeUser(u.id)} style={{padding:"8px 12px",background:"#fef2f2",color:C.red,border:"1px solid #fecaca",borderRadius:999,fontSize:".72rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>Return to limited</button>
+            </div>
+          ))}
+        </div>
+      </SectionFrame>
+    </div>
+  );
+}
+
+function AccessCodesTab({showToast}) {
+  const {accessCodes,setAccessCodes,institutions}=useData();
+  const createCode = type => {
+    const id = Date.now();
+    const suffix = String(id).slice(-4);
+    const next = type==="individual"
+      ? {id,code:`CHD-IND-2026-${suffix}`,type:"individual",tier:"premium",assignedEmail:"",usedBy:"",usedAt:"",active:true,expiresAt:"2026-12-31"}
+      : {id,code:`CHD-INST-2026-${suffix}`,type:"institution",tier:"premium",institutionId:institutions[0]?.id || 1,seatLimit:10,seatsUsed:0,active:true,expiresAt:"2026-12-31"};
+    setAccessCodes([next,...accessCodes]);
+    showToast("Access code created.");
+  };
+  const toggleActive = id => setAccessCodes(prev=>prev.map(code=>code.id===id?{...code,active:!code.active}:code));
+  return (
+    <div>
+      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,flexWrap:"wrap",marginBottom:20}}>
+        <div>
+          <h2 style={{fontFamily:serif,fontSize:"1.5rem",color:C.navy,fontWeight:600,marginBottom:4}}>Access Codes</h2>
+          <p style={{fontSize:".82rem",color:C.g500}}>Issue single-use individual access and master institutional access from one quiet control surface.</p>
+        </div>
+        <div style={{display:"flex",gap:10}}>
+          <button onClick={()=>createCode("individual")} style={{...premiumButton,background:C.navy,color:"#fff"}}>New individual code</button>
+          <button onClick={()=>createCode("institution")} style={{...premiumButton,background:C.gold,color:"#fff"}}>New institutional code</button>
+        </div>
+      </div>
+      <div style={{display:"grid",gap:12}}>
+        {accessCodes.map(code=>{
+          const inst = institutions.find(i=>i.id===code.institutionId);
+          return (
+            <SectionFrame key={code.id} title={code.code} sub={code.type==="individual" ? "Single-use activation for one subscriber account." : `Master institutional code${inst ? ` · ${inst.name}` : ""}`}>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(5,minmax(0,1fr))",gap:12}}>
+                <div><Eyebrow style={{marginBottom:4,color:C.g500}}>Type</Eyebrow><div style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>{code.type}</div></div>
+                <div><Eyebrow style={{marginBottom:4,color:C.g500}}>Tier</Eyebrow><div style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>{code.tier}</div></div>
+                <div><Eyebrow style={{marginBottom:4,color:C.g500}}>Expires</Eyebrow><div style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>{code.expiresAt}</div></div>
+                <div><Eyebrow style={{marginBottom:4,color:C.g500}}>Usage</Eyebrow><div style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>{code.type==="individual" ? (code.usedBy || "Unused") : `${code.seatsUsed||0}/${code.seatLimit||0} seats`}</div></div>
+                <div style={{display:"flex",alignItems:"end",justifyContent:"flex-end"}}><button onClick={()=>toggleActive(code.id)} style={{padding:"8px 12px",background:code.active?C.g100:"#fef2f2",color:code.active?C.navy:C.red,border:"none",borderRadius:999,fontSize:".72rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>{code.active?"Disable":"Enable"}</button></div>
+              </div>
+            </SectionFrame>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 /* ═══ SETTINGS TAB (portal config) ═══ */
 function SettingsTab({showToast}) {
   const [settings,setSettings]=useState({site_name:"CHD Research Portal",contact_email:"research@chapelhilldenham.com"});
@@ -3911,6 +4229,7 @@ const LS={
   funds:"chd_funds",bioEdits:"chd_bioedits",demoUsers:"chd_demo_users",prices:"chd_prices",
   mailingList:"chd_mailing_list",library:"chd_library",categoryRules:"chd_category_rules",
   accessRequests:"chd_access_requests",bannerMedia:"chd_banner_media",recentViews:"chd_recent_views",
+  accessCodes:"chd_access_codes",institutions:"chd_institutions",
 };
 function lsGet(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
@@ -3922,7 +4241,7 @@ export default function App() {
   const [pageData,setPageData] = useState(()=>lsGet("chd_pageData")||{});
   const [navStack,setNavStack] = useState([{page:lsGet("chd_page")||"home",data:lsGet("chd_pageData")||{}}]);
   /* Initialize state from localStorage so data survives refresh */
-  const [user,setUser]         = useState(()=>lsGet(LS.user));
+  const [user,setUser]         = useState(()=>normalizePortalUser(lsGet(LS.user)));
   const [toast,setToast]       = useState("");
   const [reports,setReports]   = useState(()=>lsGet(LS.reports)||INIT_REPORTS);
   const [analysts,setAnalysts] = useState(()=>lsGet(LS.analysts)||INIT_ANALYSTS);
@@ -3935,6 +4254,8 @@ export default function App() {
   const [accessRequests,setAccessRequests] = useState(()=>lsGet(LS.accessRequests)||[]);
   const [bannerMedia,setBannerMedia] = useState(()=>lsGet(LS.bannerMedia)||DEFAULT_BANNER_MEDIA);
   const [recentViews,setRecentViews] = useState(()=>lsGet(LS.recentViews)||[]);
+  const [accessCodes,setAccessCodes] = useState(()=>lsGet(LS.accessCodes)||INIT_ACCESS_CODES);
+  const [institutions,setInstitutions] = useState(()=>lsGet(LS.institutions)||INIT_INSTITUTIONS);
 
   /* ── Persist state to localStorage whenever it changes ── */
   useEffect(()=>{ if(user) lsSet(LS.user,user); else lsDel(LS.user); },[user]);
@@ -3948,6 +4269,8 @@ export default function App() {
   useEffect(()=>{ lsSet(LS.accessRequests,accessRequests); },[accessRequests]);
   useEffect(()=>{ lsSet(LS.bannerMedia,bannerMedia); },[bannerMedia]);
   useEffect(()=>{ lsSet(LS.recentViews,recentViews); },[recentViews]);
+  useEffect(()=>{ lsSet(LS.accessCodes,accessCodes); },[accessCodes]);
+  useEffect(()=>{ lsSet(LS.institutions,institutions); },[institutions]);
   useEffect(()=>{ lsSet("chd_page",page); },[page]);
   useEffect(()=>{ lsSet("chd_pageData",pageData); },[pageData]);
 
@@ -3955,7 +4278,7 @@ export default function App() {
   useEffect(()=>{
     /* Validate / refresh session from API (won't clear localStorage-restored user if API offline) */
     api.auth.me()
-      .then(u=>{ if(u?.id) setUser(u); })
+      .then(u=>{ if(u?.id) setUser(normalizePortalUser(u)); })
       .catch(()=>{}); /* stay with localStorage user in offline/demo mode */
 
     api.reports.list()
@@ -3999,7 +4322,7 @@ export default function App() {
   const canGoBack = navStack.length>1;
 
   const login  = u=>{
-    setUser(u);
+    setUser(normalizePortalUser(u));
     if(!u.mustChange) setToast(`Welcome${u.name?", "+u.name.split(" ")[0]:""}!`);
   };
   const completePwChange = newPw => {
@@ -4007,7 +4330,7 @@ export default function App() {
     const idx=saved.findIndex(u=>u.email===user?.email);
     if(idx>=0){saved[idx]={...saved[idx],password:newPw,mustChange:false};lsSet(LS.demoUsers,saved);}
     const updated={...user,mustChange:false};
-    setUser(updated);
+    setUser(normalizePortalUser(updated));
     setToast(`Welcome, ${user?.name?.split(" ")[0]||""}! Password updated.`);
   };
   const logout = ()=>{
@@ -4021,8 +4344,47 @@ export default function App() {
     return ()=>clearTimeout(t);
   },[toast]);
 
+  const activateAccessCode = useCallback((rawCode,type)=>{
+    const code = rawCode.trim().toUpperCase();
+    if(!user) return {ok:false,message:"Please sign in first."};
+    if(!code) return {ok:false,message:"Enter the activation code."};
+    if(type==="individual"){
+      const match = accessCodes.find(c=>c.type==="individual"&&c.code===code);
+      if(!match || !match.active) return {ok:false,message:"This individual code is not valid."};
+      if(match.usedBy) return {ok:false,message:"This individual code has already been used."};
+      const upgraded = normalizePortalUser({...user,tier:match.tier,accessState:"active",activationHistory:[...(user.activationHistory||[]),{code,type,at:new Date().toISOString()}]});
+      setAccessCodes(prev=>prev.map(c=>c.id===match.id?{...c,usedBy:user.email,usedAt:new Date().toISOString()}:c));
+      const saved=lsGet(LS.demoUsers)||[];
+      const idx=saved.findIndex(u=>u.email===user.email);
+      if(idx>=0){
+        saved[idx]={...saved[idx],tier:upgraded.tier,accessState:"active",activationHistory:upgraded.activationHistory};
+        lsSet(LS.demoUsers,saved);
+      }
+      setUser(upgraded);
+      setToast("Research access activated.");
+      return {ok:true};
+    }
+    const match = accessCodes.find(c=>c.type==="institution"&&c.code===code);
+    if(!match || !match.active) return {ok:false,message:"This institutional code is not valid."};
+    const institution = institutions.find(i=>i.id===match.institutionId);
+    if(!institution || !institution.active) return {ok:false,message:"This institution is not active."};
+    if((institution.seatsUsed||0) >= (institution.seatLimit||0)) return {ok:false,message:"All seats on this institutional code have been used."};
+    const upgraded = normalizePortalUser({...user,tier:match.tier,accessState:"active",institutionId:institution.id,institutionName:institution.name,activationHistory:[...(user.activationHistory||[]),{code,type,at:new Date().toISOString()}]});
+    setInstitutions(prev=>prev.map(i=>i.id===institution.id?{...i,seatsUsed:(i.seatsUsed||0)+1}:i));
+    setAccessCodes(prev=>prev.map(c=>c.id===match.id?{...c,seatsUsed:(c.seatsUsed||0)+1}:c));
+    const saved=lsGet(LS.demoUsers)||[];
+    const idx=saved.findIndex(u=>u.email===user.email);
+    if(idx>=0){
+      saved[idx]={...saved[idx],tier:upgraded.tier,accessState:"active",institutionId:institution.id,institutionName:institution.name,activationHistory:upgraded.activationHistory};
+      lsSet(LS.demoUsers,saved);
+    }
+    setUser(upgraded);
+    setToast(`Access activated under ${institution.name}.`);
+    return {ok:true};
+  },[user,accessCodes,institutions]);
+
   return (
-    <DataCtx.Provider value={{reports,analysts,funds,setReports,setAnalysts,setFunds,demoFill,setDemoFill,bioEdits,setBioEdits,mailingList,setMailingList,library,setLibrary,categoryRules,setCategoryRules,accessRequests,setAccessRequests,bannerMedia,setBannerMedia,recentViews,trackRecentView}}>
+    <DataCtx.Provider value={{reports,analysts,funds,setReports,setAnalysts,setFunds,demoFill,setDemoFill,bioEdits,setBioEdits,mailingList,setMailingList,library,setLibrary,categoryRules,setCategoryRules,accessRequests,setAccessRequests,bannerMedia,setBannerMedia,recentViews,trackRecentView,user,accessCodes,setAccessCodes,institutions,setInstitutions,activateAccessCode}}>
       <div style={{minHeight:"100vh",display:"flex",flexDirection:"column",fontFamily:sans,background:"#fff"}}>
         <style>{`
           *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -4142,6 +4504,7 @@ export default function App() {
           }
         `}</style>
         <Header page={page} nav={nav} goBack={goBack} canGoBack={canGoBack} user={user} onLogout={logout}/>
+        <LimitedAccessBanner user={user} nav={nav}/>
         <div style={{flex:1}}>
           {page==="home"       &&<Home nav={nav} user={user}/>}
           {page==="reports"    &&<ReportsPage nav={nav} user={user} initCat={pageData.cat}/>}
