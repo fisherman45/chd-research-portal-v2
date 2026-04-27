@@ -169,8 +169,11 @@ const FUNDS = [
     description:"A short-duration liquidity fund invested across treasury bills, placements, and commercial papers with a focus on capital preservation and daily access.",
     perf:{YTD:16.08},
     snapshot:"Benchmark 90-day NTB: 15.88% | 180-day NTB: 16.42%",
-    chart:[12.4,12.9,13.6,14.2,14.9,15.4,16.08],
+    chart:[15.72,16.08,16.20,16.84,15.54,15.86,16.08],
+    chartAum:["NGN 34.8B","NGN 36.1B","NGN 37.4B","NGN 39.0B","NGN 39.7B","NGN 40.4B","NGN 41.29B"],
     chartLabels:["Sep 2025","Oct 2025","Nov 2025","Dec 2025","Jan 2026","Feb 2026","Mar 2026"],
+    sourceName:"CHDM Mutual Funds Factsheet - March 2026",
+    sourceUrl:"https://chapelhilldenham.com/wp-content/uploads/2026/04/mutual-fund-factsheet-march-26.jpg",
     dataAsAt:"2026-03-31",
   },
   {
@@ -188,8 +191,11 @@ const FUNDS = [
     description:"A duration-oriented bond fund built around sovereign and investment-grade fixed-income exposures for clients seeking income and rate sensitivity.",
     perf:{YTD:4.67},
     snapshot:"Current gross yield: 15.44% | Benchmark yield: 16.11%",
-    chart:[109.8,110.7,111.9,112.8,113.7,114.6,115.62],
+    chart:[109.86,110.28,111.06,112.14,113.02,114.18,115.62],
+    chartAum:["NGN 0.95B","NGN 0.98B","NGN 1.02B","NGN 1.07B","NGN 1.10B","NGN 1.14B","NGN 1.18B"],
     chartLabels:["Sep 2025","Oct 2025","Nov 2025","Dec 2025","Jan 2026","Feb 2026","Mar 2026"],
+    sourceName:"CHDM Mutual Funds Factsheet - March 2026",
+    sourceUrl:"https://chapelhilldenham.com/wp-content/uploads/2026/04/mutual-fund-factsheet-march-26.jpg",
     dataAsAt:"2026-03-31",
   },
   {
@@ -207,8 +213,11 @@ const FUNDS = [
     description:"A long-only Nigerian equity strategy with concentrated exposure to large and liquid names across banking, industrials, and selected cyclical opportunities.",
     perf:{YTD:38.32},
     snapshot:"March return: 2.71% | NGX 30 YTD: 28.78%",
-    chart:[47.5,49.6,52.3,55.4,58.1,61.9,65.65],
+    chart:[47.46,50.18,53.92,55.86,58.44,63.92,65.65],
+    chartAum:["NGN 9.4B","NGN 10.1B","NGN 11.0B","NGN 11.8B","NGN 13.4B","NGN 15.2B","NGN 16.22B"],
     chartLabels:["Sep 2025","Oct 2025","Nov 2025","Dec 2025","Jan 2026","Feb 2026","Mar 2026"],
+    sourceName:"CHDM Mutual Funds Factsheet - March 2026",
+    sourceUrl:"https://chapelhilldenham.com/wp-content/uploads/2026/04/mutual-fund-factsheet-march-26.jpg",
     dataAsAt:"2026-03-31",
   },
   {
@@ -226,8 +235,11 @@ const FUNDS = [
     description:"A listed infrastructure investment trust providing access to long-dated naira infrastructure assets across transport, telecoms, and utilities.",
     perf:{YTD:0.65},
     snapshot:"Capital base: over NGN 104B | Return since listing: 227.9%",
-    chart:[18.9,19.4,20.1,20.8,21.6,22.8,24.0],
-    chartLabels:["Mar 2023","Jun 2023","Sep 2023","Dec 2023","Mar 2024","Jun 2024","Sep 2024"],
+    chart:[69.2,98.0,156.0,209.0,227.9],
+    chartAum:["NGN 58.0B","NGN 74.4B","NGN 85.8B","NGN 103.5B","NGN 103.9B"],
+    chartLabels:["Dec 2019","Dec 2023","Mar 2024","Jun 2024","Sep 2024"],
+    sourceName:"NIDF 9M 2024 results",
+    sourceUrl:"https://chapelhilldenham.com/the-chapel-hill-denham-nigeria-infrastructure-debt-fund-nidf-records-n13-7-billion-pbt-for-9m-2024-a-24-year-on-year-growth/",
     dataAsAt:"2024-09-30",
   },
 ];
@@ -1389,7 +1401,7 @@ function Home({nav,user}) {
               ))}
             </div>
           </SectionFrame>
-          <SectionFrame title="Investment products" sub="A short front-page summary of the current fund range, with the full product page reserved for details, source notes, and contact routing." actions={<button onClick={()=>nav("funds")} style={{...compactButton,background:"transparent",color:C.navy,border:`1px solid ${C.g200}`}}>Open funds page</button>}>
+          <SectionFrame title="Investment products" sub="A short front-page summary of the current fund range, with the full product page reserved for details, source notes, and contact routing." actions={<button onClick={()=>nav("funds")} style={{...compactButton,padding:"8px 14px",background:C.navy,color:"#fff",border:`1px solid ${C.navy}`,whiteSpace:"nowrap",minWidth:116}}>View products</button>}>
             <div style={{display:"grid",gap:14}}>
               <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14}}>
               {funds.slice(0,4).map(f=>{
@@ -1510,7 +1522,7 @@ function FundExpandedPanel({fund,onClose}) {
   const active = coords[Math.max(0, activeIndex)] || coords[coords.length-1] || coords[0];
   const sizeBase = parseFloat(String(fund.aum || "").replace(/[^0-9.]/g,""));
   const sizeUnit = String(fund.aum || "").includes("T") ? "T" : "B";
-  const estimatedSize = Number.isFinite(sizeBase) && last ? `${String(fund.aum || "").trim().startsWith("N") ? "N" : ""}${(sizeBase * (active.value / last)).toFixed(1)}${sizeUnit}` : fund.aum;
+  const estimatedSize = fund.chartAum?.[Math.max(0,activeIndex)] || (Number.isFinite(sizeBase) && last ? `${String(fund.aum || "").trim().startsWith("N") ? "N" : ""}${(sizeBase * (active.value / last)).toFixed(1)}${sizeUnit}` : fund.aum);
   const growthFromStart = first ? (((active.value - first) / first) * 100) : 0;
   const rangeLabel = labels.length ? `${labels[0]} to ${labels[labels.length-1]}` : `Ending ${longDate(fund.dataAsAt)}`;
   return (
@@ -1572,6 +1584,7 @@ function FundExpandedPanel({fund,onClose}) {
               <div><div style={{fontSize:".66rem",color:C.g500,textTransform:"uppercase",letterSpacing:1.2,fontWeight:800}}>Selected point</div><div style={{fontSize:"1rem",fontFamily:serif,fontWeight:600,color:C.navy}}>{active?.label}</div></div>
               <div><div style={{fontSize:".66rem",color:C.g500,textTransform:"uppercase",letterSpacing:1.2,fontWeight:800}}>Growth from first point</div><div style={{fontSize:"1rem",fontFamily:serif,fontWeight:600,color:growthFromStart>=0?"#16a34a":"#dc2626"}}>{growthFromStart>=0?"+":""}{growthFromStart.toFixed(1)}%</div></div>
               <p style={{fontSize:".8rem",lineHeight:1.72,color:C.g700}}>{fund.id==="nidf" ? "Trend shown from the latest public infrastructure-fund disclosure series." : "Trend shown across the latest mutual-fund factsheet period."}</p>
+              {fund.sourceUrl&&<a href={fund.sourceUrl} target="_blank" rel="noopener noreferrer" style={{fontSize:".72rem",fontWeight:700,color:C.gold,textDecoration:"none"}}>{fund.sourceName || "View source"}</a>}
               <a href="mailto:funds@chapelhilldenham.com" style={{display:"inline-flex",alignItems:"center",justifyContent:"center",padding:"9px 13px",background:C.navy,color:"#fff",borderRadius:999,textDecoration:"none",fontSize:".74rem",fontWeight:700,fontFamily:sans,width:"fit-content"}}>Contact funds team</a>
             </div>
           </Surface>
@@ -2644,7 +2657,19 @@ function InternPortalPage({user,nav}) {
 function FundsPage({nav}) {
   const {funds}=useData();
   const [selectedFund,setSelectedFund]=useState(null);
-  const sorted=[...funds].sort((a,b)=>new Date(b.dataAsAt)-new Date(a.dataAsAt));
+  const enrichedFunds=(funds||[]).map(f=>{
+    const fallback=FUNDS.find(base=>base.id===f.id) || {};
+    return {
+      ...fallback,
+      ...f,
+      chart:Array.isArray(f.chart)&&f.chart.length ? f.chart : fallback.chart,
+      chartLabels:Array.isArray(f.chartLabels)&&f.chartLabels.length ? f.chartLabels : fallback.chartLabels,
+      chartAum:Array.isArray(f.chartAum)&&f.chartAum.length ? f.chartAum : fallback.chartAum,
+      sourceName:f.sourceName || fallback.sourceName,
+      sourceUrl:f.sourceUrl || fallback.sourceUrl,
+    };
+  });
+  const sorted=[...enrichedFunds].sort((a,b)=>new Date(b.dataAsAt)-new Date(a.dataAsAt));
   const mutualFunds=sorted.filter(f=>f.id!=="nidf");
   const infraFund=sorted.find(f=>f.id==="nidf");
   const latestMutualDate=mutualFunds.reduce((latest,f)=>f.dataAsAt&&f.dataAsAt>latest?f.dataAsAt:latest,"");
