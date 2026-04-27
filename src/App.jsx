@@ -243,6 +243,18 @@ const FUNDS = [
     dataAsAt:"2024-09-30",
   },
 ];
+const enrichFundData = fund => {
+  const fallback = FUNDS.find(base=>base.id===fund?.id) || {};
+  return {
+    ...fallback,
+    ...(fund || {}),
+    chart:Array.isArray(fund?.chart)&&fund.chart.length ? fund.chart : fallback.chart,
+    chartLabels:Array.isArray(fund?.chartLabels)&&fund.chartLabels.length ? fund.chartLabels : fallback.chartLabels,
+    chartAum:Array.isArray(fund?.chartAum)&&fund.chartAum.length ? fund.chartAum : fallback.chartAum,
+    sourceName:fund?.sourceName || fallback.sourceName,
+    sourceUrl:fund?.sourceUrl || fallback.sourceUrl,
+  };
+};
 
 const DEMO_ACCOUNTS = [
   {email:"admin@chapelhilldenham.com",      password:"password", name:"Portal Admin",           tier:"admin"},
@@ -439,12 +451,18 @@ function ActivationPanel({user,onActivate,nav,compact=false}) {
     setError(result?.message || "Unable to activate this code.");
   };
   return (
-    <SectionFrame
-      title={compact?"Activate full access":"Activate your research access"}
-      sub="Enter the code issued by the research team. Individual codes unlock one account. Institutional codes unlock access within your organisation's seat limit."
-      style={{padding:compact?"18px":"24px"}}
-    >
-      <div style={{display:"grid",gridTemplateColumns:compact?"1fr":"1fr 1fr",gap:12,marginBottom:12}}>
+    <SectionFrame title={compact?"Activate full access":"Activate your research access"} style={{padding:compact?"18px":"24px"}}>
+      <div style={{display:"grid",gap:10,marginBottom:14}}>
+        <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
+          <div style={{width:22,height:22,borderRadius:"50%",background:C.goldSoft,color:C.gold,display:"flex",alignItems:"center",justifyContent:"center",fontSize:".68rem",fontWeight:800,flexShrink:0}}>1</div>
+          <div><div style={{fontSize:".78rem",fontWeight:800,color:C.navy}}>Choose the code type</div><p style={{fontSize:".74rem",lineHeight:1.55,color:C.g500}}>Use an individual code for one subscriber or an institutional master code for an approved organisation.</p></div>
+        </div>
+        <div style={{display:"flex",gap:10,alignItems:"flex-start"}}>
+          <div style={{width:22,height:22,borderRadius:"50%",background:C.goldSoft,color:C.gold,display:"flex",alignItems:"center",justifyContent:"center",fontSize:".68rem",fontWeight:800,flexShrink:0}}>2</div>
+          <div><div style={{fontSize:".78rem",fontWeight:800,color:C.navy}}>Enter the code from research</div><p style={{fontSize:".74rem",lineHeight:1.55,color:C.g500}}>The research team or your institution administrator issues this after access is approved.</p></div>
+        </div>
+      </div>
+      <div className="activation-grid" style={{display:"grid",gridTemplateColumns:compact?"1fr":"1fr 1fr",gap:12,marginBottom:12}}>
         <Inp label="Activation path" value={type} onChange={e=>setType(e.target.value)} as="select" options={[{v:"individual",l:"Individual code"},{v:"institution",l:"Institutional master code"}]}/>
         <Inp label="Activation code" value={code} onChange={e=>setCode(e.target.value.toUpperCase())} placeholder="e.g. CHD-IND-2026-001" required/>
       </div>
@@ -947,7 +965,7 @@ function AuthPage({mode,nav,onLogin}) {
 
   return (
     <div className="auth-page" style={{minHeight:"82vh",display:"flex",alignItems:"center",justifyContent:"center",background:`radial-gradient(circle at 10% 10%, rgba(185,114,49,0.16), transparent 25%), linear-gradient(160deg,${C.navy} 0%,${C.navyMid} 52%,#091d24 100%)`,padding:"60px 20px"}}>
-      <div className="auth-grid" style={{maxWidth:1140,width:"100%",display:"grid",gridTemplateColumns:"1.08fr .92fr",gap:22,alignItems:"stretch"}}>
+      <div className="auth-grid" style={{maxWidth:1180,width:"100%",display:"grid",gridTemplateColumns:isRequest?"1fr .82fr":"1.02fr .98fr",gap:22,alignItems:"stretch"}}>
         <Surface className="auth-card" style={{padding:"42px 38px",background:"linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%)"}}>
         <div style={{textAlign:"center",marginBottom:24}}>
           <img src={publicAsset("/chd-logo.png")} alt="Chapel Hill Denham" style={{height:52,width:"auto",margin:"0 auto 14px",display:"block"}} onError={e=>{e.currentTarget.style.display="none";}}/>
@@ -955,6 +973,21 @@ function AuthPage({mode,nav,onLogin}) {
           <h2 style={{fontFamily:serif,fontSize:"1.7rem",color:C.navy,marginBottom:5}}>{isRequest?"Create your account":"Sign in to the portal"}</h2>
           <p style={{color:C.g500,fontSize:".85rem",lineHeight:1.7}}>{isRequest?"Create a basic account first. Full subscriber access is activated after the research team issues an individual or institutional code.":"Use your account details to enter the research portal and manage activation."}</p>
         </div>
+        {isRequest&&(
+          <div className="auth-progress" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:18}}>
+            {[
+              ["Account","Create your profile"],
+              ["Approval","Research issues code"],
+              ["Access","Unlock the library"],
+            ].map(([title,sub],i)=>(
+              <div key={title} style={{padding:"12px 10px",background:i===0?C.goldSoft:C.offWhite,border:`1px solid ${i===0?"rgba(185,114,49,0.22)":C.g200}`,borderRadius:12}}>
+                <div style={{fontSize:".62rem",fontWeight:900,color:i===0?C.gold:C.g500,textTransform:"uppercase",letterSpacing:1.3,marginBottom:4}}>Step {i+1}</div>
+                <div style={{fontSize:".78rem",fontWeight:800,color:C.navy,marginBottom:2}}>{title}</div>
+                <div style={{fontSize:".68rem",lineHeight:1.4,color:C.g500}}>{sub}</div>
+              </div>
+            ))}
+          </div>
+        )}
         {error&&<div style={{background:"#fef2f2",color:C.red,padding:"9px 13px",borderRadius:10,fontSize:".81rem",marginBottom:14}}>{error}</div>}
         {isRequest?(
           <>
@@ -971,8 +1004,8 @@ function AuthPage({mode,nav,onLogin}) {
               <Inp label="Password" value={form.password} onChange={e=>setForm({...form,password:e.target.value})} placeholder="At least 8 characters" type="password" required/>
               <Inp label="Confirm password" value={form.confirmPassword} onChange={e=>setForm({...form,confirmPassword:e.target.value})} placeholder="Repeat password" type="password" required/>
             </div>
-            <div style={{background:"#f8fafc",border:`1px solid ${C.g200}`,borderRadius:14,padding:"14px 14px",marginBottom:12,fontSize:".77rem",color:C.g700,lineHeight:1.7}}>
-              Create the account first. Once signed in, you can enter an individual code from the research team or an institutional code from your organisation administrator.
+            <div style={{background:C.goldSoft,border:`1px solid rgba(185,114,49,0.18)`,borderRadius:14,padding:"14px 14px",marginBottom:12,fontSize:".77rem",color:C.g700,lineHeight:1.7}}>
+              After this account is created, contact the research team for the correct activation code. Individual access uses one code per person; institutional access uses a master code for approved users.
             </div>
             <button onClick={handleSubmit} disabled={submitting} style={{width:"100%",padding:"13px",background:submitting?C.goldHover:C.gold,color:"#fff",border:"none",borderRadius:12,fontSize:".9rem",fontWeight:700,cursor:submitting?"default":"pointer",fontFamily:sans,marginBottom:14,transition:"background .15s"}}>{submitting?"Creating account...":"Create account"}</button>
             <p style={{textAlign:"center",fontSize:".82rem",color:C.g500}}>
@@ -996,13 +1029,13 @@ function AuthPage({mode,nav,onLogin}) {
       <div className="auth-side" style={{display:"grid",gap:22}}>
         <Surface style={{padding:"34px 30px",background:"linear-gradient(180deg, rgba(8,26,34,0.94) 0%, rgba(6,38,45,0.94) 100%)",color:"#fff",border:"1px solid rgba(185,114,49,0.16)"}}>
           <Eyebrow style={{marginBottom:12}}>Access model</Eyebrow>
-          <h3 style={{fontFamily:serif,fontSize:"1.6rem",fontWeight:600,marginBottom:12}}>Controlled subscriber onboarding</h3>
-          <p style={{fontSize:".88rem",lineHeight:1.8,color:"rgba(255,255,255,0.68)",marginBottom:18}}>Create the account now, then complete access with the right code from the research team. Individual codes unlock one person. Institutional codes unlock approved users within a seat limit.</p>
+          <h3 style={{fontFamily:serif,fontSize:"1.6rem",fontWeight:600,marginBottom:12}}>{isRequest?"What happens after signup":"Access follows your approval route"}</h3>
+          <p style={{fontSize:".88rem",lineHeight:1.8,color:"rgba(255,255,255,0.68)",marginBottom:18}}>{isRequest?"The account lets the research team identify you and match you to the right subscription path. Full library access starts only after a valid code is issued.":"Use the access code issued for your profile or institution. The portal keeps individual and institutional activation separate so access can be managed cleanly."}</p>
           <div style={{display:"grid",gap:10}}>
             {[
-              "Create a basic account with work details.",
-              "Sign in and enter the code issued by research or your institution.",
-              "Move from limited access to the full research library.",
+              isRequest?"Submit account details.":"Sign in with your approved account.",
+              "Receive an individual or institutional code.",
+              "Activate the full research library.",
             ].map((item,i)=>(
               <div key={i} style={{display:"flex",gap:12,alignItems:"flex-start",padding:"12px 0",borderTop:i?`1px solid rgba(255,255,255,0.08)`:"none"}}>
                 <div style={{width:26,height:26,borderRadius:"50%",background:"rgba(185,114,49,0.16)",display:"flex",alignItems:"center",justifyContent:"center",color:C.gold,fontSize:".74rem",fontWeight:800,flexShrink:0}}>{i+1}</div>
@@ -1231,6 +1264,7 @@ function HeroCarousel({slides, nav}) {
 
 function Home({nav,user}) {
   const {reports,analysts,funds,bannerMedia,digest,featuredReportIds}=useData();
+  const displayFunds = (funds || []).map(enrichFundData);
   const published = useMemo(()=>reports.filter(r=>r.status==="published").sort((a,b)=>new Date(b.date)-new Date(a.date)),[reports]);
   const deskReports = useMemo(()=>published.filter(r=>ga(r.aid,analysts)?.role==="analyst" || ga(r.aid,analysts)?.name==="Research Desk"),[published,analysts]);
   const publicAnalystCount = analysts.filter(a=>a.role!=="intern").length;
@@ -1363,18 +1397,30 @@ function Home({nav,user}) {
               {featuredReports.map(r=><RC key={r.id} r={r} nav={nav} user={user}/>)}
             </div>
           </SectionFrame>
-          <SectionFrame title="Digest and access" sub="The yearly digest stays separate from the library and opens as its own briefing page with a clean download path.">
-            <div style={{display:"grid",gap:12}}>
-              <div style={{padding:"14px 16px",background:C.offWhite,borderRadius:14}}>
-                <Eyebrow style={{marginBottom:6}}>Yearly digest</Eyebrow>
-                <div style={{fontSize:".88rem",fontWeight:700,color:C.navy,marginBottom:5}}>{digest?.title || "2026 Yearly Digest"}</div>
-                <div style={{fontSize:".79rem",lineHeight:1.7,color:C.g500,marginBottom:10}}>{digest?.overview}</div>
-                <button onClick={()=>nav("digest")} style={{...premiumButton,padding:"10px 14px",background:C.navy,color:"#fff"}}>View digest</button>
+          <SectionFrame title="Digest briefing" sub="A quick route into the current house view, plus the access action that matters for this user.">
+            <div style={{display:"grid",gap:14}}>
+              <div style={{padding:"18px 18px 16px",background:`linear-gradient(160deg,${C.navy} 0%,${C.navyMid} 100%)`,borderRadius:16,color:"#fff",overflow:"hidden",position:"relative"}}>
+                <div style={{position:"absolute",right:-34,top:-34,width:120,height:120,borderRadius:"50%",background:"rgba(185,114,49,.18)"}}/>
+                <Eyebrow color={C.gold} style={{marginBottom:8}}>Latest house view</Eyebrow>
+                <div style={{fontFamily:serif,fontSize:"1.18rem",fontWeight:600,marginBottom:8,lineHeight:1.2}}>{digest?.title || "2026 Yearly Digest"}</div>
+                <div style={{fontSize:".8rem",lineHeight:1.72,color:"rgba(255,255,255,.74)",marginBottom:12}}>{digest?.overview}</div>
+                <div style={{display:"grid",gap:8,marginBottom:14}}>
+                  {(digest?.highlights||[]).slice(0,3).map((h,i)=>(
+                    <div key={i} style={{display:"grid",gridTemplateColumns:"22px 1fr",gap:9,alignItems:"start"}}>
+                      <span style={{width:22,height:22,borderRadius:"50%",background:"rgba(255,255,255,.1)",color:C.gold,display:"flex",alignItems:"center",justifyContent:"center",fontSize:".66rem",fontWeight:800}}>{i+1}</span>
+                      <span style={{fontSize:".76rem",lineHeight:1.55,color:"rgba(255,255,255,.82)"}}>{h}</span>
+                    </div>
+                  ))}
+                </div>
+                <button onClick={()=>nav("digest")} style={{...compactButton,padding:"9px 14px",background:C.gold,color:"#fff",border:`1px solid ${C.gold}`,whiteSpace:"nowrap"}}>Open digest</button>
               </div>
-              <div style={{padding:"14px 16px",background:C.offWhite,borderRadius:14}}>
-                <Eyebrow style={{marginBottom:6}}>Subscriber activation</Eyebrow>
-                <div style={{fontSize:".88rem",fontWeight:700,color:C.navy,marginBottom:5}}>Create an account, then activate with a research code</div>
-                <div style={{fontSize:".79rem",lineHeight:1.7,color:C.g500}}>Prospects can sign up immediately, stay in limited access, and then unlock the right level through an individual or institutional activation code.</div>
+              <div style={{padding:"16px 18px",background:C.offWhite,border:`1px solid ${C.g200}`,borderRadius:16,display:"grid",gridTemplateColumns:"1fr auto",gap:14,alignItems:"center"}}>
+                <div>
+                  <Eyebrow style={{marginBottom:6}}>{user?.tier==="premium"?"Library access":"Access status"}</Eyebrow>
+                  <div style={{fontSize:".88rem",fontWeight:800,color:C.navy,marginBottom:4}}>{user?.tier==="premium"?"Premium library is open":"Unlock the full research library"}</div>
+                  <div style={{fontSize:".76rem",lineHeight:1.6,color:C.g500}}>{user?.tier==="premium"?"Continue into saved reports, recent reads, and subscriber-only coverage.":"Create an account, then activate it with the individual or institutional code issued by research."}</div>
+                </div>
+                <button onClick={()=>nav(user?.tier==="premium"?"library":"register")} style={{...compactButton,padding:"8px 14px",background:C.navy,color:"#fff",border:`1px solid ${C.navy}`,whiteSpace:"nowrap"}}>{user?.tier==="premium"?"Open library":"Start access"}</button>
               </div>
             </div>
           </SectionFrame>
@@ -1385,7 +1431,7 @@ function Home({nav,user}) {
     <section style={{padding:"0 0 68px",background:C.offWhite}}>
       <div style={{maxWidth:1320,margin:"0 auto",padding:"0 40px"}}>
         <div className="analyst-grid-mobile" style={{display:"grid",gridTemplateColumns:"1.08fr .92fr",gap:24,alignItems:"start"}}>
-          <SectionFrame title="Meet the research team" sub="Named sector coverage sits alongside the central desk so clients know who is driving the view and where the brief is coming from." actions={<button onClick={()=>nav("analysts")} style={{...compactButton,background:"transparent",color:C.navy,border:`1px solid ${C.g200}`}}>Analyst directory</button>}>
+          <SectionFrame title="Meet the research team" sub="Named sector coverage sits alongside the central desk so clients know who is driving the view and where the brief is coming from." actions={<button onClick={()=>nav("analysts")} style={{...compactButton,padding:"8px 14px",background:C.navy,color:"#fff",border:`1px solid ${C.navy}`,whiteSpace:"nowrap",minWidth:116}}>View analysts</button>}>
             <div className="analyst-grid-mobile" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:18}}>
               {analysts.filter(a=>a.role!=="intern").slice(0,4).map(a=>(
                 <div key={a.id} onClick={()=>nav("analyst",{id:a.id})} style={{padding:"20px",borderRadius:16,background:C.offWhite,border:`1px solid ${C.g200}`,cursor:"pointer"}}>
@@ -1404,13 +1450,14 @@ function Home({nav,user}) {
           <SectionFrame title="Investment products" sub="A short front-page summary of the current fund range, with the full product page reserved for details, source notes, and contact routing." actions={<button onClick={()=>nav("funds")} style={{...compactButton,padding:"8px 14px",background:C.navy,color:"#fff",border:`1px solid ${C.navy}`,whiteSpace:"nowrap",minWidth:116}}>View products</button>}>
             <div style={{display:"grid",gap:14}}>
               <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14}}>
-              {funds.slice(0,4).map(f=>{
+              {displayFunds.slice(0,4).map(f=>{
                 const ret=(f.perf&&f.perf["YTD"])||0;
                 const pos=ret>=0;
                 return (
-                  <div key={f.id} style={{background:C.offWhite,borderRadius:16,border:`1px solid ${C.g200}`,padding:"18px"}}>
+                  <div key={f.id} onClick={()=>nav("funds")} style={{background:C.offWhite,borderRadius:16,border:`1px solid ${C.g200}`,padding:"18px",cursor:"pointer"}}>
                     <div style={{fontSize:".6rem",color:C.g500,textTransform:"uppercase",letterSpacing:1.8,marginBottom:6,fontWeight:800}}>{f.type}</div>
                     <div style={{fontFamily:serif,fontSize:"1.02rem",color:C.navy,fontWeight:600,lineHeight:1.25,marginBottom:6}}>{f.abbr}</div>
+                    <FundSparkline fund={f}/>
                     <div style={{fontFamily:serif,fontSize:"1.45rem",color:pos?"#16a34a":"#dc2626",fontWeight:600,lineHeight:1}}>{pos?"+":""}{ret.toFixed(1)}%</div>
                     <div style={{fontSize:".62rem",color:C.g500,marginTop:4,textTransform:"uppercase",letterSpacing:1.4}}>YTD return</div>
                   </div>
@@ -1493,6 +1540,38 @@ function DigestPage({nav}) {
         </div>
       </section>
     </>
+  );
+}
+
+function FundSparkline({fund,height=54}) {
+  const pts = fund?.chart || [];
+  if(pts.length < 2) return null;
+  const width = 220;
+  const pad = 7;
+  const min = Math.min(...pts);
+  const max = Math.max(...pts);
+  const range = (max - min) || 1;
+  const coords = pts.map((value,index)=>({
+    x:pad + index * ((width - pad * 2) / Math.max(pts.length - 1, 1)),
+    y:(height - pad) - (((value - min) / range) * (height - pad * 2)),
+    value,
+  }));
+  const line = coords.map((p,i)=>`${i===0?"M":"L"} ${p.x} ${p.y}`).join(" ");
+  const area = `${line} L ${coords[coords.length-1].x} ${height-pad} L ${coords[0].x} ${height-pad} Z`;
+  const gain = pts[pts.length-1] - pts[0];
+  const color = gain >= 0 ? (fund.riskColor || "#16a34a") : "#dc2626";
+  return (
+    <svg viewBox={`0 0 ${width} ${height}`} width="100%" height={height} aria-hidden="true" style={{display:"block",margin:"12px 0 2px"}}>
+      <defs>
+        <linearGradient id={`spark-${fund.id}`} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity=".18"/>
+          <stop offset="100%" stopColor={color} stopOpacity=".02"/>
+        </linearGradient>
+      </defs>
+      <path d={area} fill={`url(#spark-${fund.id})`}/>
+      <path d={line} fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx={coords[coords.length-1].x} cy={coords[coords.length-1].y} r="4" fill="#fff" stroke={color} strokeWidth="2"/>
+    </svg>
   );
 }
 
@@ -4830,9 +4909,11 @@ export default function App() {
             .auth-card{padding:22px 16px !important;border-radius:14px !important}
             .auth-card h2{font-size:1.35rem !important;line-height:1.12 !important}
             .auth-card p{font-size:.78rem !important}
+            .auth-progress{grid-template-columns:1fr !important;gap:8px !important}
             .auth-field-grid{grid-template-columns:1fr !important;gap:0 !important}
             .auth-side{gap:14px !important}
             .auth-side > div{padding:20px 16px !important}
+            .activation-grid{grid-template-columns:1fr !important;gap:0 !important}
 
             /*  Home hero / library: collapse cleanly  */
             .home-hero-grid{grid-template-columns:1fr !important;gap:18px !important}
