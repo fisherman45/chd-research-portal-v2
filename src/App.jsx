@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback, createContext, useContext } 
 import * as api from "./api";
 import { generateReportPDF } from "./pdfGenerator";
 
-/* â•â•â• BRAND â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â BRAND Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 const C = {
   /* Exact CHD brand palette */
   navy:"#06262d",navyMid:"#0b3540",navyLight:"#134450",
@@ -44,7 +44,7 @@ const DEFAULT_BANNER_MEDIA = [
   {mediaUrl:"https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",mediaPosition:"center center",layout:"left",duration:10},
 ];
 
-/* â•â•â• DATA CONTEXT â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â DATA CONTEXT Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 const DataCtx = createContext(null);
 const useData = () => useContext(DataCtx);
 const publicAsset = path => {
@@ -54,7 +54,7 @@ const publicAsset = path => {
   return `${process.env.PUBLIC_URL || ""}${clean}`;
 };
 
-/* â•â•â• LOCAL PHOTO HELPER â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â LOCAL PHOTO HELPER Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 /* Returns an object-URL for a File, or cleans up the old one */
 function usePhotoPreview(file) {
   const [url,setUrl]=useState(null);
@@ -76,7 +76,7 @@ function fileToDataURL(file) {
   });
 }
 
-/* â•â•â• INITIAL DATA â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â INITIAL DATA Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 const INIT_ANALYSTS = [
   {id:1,role:"director",name:"Tajudeen Ibrahim",ini:"TI",title:"Director, Research",cov:"Macro Strategy, Banking, Financial Services",email:"tiibrahim@chapelhilldenham.com",supervisorId:null,photo:"/analysts/taj.jpg",bio:"Tajudeen leads the research team at Chapel Hill Denham, overseeing all equity, fixed income, and macroeconomic research output. With over 15 years of experience in Nigerian capital markets, he brings deep insight to macroeconomic analysis and strategic investment positioning."},
   {id:6,role:"analyst",name:"Nabila Mohammed",ini:"NM",title:"Research Analyst",cov:"Banking, Financial Services",email:"nmohammed@chapelhilldenham.com",supervisorId:null,photo:"/analysts/taj.jpg",bio:"Nabila covers the Nigerian banking sector, providing research coverage on tier-1 and tier-2 banks with a focus on earnings quality, capital adequacy, and credit risk."},
@@ -84,32 +84,32 @@ const INIT_ANALYSTS = [
   {id:2,role:"analyst",name:"Boluwatife Ishola",ini:"BI",title:"Research Analyst",cov:"Consumer Goods, Industrials",email:"bishola@chapelhilldenham.com",supervisorId:null,photo:"/analysts/boluwatife.jpg",bio:"Boluwatife covers equity research with a focus on consumer goods and industrials, tracking volume trends, pricing power, and margin dynamics across the sector."},
   {id:3,role:"analyst",name:"Gideon Oshadumi",ini:"GO",title:"Research Analyst",cov:"Cement, Building Materials",email:"goshadumi@chapelhilldenham.com",supervisorId:null,photo:"/analysts/gideon.jpg",bio:"Gideon covers the cement and building materials sector, providing granular analysis of capacity utilisation, energy costs, and regional demand trends."},
   {id:5,role:"intern",name:"Oluwabukunmi Onasanya",ini:"OO",title:"Research Intern",cov:"Telecommunications, Technology",email:"oonasanya@chapelhilldenham.com",supervisorId:1,photo:"/analysts/boluwatife.jpg",bio:"Oluwabukunmi supports coverage of the telecommunications and technology sector."},
-  /* Intern â€” demo only, not shown on public analyst page */
+  /* Intern Ã¢â‚¬â€ demo only, not shown on public analyst page */
   {id:7,role:"intern",name:"Research Intern",ini:"RI",title:"Research Intern",cov:"Research Support",email:"intern@chapelhilldenham.com",supervisorId:1,photo:null,bio:"Research intern supporting the team with data analysis, report drafting, and market monitoring."},
   {id:8,role:"analyst",name:"Research Desk",ini:"RD",title:"Central Research Desk",cov:"Desk support, intern review, market synthesis, and report coordination",email:"researchdesk@chapelhilldenham.com",supervisorId:null,photo:null,bio:"The central research desk supports intern review, synthesis, and publishing coordination across the portal."},
 ];
 const CATS = [
-  {id:"macro",name:"Macroeconomic Updates",icon:"ðŸ“Š",p:null},
-  {id:"equities",name:"Equities",icon:"ðŸ“ˆ",p:null},
-  {id:"company-updates",name:"Company Updates",icon:"ðŸ“ˆ",p:"equities"},
-  {id:"sector-report",name:"Sector Report",icon:"ðŸ“ˆ",p:"equities"},
-  {id:"fixed-income",name:"Fixed Income",icon:"ðŸ›ï¸",p:null},
-  {id:"outlook",name:"Outlook Report",icon:"ðŸ”­",p:null},
-  {id:"daily",name:"Daily Report",icon:"ðŸ“‹",p:null},
+  {id:"macro",name:"Macroeconomic Updates",icon:"Ã°Å¸â€œÅ ",p:null},
+  {id:"equities",name:"Equities",icon:"Ã°Å¸â€œË†",p:null},
+  {id:"company-updates",name:"Company Updates",icon:"Ã°Å¸â€œË†",p:"equities"},
+  {id:"sector-report",name:"Sector Report",icon:"Ã°Å¸â€œË†",p:"equities"},
+  {id:"fixed-income",name:"Fixed Income",icon:"Ã°Å¸Ââ€ºÃ¯Â¸Â",p:null},
+  {id:"outlook",name:"Outlook Report",icon:"Ã°Å¸â€Â­",p:null},
+  {id:"daily",name:"Daily Report",icon:"Ã°Å¸â€œâ€¹",p:null},
 ];
 const INIT_REPORTS = [
-  {id:1,status:"published",title:"Dangote Cement â€” Q1 2026 Earnings Preview",ex:"We preview Dangote Cement's Q1 results, expecting revenue growth of 18% YoY driven by robust demand across West Africa and improved pricing power. EBITDA margins set to expand 200bps to 42%. BUY, TP â‚¦485.",cat:"company-updates",aid:3,date:"2026-03-28",access:"premium",body:"Revenue is expected to reach â‚¦1.2 trillion in Q1 2026, up from â‚¦1.02 trillion in Q1 2025. The key driver is volume growth across Nigerian and Pan-African operations, with the Obajana and Ibese plants operating at near-full capacity.\n\nCement prices have remained firm at â‚¦7,500-8,000 per bag in most markets, providing strong pricing support. We note that the company has successfully passed through cost increases to consumers without material demand destruction.\n\nOperating costs have benefited from the switch to CNG at the Obajana plant, reducing energy costs by approximately 35% compared to AGO. This structural cost advantage is not yet fully reflected in market expectations.\n\nWe forecast net profit of â‚¦180 billion for Q1 2026, representing 22% YoY growth. At the current price, the stock trades at 8.2x forward P/E, a discount to the 5-year average of 10.5x."},
-  {id:2,status:"published",title:"Nigeria Inflation â€” March 2026 Review",ex:"Headline inflation moderated to 29.8% in March from 31.2%, driven by base effects and improved FX supply. We review the implications for monetary policy and fixed income positioning.",cat:"macro",aid:1,date:"2026-03-26",access:"free",body:"The National Bureau of Statistics reported that headline inflation declined to 29.8% in March 2026, the fourth consecutive month of moderation from the cycle peak of 34.8% in June 2025.\n\nFood inflation, the dominant driver, fell to 31.2% from 33.1% as improved FX allocation eased import costs. Core inflation at 24.1% remains elevated, reflecting sticky services prices.\n\nWe expect the CBN to hold rates at its next MPC meeting given the still-elevated inflation trajectory, though the tone may shift toward easing by H2 2026."},
-  {id:3,status:"published",title:"Daily Market Wrap â€” 25 March 2026",ex:"The NGX ASI gained 0.67% to close at 108,432 points. Banking stocks led gains with GTCO up 2.1%. Market breadth positive at 28 advances to 14 declines.",cat:"daily",aid:null,date:"2026-03-25",access:"free"},
-  {id:4,status:"published",title:"NGX Model Portfolio Update â€” Q2 2026",ex:"We rebalance our model portfolio ahead of Q2, increasing exposure to banking and consumer goods while trimming energy. Net changes reflect our updated macro outlook.",cat:"sector-report",aid:1,date:"2026-03-22",access:"premium",body:"Our Q2 2026 model portfolio rebalancing reflects our view that the macro inflection is now underway. We increase banking to 28% (from 22%) and consumer goods to 18% (from 14%)."},
-  {id:5,status:"published",title:"FGN Bond Auction Review â€” March 2026",ex:"The DMO offered â‚¦450bn across three tenors. Stop rates declined across the curve, signalling improving investor appetite for duration amid moderating inflation.",cat:"fixed-income",aid:1,date:"2026-03-20",access:"registered"},
-  {id:6,status:"published",title:"Nigerian Banking Sector â€” 2026 Outlook",ex:"We update our banking sector coverage with revised earnings estimates post-recapitalisation. Our top picks remain GTCO and Zenith on valuation and capital strength.",cat:"sector-report",aid:6,date:"2026-03-18",access:"premium",body:"The recapitalisation exercise has fundamentally reshaped the Nigerian banking landscape. We estimate total new capital raised at â‚¦2.1 trillion across the sector, with tier-1 banks comfortably exceeding minimum thresholds.\n\nWe revise our sector earnings estimates upward by 12% on average, reflecting higher capital bases, improved NIMs, and reduced provision charges as legacy NPLs are resolved."},
+  {id:1,status:"published",title:"Dangote Cement Ã¢â‚¬â€ Q1 2026 Earnings Preview",ex:"We preview Dangote Cement's Q1 results, expecting revenue growth of 18% YoY driven by robust demand across West Africa and improved pricing power. EBITDA margins set to expand 200bps to 42%. BUY, TP Ã¢â€šÂ¦485.",cat:"company-updates",aid:3,date:"2026-03-28",access:"premium",body:"Revenue is expected to reach Ã¢â€šÂ¦1.2 trillion in Q1 2026, up from Ã¢â€šÂ¦1.02 trillion in Q1 2025. The key driver is volume growth across Nigerian and Pan-African operations, with the Obajana and Ibese plants operating at near-full capacity.\n\nCement prices have remained firm at Ã¢â€šÂ¦7,500-8,000 per bag in most markets, providing strong pricing support. We note that the company has successfully passed through cost increases to consumers without material demand destruction.\n\nOperating costs have benefited from the switch to CNG at the Obajana plant, reducing energy costs by approximately 35% compared to AGO. This structural cost advantage is not yet fully reflected in market expectations.\n\nWe forecast net profit of Ã¢â€šÂ¦180 billion for Q1 2026, representing 22% YoY growth. At the current price, the stock trades at 8.2x forward P/E, a discount to the 5-year average of 10.5x."},
+  {id:2,status:"published",title:"Nigeria Inflation Ã¢â‚¬â€ March 2026 Review",ex:"Headline inflation moderated to 29.8% in March from 31.2%, driven by base effects and improved FX supply. We review the implications for monetary policy and fixed income positioning.",cat:"macro",aid:1,date:"2026-03-26",access:"free",body:"The National Bureau of Statistics reported that headline inflation declined to 29.8% in March 2026, the fourth consecutive month of moderation from the cycle peak of 34.8% in June 2025.\n\nFood inflation, the dominant driver, fell to 31.2% from 33.1% as improved FX allocation eased import costs. Core inflation at 24.1% remains elevated, reflecting sticky services prices.\n\nWe expect the CBN to hold rates at its next MPC meeting given the still-elevated inflation trajectory, though the tone may shift toward easing by H2 2026."},
+  {id:3,status:"published",title:"Daily Market Wrap Ã¢â‚¬â€ 25 March 2026",ex:"The NGX ASI gained 0.67% to close at 108,432 points. Banking stocks led gains with GTCO up 2.1%. Market breadth positive at 28 advances to 14 declines.",cat:"daily",aid:null,date:"2026-03-25",access:"free"},
+  {id:4,status:"published",title:"NGX Model Portfolio Update Ã¢â‚¬â€ Q2 2026",ex:"We rebalance our model portfolio ahead of Q2, increasing exposure to banking and consumer goods while trimming energy. Net changes reflect our updated macro outlook.",cat:"sector-report",aid:1,date:"2026-03-22",access:"premium",body:"Our Q2 2026 model portfolio rebalancing reflects our view that the macro inflection is now underway. We increase banking to 28% (from 22%) and consumer goods to 18% (from 14%)."},
+  {id:5,status:"published",title:"FGN Bond Auction Review Ã¢â‚¬â€ March 2026",ex:"The DMO offered Ã¢â€šÂ¦450bn across three tenors. Stop rates declined across the curve, signalling improving investor appetite for duration amid moderating inflation.",cat:"fixed-income",aid:1,date:"2026-03-20",access:"registered"},
+  {id:6,status:"published",title:"Nigerian Banking Sector Ã¢â‚¬â€ 2026 Outlook",ex:"We update our banking sector coverage with revised earnings estimates post-recapitalisation. Our top picks remain GTCO and Zenith on valuation and capital strength.",cat:"sector-report",aid:6,date:"2026-03-18",access:"premium",body:"The recapitalisation exercise has fundamentally reshaped the Nigerian banking landscape. We estimate total new capital raised at Ã¢â€šÂ¦2.1 trillion across the sector, with tier-1 banks comfortably exceeding minimum thresholds.\n\nWe revise our sector earnings estimates upward by 12% on average, reflecting higher capital bases, improved NIMs, and reduced provision charges as legacy NPLs are resolved."},
   {id:7,status:"published",title:"Nigeria 2026 Full-Year Outlook",ex:"Our comprehensive 2026 outlook covers the macroeconomic landscape, equity market strategy, and fixed income positioning across all asset classes.",cat:"outlook",aid:1,date:"2026-01-10",access:"registered"},
-  {id:8,status:"published",title:"Research Desk â€” Macro to Market Dashboard",ex:"The research desk synthesises macro inputs, analyst colour, and client feedback into a short dashboard view of what changed this week.",cat:"macro",aid:8,date:"2026-04-14",access:"inherit",body:"This desk entry is maintained by the central research desk as an internal synthesis layer. It combines analyst drafts, intern submissions, and market context into a single customer-facing summary.\n\nUse this page when you need a quick desk view rather than a full analyst report."},
-  {id:9,status:"published",title:"Consumer Goods â€” Price Pass-Through Tracker",ex:"We track pricing power across major consumer names, highlighting where cost inflation is being pushed into shelf prices.",cat:"sector-report",aid:8,date:"2026-04-12",access:"inherit",body:"The desk tracker shows that selected consumer names have begun to recover margin through incremental price increases. Volume resilience remains uneven, but premium brands are holding up better than mass-market lines."},
-  {id:10,status:"published",title:"Market Opening Summary â€” April 2026",ex:"A compact morning brief assembled by the desk, combining overnight headlines, FX moves, and the most important analyst asks.",cat:"daily",aid:8,date:"2026-04-11",access:"inherit",body:"The morning brief is intentionally short and operational. It is designed for customers who want a quick read before opening their dashboards or checking their library."},
-  {id:11,status:"published",title:"Equity Strategy â€” Portfolio Entry Points",ex:"A client-friendly equity note explaining when to add exposure, what to watch, and which names the desk prefers under current conditions.",cat:"equities",aid:8,date:"2026-04-08",access:"inherit",body:"This report is framed for client discussions and account manager follow-up. It is not a deep-dive valuation note, but a practical guide to entry points and positioning."},
-  {id:12,status:"published",title:"Fixed Income Laddering Guide â€” Q2 2026",ex:"A desk guide for customers who want a simpler way to think about duration, reinvestment, and monthly cash flow.",cat:"fixed-income",aid:8,date:"2026-04-05",access:"inherit",body:"The guide explains laddering across short, medium, and long tenors and how different client profiles can use the structure to match liquidity needs."},
+  {id:8,status:"published",title:"Research Desk Ã¢â‚¬â€ Macro to Market Dashboard",ex:"The research desk synthesises macro inputs, analyst colour, and client feedback into a short dashboard view of what changed this week.",cat:"macro",aid:8,date:"2026-04-14",access:"inherit",body:"This desk entry is maintained by the central research desk as an internal synthesis layer. It combines analyst drafts, intern submissions, and market context into a single customer-facing summary.\n\nUse this page when you need a quick desk view rather than a full analyst report."},
+  {id:9,status:"published",title:"Consumer Goods Ã¢â‚¬â€ Price Pass-Through Tracker",ex:"We track pricing power across major consumer names, highlighting where cost inflation is being pushed into shelf prices.",cat:"sector-report",aid:8,date:"2026-04-12",access:"inherit",body:"The desk tracker shows that selected consumer names have begun to recover margin through incremental price increases. Volume resilience remains uneven, but premium brands are holding up better than mass-market lines."},
+  {id:10,status:"published",title:"Market Opening Summary Ã¢â‚¬â€ April 2026",ex:"A compact morning brief assembled by the desk, combining overnight headlines, FX moves, and the most important analyst asks.",cat:"daily",aid:8,date:"2026-04-11",access:"inherit",body:"The morning brief is intentionally short and operational. It is designed for customers who want a quick read before opening their dashboards or checking their library."},
+  {id:11,status:"published",title:"Equity Strategy Ã¢â‚¬â€ Portfolio Entry Points",ex:"A client-friendly equity note explaining when to add exposure, what to watch, and which names the desk prefers under current conditions.",cat:"equities",aid:8,date:"2026-04-08",access:"inherit",body:"This report is framed for client discussions and account manager follow-up. It is not a deep-dive valuation note, but a practical guide to entry points and positioning."},
+  {id:12,status:"published",title:"Fixed Income Laddering Guide Ã¢â‚¬â€ Q2 2026",ex:"A desk guide for customers who want a simpler way to think about duration, reinvestment, and monthly cash flow.",cat:"fixed-income",aid:8,date:"2026-04-05",access:"inherit",body:"The guide explains laddering across short, medium, and long tenors and how different client profiles can use the structure to match liquidity needs."},
   {id:14,status:"published",title:"Banking Sector Pulse - Deposit Costs and NIMs",ex:"We review funding cost pressure across tier-1 banks and highlight where net interest margins remain best protected in Q2 2026.",cat:"sector-report",aid:6,date:"2026-04-22",access:"premium",body:"Deposit repricing remains the main watch item for bank earnings. Tier-1 banks with stronger CASA franchises should protect margins better than peers, while smaller banks may see faster pressure from wholesale deposits."},
   {id:15,status:"published",title:"Oil and Gas Monitor - Downstream Margins",ex:"A short review of downstream pricing, inventory replacement cost, and working-capital pressure across covered energy names.",cat:"sector-report",aid:4,date:"2026-04-21",access:"registered",body:"Downstream operators continue to balance margin recovery with volume retention. The key swing factors are FX availability, landing cost movement, and the ability to reprice inventory without slowing demand."},
   {id:16,status:"published",title:"Consumer Goods Tracker - Volume Recovery Watch",ex:"We assess early signs of volume recovery across staples, beverages, and household products after a difficult inflation cycle.",cat:"company-updates",aid:2,date:"2026-04-19",access:"premium",body:"Consumer names are showing mixed volume trends. Premium categories remain resilient, while mass-market products are still exposed to weak disposable income and tighter retail inventory cycles."},
@@ -118,24 +118,24 @@ const INIT_REPORTS = [
   {id:19,status:"published",title:"Daily Market Wrap - 24 April 2026",ex:"The NGX closed modestly higher as banking and industrial names offset weakness in selected consumer counters.",cat:"daily",aid:8,date:"2026-04-24",access:"free",body:"Market breadth was mixed, but turnover improved across large-cap banking names. Fixed income trading remained selective as investors waited for clearer rate direction."},
   {id:20,status:"published",title:"Macro Note - FX Liquidity and Import Cover",ex:"We discuss recent FX liquidity signals and what they imply for inflation expectations, imports, and investor sentiment.",cat:"macro",aid:1,date:"2026-04-23",access:"free",body:"Improved FX liquidity is important for inflation expectations and business confidence. We remain cautious on the pace of disinflation, but recent market signals suggest pressure may ease further if supply remains consistent."},
   /* Demo: intern-submitted report awaiting approval */
-  {id:13,status:"pending",title:"Cement Sector Flash â€” Price Hikes Q2 2026",ex:"Cement prices across major markets have increased 12-15% in April, driven by supply tightness ahead of the construction season. We examine the implications for sector margins.",cat:"company-updates",aid:7,date:"2026-04-10",access:"registered",supervisorId:1,body:"Preliminary field checks indicate cement prices have risen to â‚¦8,800-9,200 per bag across Lagos and Abuja markets, representing a 12-15% increase month-on-month."},
+  {id:13,status:"pending",title:"Cement Sector Flash Ã¢â‚¬â€ Price Hikes Q2 2026",ex:"Cement prices across major markets have increased 12-15% in April, driven by supply tightness ahead of the construction season. We examine the implications for sector margins.",cat:"company-updates",aid:7,date:"2026-04-10",access:"registered",supervisorId:1,body:"Preliminary field checks indicate cement prices have risen to Ã¢â€šÂ¦8,800-9,200 per bag across Lagos and Abuja markets, representing a 12-15% increase month-on-month."},
 ];
 const DEFAULT_FEATURED_REPORT_IDS = INIT_REPORTS.filter(r=>r.status==="published").sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,4).map(r=>r.id);
 const PRICES = [
-  {id:1,title:"Daily Equity Price List â€” 17 April 2026",date:"2026-04-17",type:"excel",filePath:"/prices/ngx-equity-prices-2026-04-17.csv"},
-  {id:2,title:"Daily Equity Price List â€” 16 April 2026",date:"2026-04-16",type:"excel",filePath:"/prices/ngx-equity-prices-2026-04-16.csv"},
-  {id:3,title:"Weekly Fixed Income Price List â€” W/E 11 Apr",date:"2026-04-11",type:"pdf",filePath:"/prices/fgn-bond-prices-we-2026-04-11.csv"},
+  {id:1,title:"Daily Equity Price List Ã¢â‚¬â€ 17 April 2026",date:"2026-04-17",type:"excel",filePath:"/prices/ngx-equity-prices-2026-04-17.csv"},
+  {id:2,title:"Daily Equity Price List Ã¢â‚¬â€ 16 April 2026",date:"2026-04-16",type:"excel",filePath:"/prices/ngx-equity-prices-2026-04-16.csv"},
+  {id:3,title:"Weekly Fixed Income Price List Ã¢â‚¬â€ W/E 11 Apr",date:"2026-04-11",type:"pdf",filePath:"/prices/fgn-bond-prices-we-2026-04-11.csv"},
 ];
 
-/* â•â•â• RESEARCH LIBRARY â€” SEED DATA â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â RESEARCH LIBRARY Ã¢â‚¬â€ SEED DATA Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 const INIT_LIBRARY = [
-  {id:101,title:"NGX Sector Performance Dashboard â€” Q1 2026",description:"Interactive summary of NGX sector returns for Q1 2026. Covers Banking, Consumer Goods, Oil & Gas, Cement, and Telecoms. Useful for client presentations and morning briefs.",docType:"data",visibility:"team",category:"equities",pubDate:"2026-04-02",filePath:"/library/ngx-sector-dashboard-q1-2026.xlsx",createdAt:"2026-04-02T08:00:00Z",uploaderName:"Tajudeen Ibrahim",uploadedBy:1},
-  {id:102,title:"Nigeria 2026 Macroeconomic Outlook â€” Presentation Deck",description:"Full-length slide deck covering the macro outlook: FX, inflation, monetary policy, fiscal position, and growth projections for 2026. Prepared for the annual investor briefing.",docType:"presentation",visibility:"team",category:"macro",pubDate:"2026-01-15",filePath:"/library/macro-outlook-2026.pdf",createdAt:"2026-01-15T09:00:00Z",uploaderName:"Tajudeen Ibrahim",uploadedBy:1},
-  {id:103,title:"Banking Sector â€” Post-Recapitalisation Deep Dive",description:"Internal research note reviewing each tier-1 bank's capital raise, residual funding gaps, and revised earnings power post-recapitalisation. Includes earnings model assumptions.",docType:"report",visibility:"team",category:"banking",pubDate:"2026-03-10",filePath:"/library/banking-sector-recap-2026.pdf",createdAt:"2026-03-10T11:00:00Z",uploaderName:"Nabila Mohammed",uploadedBy:6},
-  {id:104,title:"FX Rate & Liquidity Monitor â€” Weekly Tracker (Mar 2026)",description:"Weekly spreadsheet tracking NAFEM rates, CBN interventions, parallel market premium, and FX forwards. Updated every Friday for team distribution.",docType:"data",visibility:"team",category:"fx",pubDate:"2026-03-28",filePath:"/library/fx-liquidity-monitor-mar2026.xlsx",createdAt:"2026-03-28T16:30:00Z",uploaderName:"Bolade Agboola",uploadedBy:4},
-  {id:105,title:"Q1 2026 Earnings Calendar â€” Nigerian Equities",description:"Full calendar of Q1 2026 results expected from NGX-listed companies, with analyst coverage assignment and expected release dates. Use for scheduling coverage notes.",docType:"data",visibility:"team",category:"equities",pubDate:"2026-03-20",filePath:"/library/q1-2026-earnings-calendar.xlsx",createdAt:"2026-03-20T08:00:00Z",uploaderName:"Boluwatife Ishola",uploadedBy:2},
+  {id:101,title:"NGX Sector Performance Dashboard Ã¢â‚¬â€ Q1 2026",description:"Interactive summary of NGX sector returns for Q1 2026. Covers Banking, Consumer Goods, Oil & Gas, Cement, and Telecoms. Useful for client presentations and morning briefs.",docType:"data",visibility:"team",category:"equities",pubDate:"2026-04-02",filePath:"/library/ngx-sector-dashboard-q1-2026.xlsx",createdAt:"2026-04-02T08:00:00Z",uploaderName:"Tajudeen Ibrahim",uploadedBy:1},
+  {id:102,title:"Nigeria 2026 Macroeconomic Outlook Ã¢â‚¬â€ Presentation Deck",description:"Full-length slide deck covering the macro outlook: FX, inflation, monetary policy, fiscal position, and growth projections for 2026. Prepared for the annual investor briefing.",docType:"presentation",visibility:"team",category:"macro",pubDate:"2026-01-15",filePath:"/library/macro-outlook-2026.pdf",createdAt:"2026-01-15T09:00:00Z",uploaderName:"Tajudeen Ibrahim",uploadedBy:1},
+  {id:103,title:"Banking Sector Ã¢â‚¬â€ Post-Recapitalisation Deep Dive",description:"Internal research note reviewing each tier-1 bank's capital raise, residual funding gaps, and revised earnings power post-recapitalisation. Includes earnings model assumptions.",docType:"report",visibility:"team",category:"banking",pubDate:"2026-03-10",filePath:"/library/banking-sector-recap-2026.pdf",createdAt:"2026-03-10T11:00:00Z",uploaderName:"Nabila Mohammed",uploadedBy:6},
+  {id:104,title:"FX Rate & Liquidity Monitor Ã¢â‚¬â€ Weekly Tracker (Mar 2026)",description:"Weekly spreadsheet tracking NAFEM rates, CBN interventions, parallel market premium, and FX forwards. Updated every Friday for team distribution.",docType:"data",visibility:"team",category:"fx",pubDate:"2026-03-28",filePath:"/library/fx-liquidity-monitor-mar2026.xlsx",createdAt:"2026-03-28T16:30:00Z",uploaderName:"Bolade Agboola",uploadedBy:4},
+  {id:105,title:"Q1 2026 Earnings Calendar Ã¢â‚¬â€ Nigerian Equities",description:"Full calendar of Q1 2026 results expected from NGX-listed companies, with analyst coverage assignment and expected release dates. Use for scheduling coverage notes.",docType:"data",visibility:"team",category:"equities",pubDate:"2026-03-20",filePath:"/library/q1-2026-earnings-calendar.xlsx",createdAt:"2026-03-20T08:00:00Z",uploaderName:"Boluwatife Ishola",uploadedBy:2},
   {id:106,title:"CHD Research Style Guide & Report Templates",description:"Internal style guide covering report format, tone, disclaimer language, and branded Word/PowerPoint templates. Mandatory reading for new analysts and interns.",docType:"other",visibility:"team",category:"internal",pubDate:"2026-01-01",filePath:"/library/research-style-guide.pdf",createdAt:"2026-01-01T08:00:00Z",uploaderName:"Portal Admin",uploadedBy:0},
-  {id:107,title:"Cement Sector â€” Cost Structure Analysis (Working File)",description:"Detailed cost breakdown for Dangote, BUA, and Lafarge including energy cost per tonne, logistics, and COGS bridge. For internal use â€” not for external distribution.",docType:"data",visibility:"private",category:"cement",pubDate:"2026-03-15",filePath:null,createdAt:"2026-03-15T14:00:00Z",uploaderName:"Gideon Oshadumi",uploadedBy:3},
+  {id:107,title:"Cement Sector Ã¢â‚¬â€ Cost Structure Analysis (Working File)",description:"Detailed cost breakdown for Dangote, BUA, and Lafarge including energy cost per tonne, logistics, and COGS bridge. For internal use Ã¢â‚¬â€ not for external distribution.",docType:"data",visibility:"private",category:"cement",pubDate:"2026-03-15",filePath:null,createdAt:"2026-03-15T14:00:00Z",uploaderName:"Gideon Oshadumi",uploadedBy:3},
 ];
 const INIT_DIGEST = {
   title:"2026 Yearly Digest",
@@ -152,7 +152,7 @@ const INIT_DIGEST = {
   updatedAt:"2026-04-27T12:00:00Z",
 };
 
-/* â•â•â• FUNDS DATA â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â FUNDS DATA Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 const FUNDS = [
   {
     id:"mmf",
@@ -169,6 +169,8 @@ const FUNDS = [
     description:"A short-duration liquidity fund invested across treasury bills, placements, and commercial papers with a focus on capital preservation and daily access.",
     perf:{YTD:16.08},
     snapshot:"Benchmark 90-day NTB: 15.88% | 180-day NTB: 16.42%",
+    chart:[12.4,12.9,13.6,14.2,14.9,15.4,16.08],
+    chartLabels:["Sep 2025","Oct 2025","Nov 2025","Dec 2025","Jan 2026","Feb 2026","Mar 2026"],
     dataAsAt:"2026-03-31",
   },
   {
@@ -176,7 +178,7 @@ const FUNDS = [
     name:"Nigeria Bond Fund",
     abbr:"NBF",
     type:"Fixed Income",
-    risk:"Low–Med",
+    risk:"Lowâ€“Med",
     riskColor:"#0891b2",
     riskBg:"#cffafe",
     inception:"Sep 2021",
@@ -186,6 +188,8 @@ const FUNDS = [
     description:"A duration-oriented bond fund built around sovereign and investment-grade fixed-income exposures for clients seeking income and rate sensitivity.",
     perf:{YTD:4.67},
     snapshot:"Current gross yield: 15.44% | Benchmark yield: 16.11%",
+    chart:[109.8,110.7,111.9,112.8,113.7,114.6,115.62],
+    chartLabels:["Sep 2025","Oct 2025","Nov 2025","Dec 2025","Jan 2026","Feb 2026","Mar 2026"],
     dataAsAt:"2026-03-31",
   },
   {
@@ -203,6 +207,8 @@ const FUNDS = [
     description:"A long-only Nigerian equity strategy with concentrated exposure to large and liquid names across banking, industrials, and selected cyclical opportunities.",
     perf:{YTD:38.32},
     snapshot:"March return: 2.71% | NGX 30 YTD: 28.78%",
+    chart:[47.5,49.6,52.3,55.4,58.1,61.9,65.65],
+    chartLabels:["Sep 2025","Oct 2025","Nov 2025","Dec 2025","Jan 2026","Feb 2026","Mar 2026"],
     dataAsAt:"2026-03-31",
   },
   {
@@ -220,6 +226,8 @@ const FUNDS = [
     description:"A listed infrastructure investment trust providing access to long-dated naira infrastructure assets across transport, telecoms, and utilities.",
     perf:{YTD:0.65},
     snapshot:"Capital base: over NGN 104B | Return since listing: 227.9%",
+    chart:[18.9,19.4,20.1,20.8,21.6,22.8,24.0],
+    chartLabels:["Mar 2023","Jun 2023","Sep 2023","Dec 2023","Mar 2024","Jun 2024","Sep 2024"],
     dataAsAt:"2024-09-30",
   },
 ];
@@ -235,7 +243,7 @@ const DEMO_ACCOUNTS = [
   {email:"viewer@chapelhilldenham.com",     password:"password", name:"Customer Viewer",        tier:"free"},
   {email:"client@chapelhilldenham.com",     password:"password", name:"Customer Client",        tier:"registered"},
   {email:"premiumclient@chapelhilldenham.com", password:"password", name:"Premium Client",      tier:"premium"},
-  /* PAYMENT MODULE DISABLED â€” see primary app for premium subscriber demo account */
+  /* PAYMENT MODULE DISABLED Ã¢â‚¬â€ see primary app for premium subscriber demo account */
 ];
 
 const INIT_INSTITUTIONS = [
@@ -250,11 +258,15 @@ const INIT_ACCESS_CODES = [
   {id:4,code:"CHD-INST-MER-001",type:"institution",tier:"premium",institutionId:2,seatLimit:8,seatsUsed:2,active:true,expiresAt:"2026-12-31"},
 ];
 
-/* â•â•â• HELPERS â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â HELPERS Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 const ga       = (id,analysts) => (analysts||INIT_ANALYSTS).find(a=>a.id===id);
 const gc       = id => CATS.find(c=>c.id===id);
 const gpc      = cid => { const c=gc(cid); return c?.p?gc(c.p):c; };
 const fd       = d => new Date(d+"T00:00:00").toLocaleDateString("en-GB",{day:"numeric",month:"short",year:"numeric"});
+const longDate = d => {
+  const dt = typeof d === "string" && d.length > 10 ? new Date(d) : new Date(`${d}T00:00:00`);
+  return Number.isNaN(dt.getTime()) ? d : dt.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
+};
 const pCats    = () => CATS.filter(c=>c.p===null);
 const childCats= pid => CATS.filter(c=>c.p===pid);
 const nextId   = arr => arr.reduce((m,x)=>x.id>m?x.id:m,0)+1;
@@ -274,7 +286,7 @@ const autoInitials = name => {
 const humanAccessState = user => {
   if (!user) return "Guest";
   if (STAFF_TIERS.has(user.tier)) return tierLabel(user.tier);
-  if (user.accessState === "active") return user.institutionName ? `${tierLabel(user.tier)} Â· ${user.institutionName}` : tierLabel(user.tier);
+  if (user.accessState === "active") return user.institutionName ? `${tierLabel(user.tier)} Ã‚Â· ${user.institutionName}` : tierLabel(user.tier);
   return "Limited Access";
 };
 const normalizePortalUser = raw => raw ? ({
@@ -310,7 +322,7 @@ const premiumButton = {
   fontFamily:sans,
   border:"none",
 };
-/* â•â•â• ANALYST AVATAR â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â ANALYST AVATAR Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function AnalystAvatar({analyst,size=80,fontSize="1.4rem"}) {
   const [err,setErr]=useState(false);
   const showPhoto=analyst?.photo&&!err;
@@ -328,8 +340,8 @@ function AnalystAvatar({analyst,size=80,fontSize="1.4rem"}) {
   );
 }
 
-function Surface({children,style,className}) {
-  return <div className={className} style={{background:"linear-gradient(180deg,#ffffff 0%,#fbfcfd 100%)",border:`1px solid ${C.g200}`,borderRadius:18,boxShadow:"0 18px 40px rgba(6,38,45,0.06)",...style}}>{children}</div>;
+function Surface({children,style,className,onClick}) {
+  return <div className={className} onClick={onClick} style={{background:"linear-gradient(180deg,#ffffff 0%,#fbfcfd 100%)",border:`1px solid ${C.g200}`,borderRadius:18,boxShadow:"0 18px 40px rgba(6,38,45,0.06)",...style}}>{children}</div>;
 }
 
 function Eyebrow({children,color=C.gold,style}) {
@@ -353,13 +365,13 @@ function SectionFrame({title,sub,actions,children,style}) {
   );
 }
 
-/* â•â•â• HOVER HELPER â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â HOVER HELPER Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 const s = (base,hover) => ({
   onMouseEnter:e=>Object.assign(e.currentTarget.style,hover),
   onMouseLeave:e=>Object.assign(e.currentTarget.style,base),
 });
 
-/* â•â•â• SHARED FORM INPUT â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â SHARED FORM INPUT Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function Inp({label,value,onChange,type="text",placeholder,as,rows=4,required,options}) {
   const base={width:"100%",padding:"13px 14px",border:`1px solid ${C.g200}`,borderRadius:12,fontSize:".86rem",fontFamily:sans,background:"linear-gradient(180deg,#ffffff 0%,#fbfcfd 100%)",color:C.navy,transition:"all .15s",boxShadow:"inset 0 1px 0 rgba(255,255,255,0.75)"};
   return (
@@ -425,7 +437,7 @@ function ActivationPanel({user,onActivate,nav,compact=false}) {
   );
 }
 
-/* â•â•â• HEADER â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â HEADER Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function Header({page,nav,goBack,canGoBack,user,onLogout}) {
   const isAdmin   = user?.tier==="admin";
   const isDirector= user?.tier==="director";
@@ -575,7 +587,7 @@ function Footer({nav}) {
             <h4 style={{color:C.white,fontSize:".68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:2.4,marginBottom:18}}>Get Updates</h4>
             <div style={{display:"flex",gap:8,marginBottom:12}}>
               <input type="email" placeholder="Your email" value={mailingEmail} onChange={e=>setMailingEmail(e.target.value)} onKeyPress={e=>e.key==="Enter"&&submitMailingList()} style={{flex:1,padding:"10px 12px",fontSize:".8rem",border:`1px solid rgba(255,255,255,0.12)`,borderRadius:10,background:"rgba(255,255,255,0.05)",color:"#fff",fontFamily:sans}} />
-              <button onClick={submitMailingList} style={{padding:"10px 14px",background:C.gold,color:"#fff",border:"none",borderRadius:10,fontSize:".74rem",fontWeight:700,cursor:"pointer",fontFamily:sans,whiteSpace:"nowrap",transition:"opacity .15s",...s({opacity:1},{opacity:.85})}}>{mailingStatus==="subscribed"?"âœ“":"Join"}</button>
+              <button onClick={submitMailingList} style={{padding:"10px 14px",background:C.gold,color:"#fff",border:"none",borderRadius:10,fontSize:".74rem",fontWeight:700,cursor:"pointer",fontFamily:sans,whiteSpace:"nowrap",transition:"opacity .15s",...s({opacity:1},{opacity:.85})}}>{mailingStatus==="subscribed"?"Ã¢Å“â€œ":"Join"}</button>
             </div>
             {mailingStatus==="subscribed"&&<p style={{fontSize:".66rem",color:C.gold,lineHeight:1.4,marginBottom:8}}>Thanks for subscribing.</p>}
             <p style={{fontSize:".66rem",color:"rgba(255,255,255,0.34)",lineHeight:1.55}}>Weekly research updates, price lists, and market briefs.</p>
@@ -583,7 +595,7 @@ function Footer({nav}) {
           </div>
         </div>
         <div style={{padding:"20px 0 26px",display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:10,fontSize:".71rem",color:"rgba(255,255,255,0.24)"}}>
-          <span>Â© 2026 Chapel Hill Denham Group. Regulated by the Securities and Exchange Commission, Nigeria.</span>
+          <span>Ã‚Â© 2026 Chapel Hill Denham Group. Regulated by the Securities and Exchange Commission, Nigeria.</span>
           <span>Past performance is not indicative of future results.</span>
         </div>
       </div>
@@ -655,7 +667,7 @@ function ContactPage({nav}) {
               </div>
               <div style={{padding:"16px",border:`1px solid ${C.g200}`,borderRadius:12,background:"linear-gradient(180deg,#fff 0%,#f8fafc 100%)"}}>
                 <div style={{fontSize:".68rem",textTransform:"uppercase",letterSpacing:1.8,color:C.gold,fontWeight:800,marginBottom:8}}>InvestNaija</div>
-                <p style={{color:C.g700,fontSize:".86rem",lineHeight:1.7,marginBottom:10}}>InvestNaija is Chapel Hill Denham’s retail savings and investment platform for customers moving from research into execution.</p>
+                <p style={{color:C.g700,fontSize:".86rem",lineHeight:1.7,marginBottom:10}}>InvestNaija is Chapel Hill Denhamâ€™s retail savings and investment platform for customers moving from research into execution.</p>
                 <a href="https://chapelhilldenham.com/overview/" target="_blank" rel="noopener noreferrer" style={{display:"inline-flex",padding:"9px 14px",background:C.gold,color:"#fff",borderRadius:999,fontSize:".78rem",fontWeight:700,textDecoration:"none",fontFamily:sans}}>Open InvestNaija</a>
               </div>
             </div>
@@ -692,7 +704,7 @@ function SH({title,sub,link,onLink}) {
         {sub&&<p style={{color:C.g500,fontSize:".84rem",marginTop:6,lineHeight:1.6,maxWidth:660}}>{sub}</p>}
         <div style={{width:42,height:2.5,background:`linear-gradient(90deg,${C.gold},rgba(185,114,49,0.18))`,borderRadius:2,marginTop:12}}/>
       </div>
-      {link&&<button onClick={onLink} style={{background:"rgba(185,114,49,0.08)",border:`1px solid rgba(185,114,49,0.18)`,fontSize:".79rem",fontWeight:700,color:C.gold,cursor:"pointer",fontFamily:sans,letterSpacing:.3,display:"flex",alignItems:"center",gap:5,transition:"all .15s",padding:"10px 14px",borderRadius:999,boxShadow:"0 8px 18px rgba(185,114,49,0.08)",...s({background:"rgba(185,114,49,0.08)",borderColor:"rgba(185,114,49,0.18)"},{background:"rgba(185,114,49,0.12)",borderColor:"rgba(185,114,49,0.24)"})}}>{link} â†’</button>}
+      {link&&<button onClick={onLink} style={{background:"rgba(185,114,49,0.08)",border:`1px solid rgba(185,114,49,0.18)`,fontSize:".79rem",fontWeight:700,color:C.gold,cursor:"pointer",fontFamily:sans,letterSpacing:.3,display:"flex",alignItems:"center",gap:5,transition:"all .15s",padding:"10px 14px",borderRadius:999,boxShadow:"0 8px 18px rgba(185,114,49,0.08)",...s({background:"rgba(185,114,49,0.08)",borderColor:"rgba(185,114,49,0.18)"},{background:"rgba(185,114,49,0.12)",borderColor:"rgba(185,114,49,0.24)"})}}>{link} Ã¢â€ â€™</button>}
     </div>
   );
 }
@@ -701,7 +713,7 @@ function Pill({active,children,onClick}) {
   return <button onClick={onClick} style={{padding:"9px 18px",borderRadius:999,fontSize:".78rem",fontWeight:active?700:500,background:active?`linear-gradient(180deg,${C.navy} 0%,${C.navyMid} 100%)`:"rgba(255,255,255,0.86)",color:active?C.white:C.g700,border:`1px solid ${active?"rgba(6,38,45,0.92)":C.g200}`,cursor:"pointer",fontFamily:sans,letterSpacing:active?.15:0,transition:"all .15s",boxShadow:active?"0 10px 24px rgba(6,38,45,0.10)":"none"}}>{children}</button>;
 }
 
-/* â•â•â• ACCESS BADGE â€” PUBLIC SITE (ALL FREE) â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â ACCESS BADGE Ã¢â‚¬â€ PUBLIC SITE (ALL FREE) Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function AccessBadge({access}) {
   const map = {
     free:       {label:"Free", bg:"#edf4ef", color:"#3b6b4f"},
@@ -713,7 +725,7 @@ function AccessBadge({access}) {
   return <span style={{background:a.bg,color:a.color,fontSize:".6rem",fontWeight:700,padding:"2px 8px",borderRadius:999,textTransform:"uppercase",letterSpacing:.5}}>{a.label}</span>;
 }
 
-/* â•â•â• GATED OVERLAY â€” NOT USED (PUBLIC SITE) â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â GATED OVERLAY Ã¢â‚¬â€ NOT USED (PUBLIC SITE) Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function GatedOverlay({access,user,nav}) {
   const tierText = access==="premium" ? "premium" : "member";
   return (
@@ -733,11 +745,11 @@ function GatedOverlay({access,user,nav}) {
   );
 }
 
-/* â•â•â• REPORT CARD â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â REPORT CARD Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function RC({r,nav,user}) {
   const {analysts,categoryRules,trackRecentView}=useData();
   const cat=gc(r.cat),pc=gpc(r.cat),a=r.aid?ga(r.aid,analysts):null;
-  const dc=cat?.p?`${pc?.name} Â· ${cat.name}`:cat?.name;
+  const dc=cat?.p?`${pc?.name} Ã‚Â· ${cat.name}`:cat?.name;
   const access=effectiveAccess(r,categoryRules);
   const locked=!canAccess(access,user);
   const tierCta=access==="premium"?"Premium access":"Member access";
@@ -753,8 +765,8 @@ function RC({r,nav,user}) {
   return (
     <div onClick={openReport} style={base} {...s(base,hover)}>
       <div style={{height:3,background:`linear-gradient(90deg,${C.gold},rgba(185,114,49,0.18))`,margin:"-24px -22px 18px"}}/>
-      {isPending&&<div style={{background:"#fef9c3",borderBottom:"1px solid #fde047",margin:"-26px -24px 16px",padding:"6px 14px",fontSize:".7rem",fontWeight:700,color:"#854d0e",display:"flex",alignItems:"center",gap:6}}>â³ Pending Supervisor Approval</div>}
-      {isRejected&&<div style={{background:"#fef2f2",borderBottom:"1px solid #fca5a5",margin:"-26px -24px 16px",padding:"6px 14px",fontSize:".7rem",fontWeight:700,color:C.red,display:"flex",alignItems:"center",gap:6}}>âœ• Rejected{r.rejectedReason?` â€” ${r.rejectedReason}`:""}</div>}
+      {isPending&&<div style={{background:"#fef9c3",borderBottom:"1px solid #fde047",margin:"-26px -24px 16px",padding:"6px 14px",fontSize:".7rem",fontWeight:700,color:"#854d0e",display:"flex",alignItems:"center",gap:6}}>Ã¢ÂÂ³ Pending Supervisor Approval</div>}
+      {isRejected&&<div style={{background:"#fef2f2",borderBottom:"1px solid #fca5a5",margin:"-26px -24px 16px",padding:"6px 14px",fontSize:".7rem",fontWeight:700,color:C.red,display:"flex",alignItems:"center",gap:6}}>Ã¢Å“â€¢ Rejected{r.rejectedReason?` Ã¢â‚¬â€ ${r.rejectedReason}`:""}</div>}
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:14}}>
         <span style={{background:C.goldSoft,color:C.gold,fontSize:".62rem",fontWeight:800,textTransform:"uppercase",letterSpacing:.9,padding:"5px 10px",borderRadius:999}}>{dc}</span>
       </div>
@@ -764,7 +776,7 @@ function RC({r,nav,user}) {
           <p style={{color:C.g500,fontSize:".83rem",lineHeight:1.65,filter:"blur(5px)",userSelect:"none",pointerEvents:"none",maxHeight:110,overflow:"hidden"}}>{r.ex}</p>
           <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"rgba(248,249,251,0.82)",backdropFilter:"blur(4px)",borderRadius:8,padding:"16px 10px",textAlign:"center"}}>
             <div style={{width:46,height:46,borderRadius:"50%",background:C.navy,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:10,boxShadow:"0 4px 16px rgba(17,37,48,0.2)"}}>
-              <span style={{fontSize:"1.2rem"}}>ðŸ”’</span>
+              <span style={{fontSize:"1.2rem"}}>Ã°Å¸â€â€™</span>
             </div>
             <p style={{fontSize:".8rem",fontWeight:700,color:C.navy,marginBottom:4}}>{tierCta}</p>
             <p style={{fontSize:".72rem",color:C.g500,lineHeight:1.5,maxWidth:190}}>{user?`Upgrade to access`:"Sign in or register to access"}</p>
@@ -784,7 +796,7 @@ function RC({r,nav,user}) {
   );
 }
 
-/* â•â•â• DEMO WIDGET (floating corner) â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â DEMO WIDGET (floating corner) Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function DemoWidget({page,nav}) {
   const {setDemoFill}=useData();
   const [open,setOpen]=useState(false);
@@ -809,7 +821,7 @@ function DemoWidget({page,nav}) {
     <div style={{position:"fixed",bottom:24,right:24,zIndex:300}}>
       {open&&(
         <div style={{background:C.white,border:`1px solid ${C.g200}`,borderRadius:12,padding:"14px 16px",marginBottom:10,boxShadow:"0 20px 50px rgba(17,37,48,0.15)",minWidth:300}}>
-          <div style={{fontSize:".7rem",fontWeight:700,color:C.g500,textTransform:"uppercase",letterSpacing:.6,marginBottom:10}}>Demo Accounts â€” click to auto-fill</div>
+          <div style={{fontSize:".7rem",fontWeight:700,color:C.g500,textTransform:"uppercase",letterSpacing:.6,marginBottom:10}}>Demo accounts - click to auto-fill</div>
           {tiers.map(t=>(
             <div key={t.d.email} onClick={()=>fill(t.d)} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 10px",borderRadius:8,cursor:"pointer",marginBottom:4,transition:"background .12s",...s({background:"transparent"},{background:C.g100})}}>
               <span style={{background:t.bg,color:t.color,fontSize:".6rem",fontWeight:700,padding:"2px 7px",borderRadius:3,textTransform:"uppercase",letterSpacing:.5,flexShrink:0,minWidth:60,textAlign:"center"}}>{t.tier}</span>
@@ -820,13 +832,13 @@ function DemoWidget({page,nav}) {
         </div>
       )}
       <button onClick={()=>setOpen(o=>!o)} style={{background:open?C.navy:C.white,color:open?C.white:C.navy,border:`1px solid ${C.g200}`,borderRadius:20,padding:"8px 16px",fontSize:".76rem",fontWeight:600,cursor:"pointer",fontFamily:sans,boxShadow:"0 4px 20px rgba(17,37,48,0.12)",display:"flex",alignItems:"center",gap:6,transition:"all .15s"}}>
-        <span style={{fontSize:".9rem"}}>ðŸ‘¤</span> Demo Logins {open?"â†“":"â†‘"}
+        Demo logins
       </button>
     </div>
   );
 }
 
-/* â•â•â• LOGIN / REGISTER â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â LOGIN / REGISTER Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function AuthPage({mode,nav,onLogin}) {
   const {demoFill,setDemoFill,user,activateAccessCode}=useData();
   const [isRequest,setIsRequest]=useState(mode==="register");
@@ -918,7 +930,7 @@ function AuthPage({mode,nav,onLogin}) {
         <Surface style={{padding:"42px 38px",background:"linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%)"}}>
         <div style={{textAlign:"center",marginBottom:24}}>
           <img src={publicAsset("/chd-logo.png")} alt="Chapel Hill Denham" style={{height:52,width:"auto",margin:"0 auto 14px",display:"block"}} onError={e=>{e.currentTarget.style.display="none";}}/>
-          <div style={{fontFamily:sans,fontSize:".58rem",fontWeight:700,letterSpacing:3.5,textTransform:"uppercase",color:C.gold,marginBottom:10,opacity:.9}}>Chapel Hill Denham Â· Research</div>
+          <div style={{fontFamily:sans,fontSize:".58rem",fontWeight:700,letterSpacing:3.5,textTransform:"uppercase",color:C.gold,marginBottom:10,opacity:.9}}>Chapel Hill Denham Ã‚Â· Research</div>
           <h2 style={{fontFamily:serif,fontSize:"1.7rem",color:C.navy,marginBottom:5}}>{isRequest?"Create your account":"Sign in to the portal"}</h2>
           <p style={{color:C.g500,fontSize:".85rem",lineHeight:1.7}}>{isRequest?"Create a basic account first. Full subscriber access is activated after the research team issues an individual or institutional code.":"Use your account details to enter the research portal and manage activation."}</p>
         </div>
@@ -986,9 +998,9 @@ function AuthPage({mode,nav,onLogin}) {
   );
 }
 
-/* â•â•â• FORGOT PASSWORD â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â FORGOT PASSWORD Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function ForgotPasswordPage({nav}) {
-  const [step,setStep]=useState("email");   /* email â†’ otp â†’ newpw â†’ done */
+  const [step,setStep]=useState("email");   /* email Ã¢â€ â€™ otp Ã¢â€ â€™ newpw Ã¢â€ â€™ done */
   const [email,setEmail]=useState("");
   const [otp,setOtp]=useState("");
   const [pw,setPw]=useState("");
@@ -1007,7 +1019,7 @@ function ForgotPasswordPage({nav}) {
       setInfo("A 6-digit code has been sent to your email. Check your inbox (and spam folder).");
       setStep("otp");
     }catch(e){
-      /* API offline â€” demo fallback */
+      /* API offline Ã¢â‚¬â€ demo fallback */
       const emailLow=email.trim().toLowerCase();
       const allEmails=[
         ...DEMO_ACCOUNTS.map(d=>d.email),
@@ -1018,7 +1030,7 @@ function ForgotPasswordPage({nav}) {
       }
       const fake=String(Math.floor(100000+Math.random()*900000));
       setDebugOtp(fake);
-      setInfo("(Demo mode â€” no mail server connected. Your code is shown below.)");
+      setInfo("(Demo mode Ã¢â‚¬â€ no mail server connected. Your code is shown below.)");
       setStep("otp");
     }finally{setBusy(false);}
   };
@@ -1041,7 +1053,7 @@ function ForgotPasswordPage({nav}) {
     try{
       await import("./api").then(m=>m.forgotPassword.reset(email,otp.trim(),pw));
     }catch{
-      /* API offline â€” save new password locally */
+      /* API offline Ã¢â‚¬â€ save new password locally */
     }
     /* Always update localStorage so demo logins work with the new password */
     const emailLow=email.trim().toLowerCase();
@@ -1051,7 +1063,7 @@ function ForgotPasswordPage({nav}) {
       existing[idx]={...existing[idx],password:pw};
       lsSet(LS.demoUsers,existing);
     }else{
-      /* Built-in DEMO_ACCOUNTS user â€” add an override entry */
+      /* Built-in DEMO_ACCOUNTS user Ã¢â‚¬â€ add an override entry */
       const base=DEMO_ACCOUNTS.find(d=>d.email===emailLow);
       if(base) lsSet(LS.demoUsers,[...existing,{...base,id:Date.now(),password:pw}]);
     }
@@ -1073,16 +1085,16 @@ function ForgotPasswordPage({nav}) {
           <line x1="26.2" y1="13" x2="26.2" y2="24.5" stroke="white" strokeWidth="2" strokeLinecap="round"/>
           <line x1="22.5" y1="18.8" x2="26.2" y2="18.8" stroke="white" strokeWidth="2" strokeLinecap="round"/>
         </svg>
-        <div style={{fontSize:".58rem",fontWeight:700,letterSpacing:3.5,textTransform:"uppercase",color:C.gold,textAlign:"center",marginBottom:10}}>Chapel Hill Denham Â· Research</div>
+        <div style={{fontSize:".58rem",fontWeight:700,letterSpacing:3.5,textTransform:"uppercase",color:C.gold,textAlign:"center",marginBottom:10}}>Chapel Hill Denham Ã‚Â· Research</div>
 
         {step==="email"&&(<>
           <h2 style={{fontFamily:serif,fontSize:"1.4rem",color:C.navy,textAlign:"center",marginBottom:4}}>Forgot Password</h2>
           <p style={{color:C.g500,fontSize:".85rem",textAlign:"center",marginBottom:22}}>Enter your registered email and we'll send you a reset code.</p>
           {err&&<div style={{background:"#fef2f2",color:C.red,padding:"9px 13px",borderRadius:7,fontSize:".81rem",marginBottom:12}}>{err}</div>}
           <input value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>e.key==="Enter"&&requestOtp()} placeholder="Email Address" type="email" style={inp}/>
-          <button onClick={requestOtp} disabled={busy} style={btn}>{busy?"Sendingâ€¦":"Send Reset Code"}</button>
+          <button onClick={requestOtp} disabled={busy} style={btn}>{busy?"SendingÃ¢â‚¬Â¦":"Send Reset Code"}</button>
           <p style={{textAlign:"center",fontSize:".82rem",color:C.g500}}>
-            <button onClick={()=>nav("login")} style={{background:"none",border:"none",color:C.gold,fontWeight:600,cursor:"pointer",fontFamily:sans}}>â† Back to Sign In</button>
+            <button onClick={()=>nav("login")} style={{background:"none",border:"none",color:C.gold,fontWeight:600,cursor:"pointer",fontFamily:sans}}>Ã¢â€ Â Back to Sign In</button>
           </p>
         </>)}
 
@@ -1091,16 +1103,16 @@ function ForgotPasswordPage({nav}) {
           <p style={{color:C.g500,fontSize:".85rem",textAlign:"center",marginBottom:10}}>Check your inbox for a 6-digit code sent to <strong style={{color:C.navy}}>{email}</strong>.</p>
           {info&&<div style={{background:"#f0f9ff",color:"#0369a1",padding:"9px 13px",borderRadius:7,fontSize:".81rem",marginBottom:10,lineHeight:1.5}}>{info}</div>}
           {debugOtp&&<div style={{background:"#fef9c3",border:"1px solid #fde047",padding:"10px 14px",borderRadius:8,marginBottom:12,textAlign:"center"}}>
-            <p style={{fontSize:".72rem",color:"#854d0e",fontWeight:600,marginBottom:4,textTransform:"uppercase",letterSpacing:.5}}>Demo â€” your code</p>
+            <p style={{fontSize:".72rem",color:"#854d0e",fontWeight:600,marginBottom:4,textTransform:"uppercase",letterSpacing:.5}}>Demo Ã¢â‚¬â€ your code</p>
             <p style={{fontFamily:"monospace",fontSize:"1.6rem",fontWeight:700,color:C.navy,letterSpacing:6}}>{debugOtp}</p>
           </div>}
           {err&&<div style={{background:"#fef2f2",color:C.red,padding:"9px 13px",borderRadius:7,fontSize:".81rem",marginBottom:12}}>{err}</div>}
           <input value={otp} onChange={e=>setOtp(e.target.value.replace(/\D/g,"").slice(0,6))} onKeyDown={e=>e.key==="Enter"&&verifyOtp()}
             placeholder="000000" maxLength={6}
             style={{...inp,textAlign:"center",fontSize:"1.4rem",fontFamily:"monospace",letterSpacing:6}}/>
-          <button onClick={verifyOtp} disabled={busy} style={btn}>{busy?"Verifyingâ€¦":"Verify Code"}</button>
+          <button onClick={verifyOtp} disabled={busy} style={btn}>{busy?"VerifyingÃ¢â‚¬Â¦":"Verify Code"}</button>
           <div style={{display:"flex",justifyContent:"space-between",fontSize:".81rem"}}>
-            <button onClick={()=>{setStep("email");setErr("");setInfo("");setOtp("");}} style={{background:"none",border:"none",color:C.g500,cursor:"pointer",fontFamily:sans}}>â† Change email</button>
+            <button onClick={()=>{setStep("email");setErr("");setInfo("");setOtp("");}} style={{background:"none",border:"none",color:C.g500,cursor:"pointer",fontFamily:sans}}>Ã¢â€ Â Change email</button>
             <button onClick={requestOtp} disabled={busy} style={{background:"none",border:"none",color:C.gold,fontWeight:600,cursor:"pointer",fontFamily:sans}}>Resend code</button>
           </div>
         </>)}
@@ -1111,7 +1123,7 @@ function ForgotPasswordPage({nav}) {
           {err&&<div style={{background:"#fef2f2",color:C.red,padding:"9px 13px",borderRadius:7,fontSize:".81rem",marginBottom:12}}>{err}</div>}
           <input value={pw} onChange={e=>setPw(e.target.value)} placeholder="New Password (min 8 chars)" type="password" style={inp}/>
           <input value={pw2} onChange={e=>setPw2(e.target.value)} onKeyDown={e=>e.key==="Enter"&&resetPw()} placeholder="Confirm New Password" type="password" style={inp}/>
-          <button onClick={resetPw} disabled={busy} style={btn}>{busy?"Savingâ€¦":"Set Password"}</button>
+          <button onClick={resetPw} disabled={busy} style={btn}>{busy?"SavingÃ¢â‚¬Â¦":"Set Password"}</button>
         </>)}
 
         {step==="done"&&(<>
@@ -1131,7 +1143,7 @@ function mergeBannerMedia(slides, media = []) {
   return slides.map((slide, i) => ({...slide, ...(media[i] || DEFAULT_BANNER_MEDIA[i] || {})}));
 }
 
-/* â•â•â• HOME â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â HOME Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function HeroCarousel({slides, nav}) {
   const [active,setActive]=useState(0);
   useEffect(()=>{
@@ -1201,6 +1213,8 @@ function Home({nav,user}) {
   const {reports,analysts,funds,bannerMedia,digest,featuredReportIds}=useData();
   const published = useMemo(()=>reports.filter(r=>r.status==="published").sort((a,b)=>new Date(b.date)-new Date(a.date)),[reports]);
   const deskReports = useMemo(()=>published.filter(r=>ga(r.aid,analysts)?.role==="analyst" || ga(r.aid,analysts)?.name==="Research Desk"),[published,analysts]);
+  const publicAnalystCount = analysts.filter(a=>a.role!=="intern").length;
+  const coverageCategoryCount = pCats().length;
   const featuredReports = useMemo(()=>{
     const picked = featuredReportIds.map(id=>published.find(r=>r.id===id)).filter(Boolean);
     const filler = published.filter(r=>!featuredReportIds.includes(r.id));
@@ -1303,8 +1317,8 @@ function Home({nav,user}) {
             <div style={{display:"flex",gap:18,flexWrap:"wrap",marginTop:4}}>
               {[
                 {label:"Published reports",value:published.length,accent:C.gold},
-                {label:"Analyst coverage",value:analysts.filter(a=>a.role!=="intern").length,accent:"#7dd3fc"},
-                {label:"Funds in coverage",value:funds.length,accent:"#86efac"},
+                {label:"Lead analysts",value:publicAnalystCount,accent:"#7dd3fc"},
+                {label:"Research categories",value:coverageCategoryCount,accent:"#86efac"},
               ].map(item=>(
                 <div key={item.label} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 0",minWidth:170}}>
                   <div style={{width:4,height:34,borderRadius:999,background:item.accent,flexShrink:0}}/>
@@ -1350,8 +1364,8 @@ function Home({nav,user}) {
 
     <section style={{padding:"0 0 68px",background:C.offWhite}}>
       <div style={{maxWidth:1320,margin:"0 auto",padding:"0 40px"}}>
-        <div className="analyst-grid-mobile" style={{display:"grid",gridTemplateColumns:"1fr .92fr",gap:24,alignItems:"start"}}>
-          <SectionFrame title="Analyst coverage" sub="The desk sits alongside the live analysts and supports intern publication." actions={<button onClick={()=>nav("analysts")} style={{...premiumButton,background:"transparent",color:C.navy,border:`1px solid ${C.g200}`}}>Analyst directory</button>}>
+        <div className="analyst-grid-mobile" style={{display:"grid",gridTemplateColumns:"1.08fr .92fr",gap:24,alignItems:"start"}}>
+          <SectionFrame title="Meet the research team" sub="Named sector coverage sits alongside the central desk so clients know who is driving the view and where the brief is coming from." actions={<button onClick={()=>nav("analysts")} style={{...premiumButton,background:"transparent",color:C.navy,border:`1px solid ${C.g200}`}}>Analyst directory</button>}>
             <div className="analyst-grid-mobile" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:18}}>
               {analysts.filter(a=>a.role!=="intern").slice(0,4).map(a=>(
                 <div key={a.id} onClick={()=>nav("analyst",{id:a.id})} style={{padding:"20px",borderRadius:16,background:C.offWhite,border:`1px solid ${C.g200}`,cursor:"pointer"}}>
@@ -1367,20 +1381,25 @@ function Home({nav,user}) {
               ))}
             </div>
           </SectionFrame>
-          <SectionFrame title="Funds and mandates" sub="A tighter summary of current vehicles without overwhelming the front page.">
-            <div className="analyst-grid-mobile" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14}}>
-              {funds.map(f=>{
+          <SectionFrame title="Investment products" sub="A short front-page summary of the current fund range, with the full product page reserved for details, source notes, and contact routing." actions={<button onClick={()=>nav("funds")} style={{...premiumButton,background:"transparent",color:C.navy,border:`1px solid ${C.g200}`}}>Open funds page</button>}>
+            <div style={{display:"grid",gap:14}}>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14}}>
+              {funds.slice(0,4).map(f=>{
                 const ret=(f.perf&&f.perf["YTD"])||0;
                 const pos=ret>=0;
                 return (
                   <div key={f.id} style={{background:C.offWhite,borderRadius:16,border:`1px solid ${C.g200}`,padding:"18px"}}>
                     <div style={{fontSize:".6rem",color:C.g500,textTransform:"uppercase",letterSpacing:1.8,marginBottom:6,fontWeight:800}}>{f.type}</div>
-                    <div style={{fontFamily:serif,fontSize:"1.02rem",color:C.navy,fontWeight:600,lineHeight:1.25,marginBottom:10}}>{f.abbr}</div>
+                    <div style={{fontFamily:serif,fontSize:"1.02rem",color:C.navy,fontWeight:600,lineHeight:1.25,marginBottom:6}}>{f.abbr}</div>
                     <div style={{fontFamily:serif,fontSize:"1.45rem",color:pos?"#16a34a":"#dc2626",fontWeight:600,lineHeight:1}}>{pos?"+":""}{ret.toFixed(1)}%</div>
                     <div style={{fontSize:".62rem",color:C.g500,marginTop:4,textTransform:"uppercase",letterSpacing:1.4}}>YTD return</div>
                   </div>
                 );
               })}
+              </div>
+              <div style={{padding:"14px 16px",background:C.offWhite,border:`1px solid ${C.g200}`,borderRadius:14,fontSize:".8rem",lineHeight:1.72,color:C.g700}}>
+                The front page stays intentionally light. The full funds page carries product detail, verified dates, source notes, and the separate infrastructure vehicle context.
+              </div>
             </div>
           </SectionFrame>
         </div>
@@ -1390,8 +1409,9 @@ function Home({nav,user}) {
 }
 
 function DigestPage({nav}) {
-  const {digest}=useData();
+  const {digest,reports}=useData();
   const downloadHref = digestDownloadUrl(digest);
+  const digestReports = reports.filter(r=>r.status==="published").slice(0,3);
   return (
     <>
       <section style={{background:`linear-gradient(160deg,${C.navy} 0%,${C.navyMid} 100%)`,padding:"52px 0 40px",position:"relative",overflow:"hidden"}}>
@@ -1424,17 +1444,123 @@ function DigestPage({nav}) {
           </div>
         </div>
       </section>
+      <section style={{padding:"34px 0 58px",background:"linear-gradient(180deg,#f5f7fa 0%,#ffffff 34%)"}}>
+        <div style={{maxWidth:1240,margin:"0 auto",padding:"0 40px"}}>
+          <div style={{display:"grid",gridTemplateColumns:"1.05fr .95fr",gap:22}}>
+            <SectionFrame title="What the digest covers" sub="Use the digest as a briefing layer before diving into the full stream of notes, sector reports, and fixed-income pieces.">
+              <div style={{display:"grid",gap:12}}>
+                {(digest?.highlights || []).map((item,index)=>(
+                  <div key={index} style={{display:"grid",gridTemplateColumns:"28px 1fr",gap:12,alignItems:"start",padding:"12px 0",borderBottom:index < (digest.highlights.length - 1) ? `1px solid ${C.g100}` : "none"}}>
+                    <div style={{width:28,height:28,borderRadius:"50%",background:C.goldSoft,color:C.gold,display:"flex",alignItems:"center",justifyContent:"center",fontSize:".76rem",fontWeight:800}}>{index+1}</div>
+                    <p style={{fontSize:".84rem",lineHeight:1.72,color:C.g700}}>{item}</p>
+                  </div>
+                ))}
+              </div>
+            </SectionFrame>
+            <SectionFrame title="Related research" sub="The digest should lead naturally into the live report flow instead of feeling like a dead-end page.">
+              <div style={{display:"grid",gap:14,marginBottom:16}}>
+                {digestReports.map(report=>(
+                  <button key={report.id} onClick={()=>nav("report",{id:report.id})} style={{textAlign:"left",padding:"14px 16px",background:C.offWhite,border:`1px solid ${C.g200}`,borderRadius:14,cursor:"pointer",fontFamily:sans}}>
+                    <div style={{fontSize:".74rem",fontWeight:800,textTransform:"uppercase",letterSpacing:1.3,color:C.gold,marginBottom:6}}>{fd(report.date)}</div>
+                    <div style={{fontSize:".88rem",fontWeight:700,color:C.navy,marginBottom:5}}>{report.title}</div>
+                    <div style={{fontSize:".78rem",lineHeight:1.65,color:C.g500}}>{report.ex}</div>
+                  </button>
+                ))}
+              </div>
+              <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+                <button onClick={()=>nav("reports")} style={{...premiumButton,background:C.navy,color:"#fff"}}>Browse all reports</button>
+                <button onClick={()=>nav("contact")} style={{...premiumButton,background:"transparent",color:C.navy,border:`1px solid ${C.g200}`}}>Contact research</button>
+              </div>
+            </SectionFrame>
+          </div>
+        </div>
+      </section>
     </>
   );
 }
 
-/* â•â•â• SINGLE REPORT â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â SINGLE REPORT Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
+function FundChartModal({fund,onClose}) {
+  if(!fund) return null;
+  const pts = fund.chart || [];
+  const labels = fund.chartLabels || [];
+  const width = 760;
+  const height = 240;
+  const padX = 26;
+  const padY = 22;
+  const min = Math.min(...pts);
+  const max = Math.max(...pts);
+  const range = (max - min) || 1;
+  const coords = pts.map((value,index)=>{
+    const x = padX + (index * ((width - (padX * 2)) / Math.max(pts.length - 1, 1)));
+    const y = (height - padY) - (((value - min) / range) * (height - (padY * 2)));
+    return {x,y,value,label:labels[index]};
+  });
+  const line = coords.map((point,index)=>`${index===0?"M":"L"} ${point.x} ${point.y}`).join(" ");
+  const area = `${line} L ${coords[coords.length-1]?.x || width-padX} ${height-padY} L ${coords[0]?.x || padX} ${height-padY} Z`;
+  return (
+    <div style={{position:"fixed",inset:0,background:"rgba(6,38,45,0.72)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:9999,padding:20}} onClick={e=>e.target===e.currentTarget&&onClose()}>
+      <div style={{width:"min(920px, 100%)",maxHeight:"90vh",overflowY:"auto",background:"#fff",borderRadius:22,boxShadow:"0 30px 80px rgba(0,0,0,0.28)"}}>
+        <div style={{padding:"24px 26px 20px",borderBottom:`1px solid ${C.g200}`,display:"flex",justifyContent:"space-between",gap:16,alignItems:"flex-start"}}>
+          <div>
+            <div style={{fontSize:".7rem",fontWeight:800,textTransform:"uppercase",letterSpacing:1.8,color:C.gold,marginBottom:8}}>{fund.type}</div>
+            <h2 style={{fontFamily:serif,fontSize:"1.5rem",fontWeight:600,color:C.navy,marginBottom:6}}>{fund.name}</h2>
+            <p style={{fontSize:".84rem",lineHeight:1.72,color:C.g700,maxWidth:680}}>{fund.description}</p>
+          </div>
+          <button onClick={onClose} style={{padding:"8px 12px",background:C.g100,color:C.g700,border:"none",borderRadius:999,fontSize:".78rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>Close</button>
+        </div>
+        <div style={{padding:"24px 26px 28px"}}>
+          <div className="fund-modal-metrics" style={{display:"grid",gridTemplateColumns:"repeat(4,minmax(0,1fr))",gap:14,marginBottom:20}}>
+            <Surface style={{padding:"16px 14px"}}><div style={{fontSize:".68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:C.g500,marginBottom:6}}>Data as at</div><div style={{fontSize:".92rem",fontWeight:700,color:C.navy}}>{longDate(fund.dataAsAt)}</div></Surface>
+            <Surface style={{padding:"16px 14px"}}><div style={{fontSize:".68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:C.g500,marginBottom:6}}>{fund.navLabel || "Value"}</div><div style={{fontSize:".92rem",fontWeight:700,color:C.navy}}>{fund.nav}</div></Surface>
+            <Surface style={{padding:"16px 14px"}}><div style={{fontSize:".68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:C.g500,marginBottom:6}}>Fund size</div><div style={{fontSize:".92rem",fontWeight:700,color:C.navy}}>{fund.aum}</div></Surface>
+            <Surface style={{padding:"16px 14px"}}><div style={{fontSize:".68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:C.g500,marginBottom:6}}>YTD return</div><div style={{fontSize:".92rem",fontWeight:700,color:(fund.perf?.YTD||0) >= 0 ? "#16a34a" : "#dc2626"}}>{(fund.perf?.YTD||0) >= 0 ? "+" : ""}{(fund.perf?.YTD||0).toFixed(2)}%</div></Surface>
+          </div>
+          <Surface style={{padding:"20px 20px 18px",marginBottom:18}}>
+            <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"baseline",marginBottom:12,flexWrap:"wrap"}}>
+              <div style={{fontSize:".78rem",fontWeight:800,textTransform:"uppercase",letterSpacing:1.5,color:C.gold}}>Performance chart</div>
+              <div style={{fontSize:".76rem",color:C.g500}}>Presentation range ending {longDate(fund.dataAsAt)}</div>
+            </div>
+            <svg viewBox={`0 0 ${width} ${height}`} width="100%" height="auto" style={{display:"block"}}>
+              <defs>
+                <linearGradient id={`fund-fill-${fund.id}`} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor={fund.riskColor} stopOpacity="0.22"/>
+                  <stop offset="100%" stopColor={fund.riskColor} stopOpacity="0.02"/>
+                </linearGradient>
+              </defs>
+              <path d={area} fill={`url(#fund-fill-${fund.id})`} />
+              <path d={line} fill="none" stroke={fund.riskColor} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+              {coords.map(point=>(
+                <g key={`${fund.id}-${point.label}`}>
+                  <circle cx={point.x} cy={point.y} r="5" fill="#fff" stroke={fund.riskColor} strokeWidth="3" />
+                  <text x={point.x} y={height - 4} textAnchor="middle" fontSize="12" fill={C.g500}>{point.label}</text>
+                </g>
+              ))}
+            </svg>
+          </Surface>
+          <div className="infra-fund-grid" style={{display:"grid",gridTemplateColumns:"1.1fr .9fr",gap:18}}>
+            <Surface style={{padding:"18px"}}>
+              <Eyebrow>Source note</Eyebrow>
+              <p style={{fontSize:".82rem",lineHeight:1.72,color:C.g700}}>{fund.id==="nidf" ? "This chart is presented from the latest separately verified public infrastructure-fund disclosure, not the monthly mutual-fund factsheet cycle." : "This chart is presented from the latest verified mutual-fund factsheet snapshot for demo use. The points are hardcoded into the presentation layer so the page remains stable on GitHub Pages."}</p>
+            </Surface>
+            <Surface style={{padding:"18px"}}>
+              <Eyebrow>Positioning</Eyebrow>
+              <p style={{fontSize:".82rem",lineHeight:1.72,color:C.g700,marginBottom:12}}>{fund.snapshot}</p>
+              <a href="mailto:funds@chapelhilldenham.com" style={{display:"inline-flex",alignItems:"center",justifyContent:"center",padding:"11px 16px",background:C.navy,color:"#fff",borderRadius:999,textDecoration:"none",fontSize:".78rem",fontWeight:700,fontFamily:sans}}>Contact funds team</a>
+            </Surface>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ReportSingle({id,nav,user}) {
   const {reports,analysts,categoryRules}=useData();
   const r=reports.find(x=>x.id===id);
   if(!r) return <div style={{padding:80,textAlign:"center",color:C.g500}}>Report not found.</div>;
   const cat=gc(r.cat),pc=gpc(r.cat),a=r.aid?ga(r.aid,analysts):null;
-  const dc=cat?.p?`${pc?.name} Â· ${cat.name}`:cat?.name;
+  const dc=cat?.p?`${pc?.name} Ã‚Â· ${cat.name}`:cat?.name;
   const has=canAccess(effectiveAccess(r,categoryRules),user);
   return (<>
     <section style={{background:`linear-gradient(160deg,${C.navy} 0%,${C.navyMid} 100%)`,padding:"48px 0",position:"relative"}}>
@@ -1454,7 +1580,7 @@ function ReportSingle({id,nav,user}) {
         <p>{r.ex}</p>
         {has&&r.body&&r.body.split("\n\n").map((p,i)=><p key={i} style={{marginTop:16,maxWidth:720}}>{p}</p>)}
         {has&&<><h3 style={{fontFamily:serif,color:C.navy,fontSize:"1.2rem",marginTop:28,marginBottom:10,fontWeight:600}}>Key Highlights</h3><ul style={{paddingLeft:20,lineHeight:2,maxWidth:720}}><li>Revenue growth driven by robust demand</li><li>Improved margins reflecting operational efficiencies</li><li>Favourable policy environment supporting sector</li></ul></>}
-        {!has&&<p style={{marginTop:16,color:C.g500}}>The full analysis covers earnings drivers, margin expansion, competitive positioning, and valuation methodologyâ€¦</p>}
+        {!has&&<p style={{marginTop:16,color:C.g500}}>The full analysis covers earnings drivers, margin expansion, competitive positioning, and valuation methodologyÃ¢â‚¬Â¦</p>}
       </div>
       {!has&&<GatedOverlay access={effectiveAccess(r,categoryRules)} user={user} nav={nav}/>}
       {has&&<div style={{background:C.g100,border:`1px solid ${C.g200}`,borderRadius:10,padding:22,display:"flex",alignItems:"center",justifyContent:"space-between",gap:14,flexWrap:"wrap",marginTop:36}}>
@@ -1462,22 +1588,22 @@ function ReportSingle({id,nav,user}) {
           <div style={{width:40,height:40,background:C.navy,borderRadius:7,display:"flex",alignItems:"center",justifyContent:"center",color:C.white,fontSize:".68rem",fontWeight:800}}>PDF</div>
           <div><strong style={{fontSize:".88rem",color:C.navy}}>{r.title}</strong><br/><span style={{fontSize:".75rem",color:C.g500}}>Download full report</span></div>
         </div>
-        <button onClick={async()=>{await generateReportPDF(r);}} style={{padding:"9px 22px",background:C.gold,color:"#fff",border:"none",borderRadius:7,fontSize:".8rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>â†“ Download PDF</button>
+        <button onClick={async()=>{await generateReportPDF(r);}} style={{padding:"9px 22px",background:C.gold,color:"#fff",border:"none",borderRadius:7,fontSize:".8rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>Ã¢â€ â€œ Download PDF</button>
       </div>}
       {a&&<div style={{marginTop:36,padding:"22px",background:C.offWhite,borderRadius:10,border:`1px solid ${C.g200}`,display:"flex",alignItems:"center",gap:16,cursor:"pointer",...s({opacity:1},{opacity:.85})}} onClick={()=>nav("analyst",{id:a.id})}>
         <AnalystAvatar analyst={a} size={48} fontSize="1.1rem"/>
         <div><p style={{fontSize:".72rem",color:C.g500,textTransform:"uppercase",letterSpacing:.4,marginBottom:2}}>Analyst</p><p style={{fontWeight:700,color:C.navy,fontSize:".9rem"}}>{a.name}</p><p style={{color:C.g500,fontSize:".78rem"}}>{a.cov}</p></div>
-        <span style={{marginLeft:"auto",color:C.gold,fontSize:".8rem",fontWeight:600}}>View Profile â†’</span>
+        <span style={{marginLeft:"auto",color:C.gold,fontSize:".8rem",fontWeight:600}}>View profile</span>
       </div>}
     </div>
   </>);
 }
 
-/* â•â•â• REPORTS ARCHIVE â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â REPORTS ARCHIVE Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 const SORT_OPTIONS=[
   {v:"date_desc",l:"Newest first"},
   {v:"date_asc",l:"Oldest first"},
-  {v:"title_asc",l:"Title Aâ€“Z"},
+  {v:"title_asc",l:"Title AÃ¢â‚¬â€œZ"},
   {v:"access",l:"Free first"},
 ];
 function ReportsPage({nav,user,initCat}) {
@@ -1520,8 +1646,8 @@ function ReportsPage({nav,user,initCat}) {
           {pCats().map(c=><Pill key={c.id} active={f===c.id} onClick={()=>sf(c.id)}>{c.name}</Pill>)}
         </div>
         <div style={{display:"flex",gap:8,alignItems:"center"}}>
-          {hasFilter&&<button onClick={()=>{sf("all");setQ("");}} style={{padding:"6px 12px",background:C.g100,color:C.g500,border:`1px solid ${C.g200}`,borderRadius:16,fontSize:".74rem",cursor:"pointer",fontFamily:sans}}>Clear âœ•</button>}
-          <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search title, excerpt, analystâ€¦" style={{padding:"8px 14px",border:`1px solid ${C.g200}`,borderRadius:20,fontSize:".82rem",fontFamily:sans,color:C.navy,width:240,background:C.white,outline:"none"}}/>
+          {hasFilter&&<button onClick={()=>{sf("all");setQ("");}} style={{padding:"6px 12px",background:C.g100,color:C.g500,border:`1px solid ${C.g200}`,borderRadius:16,fontSize:".74rem",cursor:"pointer",fontFamily:sans}}>Clear Ã¢Å“â€¢</button>}
+          <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search title, excerpt, analystÃ¢â‚¬Â¦" style={{padding:"8px 14px",border:`1px solid ${C.g200}`,borderRadius:20,fontSize:".82rem",fontFamily:sans,color:C.navy,width:240,background:C.white,outline:"none"}}/>
           <select value={sort} onChange={e=>setSort(e.target.value)} style={{padding:"8px 12px",border:`1px solid ${C.g200}`,borderRadius:8,fontSize:".8rem",fontFamily:sans,color:C.navy,background:C.white,cursor:"pointer",outline:"none"}}>
             {SORT_OPTIONS.map(o=><option key={o.v} value={o.v}>{o.l}</option>)}
           </select>
@@ -1537,7 +1663,7 @@ function ReportsPage({nav,user,initCat}) {
   </>); 
 }
 
-/* â•â•â• PERSONAL LIBRARY â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â PERSONAL LIBRARY Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function LibraryPage({nav,user}) {
   const {reports,analysts,categoryRules,recentViews}=useData();
   const accessible = useMemo(()=>reports.filter(r=>r.status==="published"&&canAccess(effectiveAccess(r,categoryRules),user)).sort((a,b)=>new Date(b.date)-new Date(a.date)),[reports,categoryRules,user]);
@@ -1631,7 +1757,7 @@ function LibraryPage({nav,user}) {
   </>);
 }
 
-/* â•â•â• ANALYSTS LIST PAGE â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â ANALYSTS LIST PAGE Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function ReaderActivityTab({nav,title="Reader Activity",sub="Track what is being read right now from the current portal session."}) {
   const {recentViews,reports,library}=useData();
   const items = recentViews.slice(0,8).map(view=>{
@@ -1733,7 +1859,7 @@ function AnalystsPage({nav}) {
             <p style={{color:C.gold,fontSize:".72rem",fontWeight:700,marginBottom:10,textTransform:"uppercase",letterSpacing:.8,textAlign:"center"}}>{a.title}</p>
             <p style={{color:C.g500,fontSize:".84rem",lineHeight:1.7,marginBottom:18,flexGrow:1,textAlign:"center"}}>{a.cov}</p>
             <div style={{paddingTop:16,borderTop:`1px solid ${C.g100}`,textAlign:"center"}}>
-              <span style={{fontSize:".75rem",color:C.gold,fontWeight:600,letterSpacing:.2}}>View Profile â†’</span>
+              <span style={{fontSize:".75rem",color:C.gold,fontWeight:600,letterSpacing:.2}}>View profile</span>
             </div>
           </div>
         ))}
@@ -1742,7 +1868,7 @@ function AnalystsPage({nav}) {
   </>);
 }
 
-/* â•â•â• PUBLIC ANALYST PROFILE â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â PUBLIC ANALYST PROFILE Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function AnalystProfilePage({id,nav,user}) {
   const {reports,analysts}=useData();
   const a=analysts.find(x=>x.id===id);
@@ -1790,8 +1916,8 @@ function AnalystProfilePage({id,nav,user}) {
             </div>
             <div style={{marginTop:14,paddingTop:14,borderTop:`1px solid ${C.g100}`,display:"grid",gap:10}}>
               <div>
-                <p style={{fontSize:".72rem",color:C.g500,textTransform:"uppercase",letterSpacing:.4,marginBottom:6}}>Email route</p>
-                <a href={`mailto:${a.email || "research@chapelhilldenham.com"}`} style={{fontSize:".84rem",fontWeight:700,color:C.navy,textDecoration:"none"}}>{a.email || "research@chapelhilldenham.com"}</a>
+                <p style={{fontSize:".72rem",color:C.g500,textTransform:"uppercase",letterSpacing:.4,marginBottom:6}}>Contact route</p>
+                <p style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>Research desk and client relations</p>
               </div>
               <button onClick={()=>nav("contact")} style={{padding:"10px 14px",background:"rgba(6,38,45,0.04)",color:C.navy,border:`1px solid rgba(6,38,45,0.08)`,borderRadius:999,fontSize:".8rem",fontWeight:700,cursor:"pointer",fontFamily:sans,width:"fit-content"}}>Open contact page</button>
             </div>
@@ -1820,7 +1946,7 @@ function AnalystProfilePage({id,nav,user}) {
   </>);
 }
 
-/* â•â•â• PRICE LISTS â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â PRICE LISTS Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function PriceListsPage({user,nav}) {
   const [prices,setPrices]=useState(()=>lsGet(LS.prices)||PRICES);
   useEffect(()=>{
@@ -1837,7 +1963,7 @@ function PriceListsPage({user,nav}) {
             <div><strong style={{fontSize:".88rem",color:C.navy,display:"block"}}>{p.title}</strong><span style={{fontSize:".76rem",color:C.g500}}>{fd(p.date)}</span></div>
           </div>
           {p.filePath
-            ? <a href={fileUrl(p.filePath)} download style={{padding:"8px 18px",background:C.navy,color:"#fff",border:"none",borderRadius:6,fontSize:".76rem",fontWeight:600,cursor:"pointer",fontFamily:sans,textDecoration:"none"}}>â†“ Download</a>
+            ? <a href={fileUrl(p.filePath)} download style={{padding:"8px 18px",background:C.navy,color:"#fff",border:"none",borderRadius:6,fontSize:".76rem",fontWeight:600,cursor:"pointer",fontFamily:sans,textDecoration:"none"}}>Ã¢â€ â€œ Download</a>
             : <button disabled style={{padding:"8px 18px",background:C.g100,color:C.g500,border:"none",borderRadius:6,fontSize:".76rem",fontWeight:600,cursor:"default",fontFamily:sans}}>No file yet</button>}
         </div>
       ))}
@@ -1846,7 +1972,7 @@ function PriceListsPage({user,nav}) {
   </>);
 }
 
-/* â•â•â• ANALYST PROFILE TAB (inside own portal) â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â ANALYST PROFILE TAB (inside own portal) Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function AnalystProfileTab({analyst,user,nav,showToast}) {
   const {bioEdits,setBioEdits,setAnalysts}=useData();
   const [editingBio,setEditingBio]=useState(false);
@@ -1926,13 +2052,13 @@ function AnalystProfileTab({analyst,user,nav,showToast}) {
         <div style={{padding:"14px",background:C.offWhite,borderRadius:8}}>
           <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:8}}>
             <p style={{fontSize:".7rem",color:C.g500,textTransform:"uppercase",letterSpacing:.4}}>Bio</p>
-            {!editingBio&&!pendingEdit&&<button onClick={()=>{setNewBio(analyst.bio||"");setEditingBio(true);}} style={{background:"none",border:"none",color:C.gold,fontSize:".75rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>Edit â†’</button>}
+            {!editingBio&&!pendingEdit&&<button onClick={()=>{setNewBio(analyst.bio||"");setEditingBio(true);}} style={{background:"none",border:"none",color:C.gold,fontSize:".75rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>Edit Ã¢â€ â€™</button>}
           </div>
           {pendingEdit?(
             <div>
               <p style={{fontSize:".82rem",color:C.g700,lineHeight:1.7,marginBottom:10}}>{analyst.bio}</p>
               <div style={{background:"#fef9c3",border:"1px solid #fde047",borderRadius:6,padding:"10px 12px"}}>
-                <p style={{fontSize:".72rem",fontWeight:700,color:"#854d0e",marginBottom:4}}>â³ Bio update pending administrator review</p>
+                <p style={{fontSize:".72rem",fontWeight:700,color:"#854d0e",marginBottom:4}}>Ã¢ÂÂ³ Bio update pending administrator review</p>
                 <p style={{fontSize:".8rem",color:"#92400e",lineHeight:1.65}}>{pendingEdit.newBio}</p>
                 <button onClick={()=>setBioEdits(p=>p.filter(e=>e.id!==pendingEdit.id))} style={{marginTop:8,background:"none",border:"none",color:"#92400e",fontSize:".72rem",cursor:"pointer",fontFamily:sans,textDecoration:"underline"}}>Withdraw</button>
               </div>
@@ -1950,13 +2076,13 @@ function AnalystProfileTab({analyst,user,nav,showToast}) {
             <p style={{fontSize:".86rem",color:C.g700,lineHeight:1.7}}>{analyst.bio||<em style={{color:C.g500}}>No bio yet. Click Edit to add one.</em>}</p>
           )}
         </div>
-        <button onClick={()=>nav("analyst",{id:analyst.id})} style={{marginTop:16,padding:"9px 20px",background:"none",border:`1px solid ${C.g200}`,borderRadius:7,fontSize:".8rem",color:C.navy,fontWeight:600,cursor:"pointer",fontFamily:sans}}>View Public Profile â†’</button>
+        <button onClick={()=>nav("analyst",{id:analyst.id})} style={{marginTop:16,padding:"9px 20px",background:"none",border:`1px solid ${C.g200}`,borderRadius:7,fontSize:".8rem",color:C.navy,fontWeight:600,cursor:"pointer",fontFamily:sans}}>View Public Profile Ã¢â€ â€™</button>
       </div>
     </div>
   );
 }
 
-/* â•â•â• PRICE LIST UPLOAD â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â PRICE LIST UPLOAD Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function PriceUploadTab({isIntern,showToast}) {
   const [file,setFile]=useState(null);
   const [title,setTitle]=useState("");
@@ -1999,11 +2125,11 @@ function PriceUploadTab({isIntern,showToast}) {
       <SH title="Upload Price List" sub="Add a new equity or fixed income price list"/>
       {error&&<div style={{background:"#fef2f2",color:C.red,padding:"10px 14px",borderRadius:7,fontSize:".83rem",marginBottom:14}}>{error}</div>}
       <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"28px"}}>
-        <Inp label="List Title" value={title} onChange={e=>setTitle(e.target.value)} placeholder="e.g. Daily Equity Price List â€” 17 April 2026" required/>
+        <Inp label="List Title" value={title} onChange={e=>setTitle(e.target.value)} placeholder="e.g. Daily Equity Price List Ã¢â‚¬â€ 17 April 2026" required/>
         <div style={{marginBottom:20}}>
           <label style={{display:"block",fontSize:".75rem",fontWeight:600,color:C.navy,marginBottom:8,textTransform:"uppercase",letterSpacing:.4}}>CSV File</label>
           <label style={{display:"inline-block",padding:"12px 18px",background:C.navy,color:"#fff",border:`2px dashed ${C.navy}`,borderRadius:7,fontSize:".85rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>
-            {file?`âœ“ ${file.name.slice(0,40)}`:"Choose CSV file"}
+            {file?`Ã¢Å“â€œ ${file.name.slice(0,40)}`:"Choose CSV file"}
             <input type="file" accept=".csv" style={{display:"none"}} onChange={e=>setFile(e.target.files?.[0]||null)}/>
           </label>
           {file&&<button onClick={()=>setFile(null)} style={{marginLeft:8,background:"none",border:"none",color:C.g500,fontSize:".78rem",cursor:"pointer",fontFamily:sans}}>Remove</button>}
@@ -2012,20 +2138,20 @@ function PriceUploadTab({isIntern,showToast}) {
         <div style={{background:C.offWhite,borderRadius:8,padding:"14px 16px",marginBottom:20,fontSize:".82rem",color:C.g700,lineHeight:1.6}}>
           <p><strong>What happens:</strong></p>
           <ul style={{margin:"8px 0 0 16px",paddingLeft:0}}>
-            <li>âœ“ Your new price list appears at the top of the Price Lists page</li>
-            <li>âœ“ Previous lists stay below as historical records</li>
-            <li>âœ“ Team can view and download all price list versions anytime</li>
+            <li>Ã¢Å“â€œ Your new price list appears at the top of the Price Lists page</li>
+            <li>Ã¢Å“â€œ Previous lists stay below as historical records</li>
+            <li>Ã¢Å“â€œ Team can view and download all price list versions anytime</li>
           </ul>
         </div>
         <button onClick={submit} disabled={!title.trim()||!file||submitting} style={{padding:"11px 28px",background:title.trim()&&file&&!submitting?C.navy:C.g200,color:"#fff",border:"none",borderRadius:7,fontSize:".85rem",fontWeight:600,cursor:title.trim()&&file&&!submitting?"pointer":"default",fontFamily:sans}}>
-          {submitting?"Uploadingâ€¦":"Upload Price List"}
+          {submitting?"UploadingÃ¢â‚¬Â¦":"Upload Price List"}
         </button>
       </div>
     </div>
   );
 }
 
-/* â•â•â• ANALYST PORTAL (own dashboard) â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â ANALYST PORTAL (own dashboard) Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function PortalShell({hero,sections,tab,setTab,children,accent=C.gold}) {
   return (
     <div style={{minHeight:"80vh",background:C.offWhite}}>
@@ -2120,13 +2246,13 @@ function PendingReportsTab({pendingReports,analysts,setReports,showToast,title="
         {pendingReports.map(r=>{
           const submitter=analysts.find(a=>a.id===r.aid);
           const cat=gc(r.cat),pc=gpc(r.cat);
-          const dc=cat?.p?`${pc?.name} Â· ${cat.name}`:cat?.name;
+          const dc=cat?.p?`${pc?.name} Ã‚Â· ${cat.name}`:cat?.name;
           const submitterLabel = submitterLabelFn ? submitterLabelFn(r,submitter) : `Submitted by ${submitter?.name||"Team member"}`;
           return (
             <div key={r.id} style={{background:C.white,borderRadius:12,border:"1px solid #fde047",overflow:"hidden"}}>
               <div style={{background:"#fef9c3",padding:"10px 20px",display:"flex",alignItems:"center",gap:10,borderBottom:"1px solid #fde047"}}>
                 <span style={{fontSize:".72rem",fontWeight:700,color:"#854d0e",textTransform:"uppercase",letterSpacing:.4}}>Pending Review</span>
-                <span style={{fontSize:".72rem",color:"#92400e",marginLeft:"auto"}}>{submitterLabel} Â· {fd(r.date)}</span>
+                <span style={{fontSize:".72rem",color:"#92400e",marginLeft:"auto"}}>{submitterLabel} Ã‚Â· {fd(r.date)}</span>
               </div>
               <div style={{padding:"20px"}}>
                 <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:16,marginBottom:12}}>
@@ -2278,7 +2404,7 @@ function AnalystPortalPage({user,nav}) {
           avatar:<AnalystAvatar analyst={analyst} size={64} fontSize="1.5rem"/>,
           eyebrow:isDirector?"Director Workspace":"Analyst Workspace",
           title:analyst.name,
-          sub:`${analyst.title} Â· ${analyst.cov}`,
+          sub:`${analyst.title} Ã‚Â· ${analyst.cov}`,
           stats:[
             {l:"Published",v:myReports.filter(r=>r.status==="published").length},
             {l:"Pending Review",v:pendingReports.length},
@@ -2303,7 +2429,7 @@ function AnalystPortalPage({user,nav}) {
         {tab==="approvals"&&<PendingReportsTab pendingReports={pendingReports} analysts={analysts} setReports={setReports} showToast={showToast} title={isDirector?"Team Approvals":"Pending Approvals"} emptySub={isDirector?"Analyst and intern submissions will appear here for review.":"Intern submissions assigned to you will appear here for review."} submitterLabelFn={(r,submitter)=>`Submitted by ${submitter?.name||"Team member"}`}/>} 
         {tab==="pricelist"&&<PriceUploadTab isIntern={false} showToast={showToast}/>} 
       </PortalShell>
-      {toast&&<div style={{position:"fixed",right:24,bottom:24,background:C.navy,color:"#fff",padding:"13px 18px",borderRadius:10,boxShadow:"0 16px 40px rgba(17,37,48,0.2)",fontSize:".83rem",zIndex:300,display:"flex",alignItems:"center",gap:8}}><span style={{color:C.gold}}>âœ“</span>{toast}</div>}
+      {toast&&<div style={{position:"fixed",right:24,bottom:24,background:C.navy,color:"#fff",padding:"13px 18px",borderRadius:10,boxShadow:"0 16px 40px rgba(17,37,48,0.2)",fontSize:".83rem",zIndex:300,display:"flex",alignItems:"center",gap:8}}><span style={{color:C.gold}}>Ã¢Å“â€œ</span>{toast}</div>}
     </>
   );
 }
@@ -2314,7 +2440,7 @@ function ReportBodyPreview({body,ex}) {
   return (
     <div style={{marginBottom:14}}>
       <button onClick={()=>setOpen(o=>!o)} style={{background:"none",border:`1px solid ${C.g200}`,borderRadius:6,padding:"6px 14px",fontSize:".75rem",fontWeight:600,color:C.navy,cursor:"pointer",fontFamily:sans,display:"flex",alignItems:"center",gap:6,marginBottom:open?10:0,transition:"all .15s",...s({background:"none",borderColor:C.g200},{background:C.offWhite,borderColor:C.g300})}}>
-        <span>{open?"â–²":"â–¼"}</span> {open?"Hide full report":"Read full report"} ({paragraphs.length} paragraph{paragraphs.length!==1?"s":""})
+        <span>{open?"Ã¢â€“Â²":"Ã¢â€“Â¼"}</span> {open?"Hide full report":"Read full report"} ({paragraphs.length} paragraph{paragraphs.length!==1?"s":""})
       </button>
       {open&&(
         <div style={{background:C.offWhite,borderRadius:8,padding:"16px 18px",border:`1px solid ${C.g200}`}}>
@@ -2328,7 +2454,7 @@ function ReportBodyPreview({body,ex}) {
   );
 }
 
-/* â”€â”€ Approvals Tab (analyst sees intern pending reports) â”€â”€ */
+/* Ã¢â€â‚¬Ã¢â€â‚¬ Approvals Tab (analyst sees intern pending reports) Ã¢â€â‚¬Ã¢â€â‚¬ */
 function AnalystUploadTab({analystId,isIntern,reports,setReports,showToast,onDone}) {
   const {analysts,mailingList}=useData();
   const internEntry=analysts.find(a=>a.id===analystId);
@@ -2355,14 +2481,14 @@ function AnalystUploadTab({analystId,isIntern,reports,setReports,showToast,onDon
       setReports(prev=>prev.map(r=>r.id===optimistic.id?saved:r));
     }catch(e){console.warn("API save failed:",e.message);}
   };
-  const catOpts=CATS.map(c=>({v:c.id,l:c.p?`  â”” ${c.name}`:c.name}));
+  const catOpts=CATS.map(c=>({v:c.id,l:c.p?`  Ã¢â€â€ ${c.name}`:c.name}));
   return (
     <div style={{maxWidth:680}}>
       <SH title="Upload New Report"/>
       {error&&<div style={{background:"#fef2f2",color:C.red,padding:"9px 13px",borderRadius:7,fontSize:".83rem",marginBottom:14}}>{error}</div>}
       <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"26px"}}>
-        <Inp label="Report Title" value={form.title} onChange={f("title")} placeholder="e.g. Sector Update â€” Q2 2026" required/>
-        <Inp label="Excerpt / Summary" value={form.ex} onChange={f("ex")} as="textarea" rows={3} placeholder="2-3 sentence summary shown on the report cardâ€¦" required/>
+        <Inp label="Report Title" value={form.title} onChange={f("title")} placeholder="e.g. Sector Update Ã¢â‚¬â€ Q2 2026" required/>
+        <Inp label="Excerpt / Summary" value={form.ex} onChange={f("ex")} as="textarea" rows={3} placeholder="2-3 sentence summary shown on the report cardÃ¢â‚¬Â¦" required/>
         <Inp label="Full Report Body" value={form.body} onChange={f("body")} as="textarea" rows={6} placeholder="Full analysis (shown to all users). Separate paragraphs with a blank line."/>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
           <Inp label="Category" value={form.cat} onChange={f("cat")} as="select" options={catOpts}/>
@@ -2370,7 +2496,7 @@ function AnalystUploadTab({analystId,isIntern,reports,setReports,showToast,onDon
         </div>
         <div style={{background:mailingList.length>0?C.goldSoft:"#f5f5f5",border:`1px solid ${mailingList.length>0?"rgba(185,114,49,0.3)":"#e5e5e5"}`,borderRadius:8,padding:"12px 14px",marginBottom:16,display:"flex",alignItems:"center",gap:10}}>
           <input type="checkbox" disabled={mailingList.length===0} checked={form.sendToMailing} onChange={e=>setForm({...form,sendToMailing:e.target.checked})} style={{cursor:mailingList.length>0?"pointer":"not-allowed",width:18,height:18,accentColor:C.gold,opacity:mailingList.length>0?1:0.5}}/>
-          <label style={{fontSize:".82rem",color:mailingList.length>0?C.navy:"#999",cursor:mailingList.length>0?"pointer":"default",flex:1}}>Send to mailing list ({mailingList.length} subscriber{mailingList.length!==1?"s":""}){mailingList.length===0?" â€” add emails in footer to enable":""}</label>
+          <label style={{fontSize:".82rem",color:mailingList.length>0?C.navy:"#999",cursor:mailingList.length>0?"pointer":"default",flex:1}}>Send to mailing list ({mailingList.length} subscriber{mailingList.length!==1?"s":""}){mailingList.length===0?" Ã¢â‚¬â€ add emails in footer to enable":""}</label>
         </div>
         <div style={{display:"flex",gap:10,marginTop:4}}>
           <button onClick={submit} style={{padding:"11px 26px",background:isIntern?"#d97706":C.gold,color:"#fff",border:"none",borderRadius:7,fontSize:".86rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>{isIntern?"Submit for Approval":"Publish Report"}</button>
@@ -2382,7 +2508,7 @@ function AnalystUploadTab({analystId,isIntern,reports,setReports,showToast,onDon
   );
 }
 
-/* â•â•â• INTERN PORTAL â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â INTERN PORTAL Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function InternPortalPage({user,nav}) {
   const {reports,analysts,setReports}=useData();
   const internEntry=analysts.find(a=>a.id===user.analystId);
@@ -2428,7 +2554,7 @@ function InternPortalPage({user,nav}) {
           eyebrowColor:'rgba(255,255,255,0.7)',
           avatar:<AnalystAvatar analyst={internEntry} size={64} fontSize="1.5rem"/>,
           title:internEntry?.name||user.name,
-          sub:supervisor?`Supervisor: ${supervisor.name} Â· ${supervisor.title}`:'Supervisor review required before publishing.',
+          sub:supervisor?`Supervisor: ${supervisor.name} Ã‚Â· ${supervisor.title}`:'Supervisor review required before publishing.',
           stats:[
             {l:'Submitted',v:myReports.length},
             {l:'Pending',v:pending.length},
@@ -2451,13 +2577,13 @@ function InternPortalPage({user,nav}) {
                 <div style={{display:"flex",flexDirection:"column",gap:16}}>
                   {myReports.map(r=>{
                     const cat=gc(r.cat),pc=gpc(r.cat);
-                    const dc=cat?.p?`${pc?.name} Â· ${cat.name}`:cat?.name;
+                    const dc=cat?.p?`${pc?.name} Ã‚Â· ${cat.name}`:cat?.name;
                     return (
                       <div key={r.id} style={{background:C.white,borderRadius:12,border:`1px solid ${r.status==="rejected"?"#fca5a5":r.status==="pending"?"#fde047":C.g200}`,overflow:"hidden"}}>
                         {r.status==="rejected"&&(
                           <div style={{background:"#fef2f2",padding:"10px 20px",borderBottom:"1px solid #fca5a5",display:"flex",alignItems:"center",gap:8}}>
                             <span style={{fontSize:".72rem",fontWeight:700,color:C.red,textTransform:"uppercase",letterSpacing:.4}}>Needs Revision</span>
-                            {r.rejectedReason&&<span style={{fontSize:".78rem",color:C.red,marginLeft:4}}>Â· {r.rejectedReason}</span>}
+                            {r.rejectedReason&&<span style={{fontSize:".78rem",color:C.red,marginLeft:4}}>Ã‚Â· {r.rejectedReason}</span>}
                           </div>
                         )}
                         {r.status==="pending"&&(
@@ -2485,17 +2611,19 @@ function InternPortalPage({user,nav}) {
         {tab==="activity"&&<ReaderActivityTab nav={nav} sub="Track what is currently being opened so you can align drafts and follow-up with the active discussion."/>}
         {tab==="pricelist"&&<PriceUploadTab isIntern={true} showToast={showToast}/>} 
       </PortalShell>
-      {toast&&<div style={{position:"fixed",right:24,bottom:24,background:"#0891b2",color:"#fff",padding:"13px 18px",borderRadius:10,boxShadow:"0 16px 40px rgba(8,145,178,0.3)",fontSize:".83rem",zIndex:300,display:"flex",alignItems:"center",gap:8}}><span>âœ“</span>{toast}</div>}
+      {toast&&<div style={{position:"fixed",right:24,bottom:24,background:"#0891b2",color:"#fff",padding:"13px 18px",borderRadius:10,boxShadow:"0 16px 40px rgba(8,145,178,0.3)",fontSize:".83rem",zIndex:300,display:"flex",alignItems:"center",gap:8}}><span>Ã¢Å“â€œ</span>{toast}</div>}
     </>
   );
 }
 function FundsPage({nav}) {
   const {funds}=useData();
+  const [selectedFund,setSelectedFund]=useState(null);
   const sorted=[...funds].sort((a,b)=>new Date(b.dataAsAt)-new Date(a.dataAsAt));
   const mutualFunds=sorted.filter(f=>f.id!=="nidf");
   const infraFund=sorted.find(f=>f.id==="nidf");
   const latestMutualDate=mutualFunds.reduce((latest,f)=>f.dataAsAt&&f.dataAsAt>latest?f.dataAsAt:latest,"");
   return (<>
+    {selectedFund && <FundChartModal fund={selectedFund} onClose={()=>setSelectedFund(null)}/>}
     <section style={{background:`linear-gradient(160deg,${C.navy} 0%,${C.navyMid} 100%)`,padding:"48px 0 40px",position:"relative",overflow:"hidden"}}>
       <div style={{position:"absolute",top:"-60%",right:"-5%",width:500,height:500,borderRadius:"50%",background:`radial-gradient(circle,${C.goldGlow} 0%,transparent 65%)`,pointerEvents:"none"}}/>
       <div style={{maxWidth:1260,margin:"0 auto",padding:"0 40px",position:"relative",zIndex:1}}>
@@ -2507,7 +2635,7 @@ function FundsPage({nav}) {
           </div>
           <div style={{display:"grid",gridTemplateColumns:"repeat(3,minmax(0,1fr))",gap:12}}>
             {[
-              {label:"Latest mutual-fund date",value:latestMutualDate?fd(latestMutualDate):"—"},
+              {label:"Latest mutual-fund date",value:latestMutualDate?fd(latestMutualDate):"â€”"},
               {label:"Verified mutual funds",value:mutualFunds.length},
               {label:"Institutional vehicle",value:infraFund?"1":"0"},
             ].map(item=>(
@@ -2523,13 +2651,13 @@ function FundsPage({nav}) {
 
     <section style={{padding:"44px 0",background:C.offWhite}}>
       <div style={{maxWidth:1260,margin:"0 auto",padding:"0 40px"}}>
-        <SectionFrame title="Mutual funds" sub="Verified from Chapel Hill Denham mutual fund factsheets dated 31 March 2026.">
+        <SectionFrame title="Mutual funds" sub="Verified from Chapel Hill Denham mutual fund factsheets dated 31 March 2026. Click any card to open the full chart and product snapshot.">
           <div className="mutual-funds-grid" style={{display:"grid",gridTemplateColumns:"repeat(3,minmax(0,1fr))",gap:18}}>
             {mutualFunds.map(f=>{
               const ret=(f.perf&&f.perf.YTD)||0;
               const pos=ret>=0;
               return (
-                <Surface key={f.id} style={{padding:"22px 20px"}}>
+                <Surface key={f.id} style={{padding:"22px 20px",cursor:"pointer"}} onClick={()=>setSelectedFund(f)}>
                   <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:12,marginBottom:14}}>
                     <div>
                       <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:8}}>
@@ -2548,9 +2676,10 @@ function FundsPage({nav}) {
                   <div style={{display:"grid",gridTemplateColumns:"repeat(3,minmax(0,1fr))",gap:10,marginBottom:14}}>
                     <div><div style={{fontSize:".66rem",color:C.g500,textTransform:"uppercase",letterSpacing:.8,marginBottom:4}}>Size</div><div style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>{f.aum}</div></div>
                     <div><div style={{fontSize:".66rem",color:C.g500,textTransform:"uppercase",letterSpacing:.8,marginBottom:4}}>{f.navLabel || "NAV"}</div><div style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>{f.nav}</div></div>
-                    <div><div style={{fontSize:".66rem",color:C.g500,textTransform:"uppercase",letterSpacing:.8,marginBottom:4}}>As at</div><div style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>{fd(f.dataAsAt)}</div></div>
+                    <div><div style={{fontSize:".66rem",color:C.g500,textTransform:"uppercase",letterSpacing:.8,marginBottom:4}}>Data as at</div><div style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>{longDate(f.dataAsAt)}</div></div>
                   </div>
                   <div style={{paddingTop:14,borderTop:`1px solid ${C.g100}`,fontSize:".76rem",lineHeight:1.65,color:C.g500}}>{f.snapshot}</div>
+                  <div style={{marginTop:12,fontSize:".74rem",fontWeight:700,color:C.gold}}>Open chart</div>
                 </Surface>
               );
             })}
@@ -2560,15 +2689,16 @@ function FundsPage({nav}) {
         {infraFund && (
           <SectionFrame title="Infrastructure vehicle" sub="The infrastructure debt fund reports on a different public timetable, so it sits in a separate block rather than pretending to be on the same monthly factsheet cycle." style={{marginTop:24}}>
             <div className="infra-fund-grid" style={{display:"grid",gridTemplateColumns:"1.1fr .9fr",gap:20,alignItems:"start"}}>
-              <Surface style={{padding:"22px 22px 18px"}}>
+              <Surface style={{padding:"22px 22px 18px",cursor:"pointer"}} onClick={()=>setSelectedFund(infraFund)}>
                 <Eyebrow>Institutional strategy</Eyebrow>
                 <h3 style={{fontFamily:serif,fontSize:"1.2rem",fontWeight:600,color:C.navy,marginBottom:10}}>{infraFund.name}</h3>
                 <p style={{fontSize:".82rem",lineHeight:1.75,color:C.g700,marginBottom:16}}>{infraFund.description}</p>
                 <div style={{display:"grid",gridTemplateColumns:"repeat(3,minmax(0,1fr))",gap:12}}>
                   <div><div style={{fontSize:".66rem",color:C.g500,textTransform:"uppercase",letterSpacing:.8,marginBottom:4}}>Capital base</div><div style={{fontSize:".86rem",fontWeight:700,color:C.navy}}>{infraFund.aum}</div></div>
                   <div><div style={{fontSize:".66rem",color:C.g500,textTransform:"uppercase",letterSpacing:.8,marginBottom:4}}>{infraFund.navLabel}</div><div style={{fontSize:".86rem",fontWeight:700,color:C.navy}}>{infraFund.nav}</div></div>
-                  <div><div style={{fontSize:".66rem",color:C.g500,textTransform:"uppercase",letterSpacing:.8,marginBottom:4}}>As at</div><div style={{fontSize:".86rem",fontWeight:700,color:C.navy}}>{fd(infraFund.dataAsAt)}</div></div>
+                  <div><div style={{fontSize:".66rem",color:C.g500,textTransform:"uppercase",letterSpacing:.8,marginBottom:4}}>Data as at</div><div style={{fontSize:".86rem",fontWeight:700,color:C.navy}}>{longDate(infraFund.dataAsAt)}</div></div>
                 </div>
+                <div style={{marginTop:14,fontSize:".74rem",fontWeight:700,color:C.gold}}>Open chart</div>
               </Surface>
               <Surface style={{padding:"22px 22px 18px"}}>
                 <Eyebrow>Latest verified snapshot</Eyebrow>
@@ -2607,7 +2737,7 @@ function FundsPage({nav}) {
   </>);
 }
 
-/* â•â•â• RESEARCH LIBRARY â€” UPLOAD MODAL â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â RESEARCH LIBRARY Ã¢â‚¬â€ UPLOAD MODAL Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function UploadDocModal({user,onClose,onSave}) {
   const [title,setTitle]=useState("");
   const [desc,setDesc]=useState("");
@@ -2627,13 +2757,13 @@ function UploadDocModal({user,onClose,onSave}) {
       let filePath=null;
       if(file){
         try{ const result=await api.upload.pdf(file); filePath=result?.path||result||null; }
-        catch{ /* file upload failed â€” save metadata only */ }
+        catch{ /* file upload failed Ã¢â‚¬â€ save metadata only */ }
       }
       let doc;
       try{
         doc=await api.library.create({title,description:desc,docType,visibility,category,pubDate,filePath});
       }catch{
-        /* API offline â€” create local doc */
+        /* API offline Ã¢â‚¬â€ create local doc */
         doc={id:Date.now(),title,description:desc,docType,visibility,category,pubDate,filePath,createdAt:new Date().toISOString(),uploaderName:user?.name||"Me",uploadedBy:user?.id||null};
       }
       onSave(doc);
@@ -2647,7 +2777,7 @@ function UploadDocModal({user,onClose,onSave}) {
       <div style={{background:C.white,borderRadius:12,padding:32,maxWidth:520,width:"100%",maxHeight:"92vh",overflowY:"auto",boxShadow:"0 20px 60px rgba(0,0,0,.3)"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:22}}>
           <h2 style={{fontFamily:serif,fontSize:"1.4rem",color:C.navy,margin:0}}>Add to Library</h2>
-          <button onClick={onClose} style={{background:"none",border:"none",fontSize:"1.3rem",cursor:"pointer",color:C.g500,lineHeight:1}}>Ã—</button>
+          <button onClick={onClose} style={{background:"none",border:"none",fontSize:"1.3rem",cursor:"pointer",color:C.g500,lineHeight:1}}>Ãƒâ€”</button>
         </div>
         <form onSubmit={handleSubmit}>
           {errMsg&&<p style={{color:C.red,fontSize:".82rem",marginBottom:12,padding:"8px 12px",background:"#fef2f2",borderRadius:6}}>{errMsg}</p>}
@@ -2694,12 +2824,12 @@ function UploadDocModal({user,onClose,onSave}) {
             <input type="file" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt"
               onChange={e=>setFile(e.target.files[0])}
               style={{fontSize:".82rem",fontFamily:sans,color:C.g700}}/>
-            <p style={{fontSize:".72rem",color:C.g500,marginTop:4}}>PDF, Word, Excel, PowerPoint, CSV â€” max 20 MB</p>
+            <p style={{fontSize:".72rem",color:C.g500,marginTop:4}}>PDF, Word, Excel, PowerPoint, CSV Ã¢â‚¬â€ max 20 MB</p>
           </div>
           <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
             <button type="button" onClick={onClose} style={{padding:"10px 20px",background:C.g100,border:`1px solid ${C.g200}`,color:C.g700,borderRadius:7,fontSize:".84rem",cursor:"pointer",fontFamily:sans}}>Cancel</button>
             <button type="submit" disabled={saving} style={{padding:"10px 24px",background:C.navy,color:C.white,border:"none",borderRadius:7,fontSize:".84rem",fontWeight:600,cursor:saving?"not-allowed":"pointer",fontFamily:sans,opacity:saving?.7:1}}>
-              {saving?"Savingâ€¦":"Add to Library"}
+              {saving?"SavingÃ¢â‚¬Â¦":"Add to Library"}
             </button>
           </div>
         </form>
@@ -2764,7 +2894,7 @@ function BulkArchiveModal({user,onClose,onSave}) {
       <div style={{background:C.white,borderRadius:12,padding:32,maxWidth:620,width:"100%",maxHeight:"92vh",overflowY:"auto",boxShadow:"0 20px 60px rgba(0,0,0,.3)"}}>
         <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:22}}>
           <h2 style={{fontFamily:serif,fontSize:"1.4rem",color:C.navy,margin:0}}>Bulk Archive Upload</h2>
-          <button onClick={onClose} style={{background:"none",border:"none",fontSize:"1.3rem",cursor:"pointer",color:C.g500,lineHeight:1}}>Ã—</button>
+          <button onClick={onClose} style={{background:"none",border:"none",fontSize:"1.3rem",cursor:"pointer",color:C.g500,lineHeight:1}}>Ãƒâ€”</button>
         </div>
         <form onSubmit={handleSubmit}>
           {errMsg&&<p style={{color:C.red,fontSize:".82rem",marginBottom:12,padding:"8px 12px",background:"#fef2f2",borderRadius:6}}>{errMsg}</p>}
@@ -2776,7 +2906,7 @@ function BulkArchiveModal({user,onClose,onSave}) {
             </div>
             <div>
               <label style={{display:"block",fontSize:".75rem",fontWeight:700,color:C.g700,marginBottom:5,textTransform:"uppercase",letterSpacing:.5}}>Category</label>
-              <input value={category} onChange={e=>setCategory(e.target.value)} placeholder="archive, macro, equitiesâ€¦" style={inp}/>
+              <input value={category} onChange={e=>setCategory(e.target.value)} placeholder="archive, macro, equitiesÃ¢â‚¬Â¦" style={inp}/>
             </div>
           </div>
           <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:14}}>
@@ -2809,7 +2939,7 @@ function BulkArchiveModal({user,onClose,onSave}) {
           <div style={{display:"flex",gap:10,justifyContent:"flex-end"}}>
             <button type="button" onClick={onClose} style={{padding:"10px 20px",background:C.g100,border:`1px solid ${C.g200}`,color:C.g700,borderRadius:7,fontSize:".84rem",cursor:"pointer",fontFamily:sans}}>Cancel</button>
             <button type="submit" disabled={saving} style={{padding:"10px 24px",background:C.navy,color:C.white,border:"none",borderRadius:7,fontSize:".84rem",fontWeight:600,cursor:saving?"not-allowed":"pointer",fontFamily:sans,opacity:saving?.7:1}}>
-              {saving?"Uploadingâ€¦":"Upload to Archive"}
+              {saving?"UploadingÃ¢â‚¬Â¦":"Upload to Archive"}
             </button>
           </div>
         </form>
@@ -2818,16 +2948,16 @@ function BulkArchiveModal({user,onClose,onSave}) {
   );
 }
 
-/* â•â•â• LIBRARY DOC VIEW MODAL â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â LIBRARY DOC VIEW MODAL Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function DocViewModal({doc,onClose}) {
   const ext=(doc.filePath||"").split(".").pop().toLowerCase();
   const canEmbed=["pdf"].includes(ext)&&doc.filePath;
   const canOpen=!!doc.filePath;
   const meta=[
     {l:"Type",v:doc.docType},
-    {l:"Category",v:doc.category||"â€”"},
-    {l:"Date",v:doc.pubDate||doc.createdAt?.slice(0,10)||"â€”"},
-    {l:"Uploaded by",v:doc.uploaderName||"â€”"},
+    {l:"Category",v:doc.category||"Ã¢â‚¬â€"},
+    {l:"Date",v:doc.pubDate||doc.createdAt?.slice(0,10)||"Ã¢â‚¬â€"},
+    {l:"Uploaded by",v:doc.uploaderName||"Ã¢â‚¬â€"},
     {l:"Visibility",v:doc.visibility==="team"?"Team Library":doc.visibility==="archive"?"Archive":"Private"},
   ];
   return (
@@ -2835,12 +2965,12 @@ function DocViewModal({doc,onClose}) {
       <div style={{background:C.white,borderRadius:14,maxWidth:640,width:"100%",maxHeight:"90vh",display:"flex",flexDirection:"column",boxShadow:"0 24px 64px rgba(0,0,0,.3)",overflow:"hidden"}}>
         {/* Header */}
         <div style={{padding:"22px 24px 18px",borderBottom:`1px solid ${C.g200}`,display:"flex",alignItems:"flex-start",gap:14}}>
-          <span style={{fontSize:"2rem",lineHeight:1,flexShrink:0,marginTop:2}}>{LIB_TYPE_ICONS[doc.docType]||"ðŸ“Ž"}</span>
+          <span style={{fontSize:"2rem",lineHeight:1,flexShrink:0,marginTop:2}}>{LIB_TYPE_ICONS[doc.docType]||"Ã°Å¸â€œÅ½"}</span>
           <div style={{flex:1,minWidth:0}}>
             <h2 style={{fontFamily:serif,fontSize:"1.15rem",color:C.navy,fontWeight:600,margin:0,lineHeight:1.3}}>{doc.title}</h2>
-            <p style={{color:C.g500,fontSize:".76rem",marginTop:4}}>{LIB_TYPE_LABELS[doc.docType]||doc.docType}{doc.category?` Â· ${doc.category}`:""}</p>
+            <p style={{color:C.g500,fontSize:".76rem",marginTop:4}}>{LIB_TYPE_LABELS[doc.docType]||doc.docType}{doc.category?` Ã‚Â· ${doc.category}`:""}</p>
           </div>
-          <button onClick={onClose} style={{background:"none",border:"none",fontSize:"1.4rem",cursor:"pointer",color:C.g500,lineHeight:1,flexShrink:0,padding:2}}>Ã—</button>
+          <button onClick={onClose} style={{background:"none",border:"none",fontSize:"1.4rem",cursor:"pointer",color:C.g500,lineHeight:1,flexShrink:0,padding:2}}>Ãƒâ€”</button>
         </div>
 
         {/* Embedded PDF preview */}
@@ -2878,11 +3008,11 @@ function DocViewModal({doc,onClose}) {
             <>
               <a href={fileUrl(doc.filePath)} target="_blank" rel="noopener noreferrer"
                 style={{padding:"9px 20px",background:C.navy,color:C.white,borderRadius:7,fontSize:".84rem",fontWeight:600,textDecoration:"none",fontFamily:sans,display:"inline-flex",alignItems:"center",gap:5}}>
-                Open in new tab â†—
+                Open in new tab Ã¢â€ â€”
               </a>
               <a href={fileUrl(doc.filePath)} download
                 style={{padding:"9px 18px",background:C.gold,color:C.white,borderRadius:7,fontSize:".84rem",fontWeight:600,textDecoration:"none",fontFamily:sans,display:"inline-flex",alignItems:"center",gap:5}}>
-                â†“ Download
+                Ã¢â€ â€œ Download
               </a>
             </>
           )}
@@ -2892,8 +3022,8 @@ function DocViewModal({doc,onClose}) {
   );
 }
 
-/* â•â•â• RESEARCH LIBRARY â•â•â• */
-const LIB_TYPE_ICONS  ={report:"ðŸ“„",article:"ðŸ“°",data:"ðŸ“Š",presentation:"ðŸ“½ï¸",other:"ðŸ“Ž"};
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â RESEARCH LIBRARY Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
+const LIB_TYPE_ICONS  ={report:"Ã°Å¸â€œâ€ž",article:"Ã°Å¸â€œÂ°",data:"Ã°Å¸â€œÅ ",presentation:"Ã°Å¸â€œÂ½Ã¯Â¸Â",other:"Ã°Å¸â€œÅ½"};
 const LIB_TYPE_LABELS ={report:"Report",article:"Article",data:"Data",presentation:"Presentation",other:"Other"};
 
 function DocumentBankPage({nav,user}) {
@@ -2995,7 +3125,7 @@ function DocumentBankPage({nav,user}) {
         <div>
           <p style={{color:C.gold,fontSize:".6rem",textTransform:"uppercase",letterSpacing:3,fontWeight:700,marginBottom:10,opacity:.9}}>Chapel Hill Denham</p>
           <h1 style={{fontFamily:serif,fontSize:"2.2rem",color:C.white,fontWeight:500,marginBottom:8}}>Research Library</h1>
-          <p style={{color:"rgba(255,255,255,0.48)",fontSize:".88rem"}}>Internal document repository â€” reports, articles, data &amp; presentations</p>
+          <p style={{color:"rgba(255,255,255,0.48)",fontSize:".88rem"}}>Internal document repository Ã¢â‚¬â€ reports, articles, data &amp; presentations</p>
         </div>
         {isStaff&&(
           <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
@@ -3044,10 +3174,10 @@ function DocumentBankPage({nav,user}) {
               <button onClick={()=>{setQ("");setTypeFilter("all");}}
                 style={{padding:"6px 12px",background:C.g100,color:C.g500,
                   border:`1px solid ${C.g200}`,borderRadius:16,fontSize:".74rem",cursor:"pointer",fontFamily:sans}}>
-                Clear âœ•
+                Clear Ã¢Å“â€¢
               </button>
             )}
-            <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search libraryâ€¦"
+            <input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search libraryÃ¢â‚¬Â¦"
               style={{padding:"8px 14px",border:`1px solid ${C.g200}`,borderRadius:20,
                 fontSize:".82rem",fontFamily:sans,color:C.navy,width:200,background:C.white,outline:"none"}}/>
             <select value={sortBy} onChange={e=>setSortBy(e.target.value)}
@@ -3055,7 +3185,7 @@ function DocumentBankPage({nav,user}) {
                 fontSize:".8rem",fontFamily:sans,color:C.navy,background:C.white,cursor:"pointer",outline:"none"}}>
               <option value="date_desc">Newest first</option>
               <option value="date_asc">Oldest first</option>
-              <option value="title_asc">Title Aâ€“Z</option>
+              <option value="title_asc">Title AÃ¢â‚¬â€œZ</option>
               <option value="type">Type</option>
             </select>
           </div>
@@ -3063,10 +3193,10 @@ function DocumentBankPage({nav,user}) {
 
         {/* Document list */}
         {loading?(
-          <div style={{padding:60,textAlign:"center",color:C.g500}}>Loading libraryâ€¦</div>
+          <div style={{padding:60,textAlign:"center",color:C.g500}}>Loading libraryÃ¢â‚¬Â¦</div>
         ):filtered.length===0?(
           <div style={{padding:60,textAlign:"center",color:C.g500,background:C.white,borderRadius:12,border:`1px solid ${C.g200}`}}>
-            {tab==="private"?"You have no private documents yet â€” add one with the button above.":"No documents found."}
+            {tab==="private"?"You have no private documents yet Ã¢â‚¬â€ add one with the button above.":"No documents found."}
           </div>
         ):(
           <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,overflow:"hidden"}}>
@@ -3087,15 +3217,15 @@ function DocumentBankPage({nav,user}) {
                     alignItems:"center",transition:"background .1s"}}
                   onMouseEnter={e=>e.currentTarget.style.background=C.offWhite}
                   onMouseLeave={e=>e.currentTarget.style.background="transparent"}>
-                  <span style={{fontSize:"1.25rem"}}>{LIB_TYPE_ICONS[doc.docType]||"ðŸ“Ž"}</span>
+                  <span style={{fontSize:"1.25rem"}}>{LIB_TYPE_ICONS[doc.docType]||"Ã°Å¸â€œÅ½"}</span>
                   <div style={{overflow:"hidden",paddingRight:12,cursor:"pointer"}} onClick={()=>openDoc(doc)}>
                     <p style={{margin:0,fontSize:".88rem",fontWeight:600,color:C.navy,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",textDecoration:"underline",textUnderlineOffset:2,textDecorationColor:C.g300}}>{doc.title}</p>
                     {doc.description&&<p style={{margin:"2px 0 0",fontSize:".75rem",color:C.g500,lineHeight:1.4,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{doc.description}</p>}
                     {doc.category&&<span style={{display:"inline-block",marginTop:3,fontSize:".67rem",padding:"1px 7px",borderRadius:8,background:C.goldSoft,color:C.gold,fontWeight:600,textTransform:"uppercase",letterSpacing:.5}}>{doc.category}</span>}
                   </div>
                   <span style={{fontSize:".75rem",padding:"3px 9px",borderRadius:10,background:C.g100,color:C.g500,border:`1px solid ${C.g200}`,width:"fit-content"}}>{LIB_TYPE_LABELS[doc.docType]||doc.docType}</span>
-                  <span style={{fontSize:".8rem",color:C.g700}}>{doc.pubDate||doc.createdAt?.slice(0,10)||"â€”"}</span>
-                  <span style={{fontSize:".8rem",color:C.g500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{doc.uploaderName||"â€”"}</span>
+                  <span style={{fontSize:".8rem",color:C.g700}}>{doc.pubDate||doc.createdAt?.slice(0,10)||"Ã¢â‚¬â€"}</span>
+                  <span style={{fontSize:".8rem",color:C.g500,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{doc.uploaderName||"Ã¢â‚¬â€"}</span>
                   <div style={{display:"flex",gap:5,justifyContent:"flex-end",alignItems:"center"}}>
                     <button onClick={()=>openDoc(doc)}
                       style={{padding:"5px 12px",background:C.navy,color:C.white,border:"none",borderRadius:5,fontSize:".72rem",fontWeight:600,cursor:"pointer",fontFamily:sans,whiteSpace:"nowrap"}}>
@@ -3112,7 +3242,7 @@ function DocumentBankPage({nav,user}) {
                       <button onClick={()=>handleDelete(doc)} title="Delete"
                         style={{padding:"5px 8px",background:"#fef2f2",color:C.red,border:"none",
                           borderRadius:5,fontSize:".72rem",cursor:"pointer",fontFamily:sans}}>
-                        âœ•
+                        Ã¢Å“â€¢
                       </button>
                     )}
                   </div>
@@ -3127,7 +3257,7 @@ function DocumentBankPage({nav,user}) {
   </>);
 }
 
-/* â•â•â• MANAGE PORTAL (admin) â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â MANAGE PORTAL (admin) Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function ManagePage({nav}) {
   const {reports,analysts,funds,setReports,setAnalysts,setFunds,bioEdits,setBioEdits,categoryRules,setCategoryRules}=useData();
   const [tab,setTab]=useState("overview");
@@ -3201,7 +3331,7 @@ function ManagePage({nav}) {
         {tab==="funds"&&<FundsAdminTab funds={funds} setFunds={setFunds} showToast={showToast}/>}
         {tab==="settings"&&<SettingsTab showToast={showToast}/>}
       </PortalShell>
-      {toast&&<div style={{position:"fixed",right:24,bottom:24,background:C.navy,color:"#fff",padding:"13px 18px",borderRadius:10,boxShadow:"0 16px 40px rgba(6,38,45,0.24)",fontSize:".83rem",zIndex:300,display:"flex",alignItems:"center",gap:8,border:`1px solid rgba(185,114,49,0.18)`}}><span style={{color:C.gold}}>âœ“</span>{toast}</div>}
+      {toast&&<div style={{position:"fixed",right:24,bottom:24,background:C.navy,color:"#fff",padding:"13px 18px",borderRadius:10,boxShadow:"0 16px 40px rgba(6,38,45,0.24)",fontSize:".83rem",zIndex:300,display:"flex",alignItems:"center",gap:8,border:`1px solid rgba(185,114,49,0.18)`}}><span style={{color:C.gold}}>Ã¢Å“â€œ</span>{toast}</div>}
     </>
   );
 }
@@ -3409,8 +3539,8 @@ function BannerMediaTab({showToast}) {
         <div style={{background:"linear-gradient(180deg, rgba(6,38,45,0.98), rgba(8,26,34,0.96))",border:"1px solid rgba(185,114,49,0.18)",borderRadius:14,padding:18,color:"#fff"}}>
           <div style={{fontSize:".72rem",textTransform:"uppercase",letterSpacing:1.8,color:"rgba(255,255,255,0.68)",fontWeight:800,marginBottom:8}}>Recommended sizes</div>
           <div style={{display:"grid",gap:10,fontSize:".84rem",lineHeight:1.6,color:"rgba(255,255,255,0.88)"}}>
-            <div><strong>Hero image:</strong> 1600 Ã— 900 or 1920 Ã— 1080 for wide landscape banners.</div>
-            <div><strong>Image panel:</strong> 1200 Ã— 900 is a safe fit for the right-side slide card.</div>
+            <div><strong>Hero image:</strong> 1600 Ãƒâ€” 900 or 1920 Ãƒâ€” 1080 for wide landscape banners.</div>
+            <div><strong>Image panel:</strong> 1200 Ãƒâ€” 900 is a safe fit for the right-side slide card.</div>
             <div><strong>Safe area:</strong> keep faces, logos, and text near the center because the frame uses a crop fit.</div>
           </div>
         </div>
@@ -3429,7 +3559,7 @@ function BannerMediaTab({showToast}) {
                 <img src={slide.mediaUrl} alt={`Banner slide ${index + 1}`} style={{width:"100%",height:140,objectFit:"cover",objectPosition:slide.mediaPosition||"center center"}} />
               ) : (
                 <div style={{textAlign:"center",padding:16,color:C.g500}}>
-                  <div style={{fontSize:"1.5rem",marginBottom:6}}>ðŸ–¼ï¸</div>
+                  <div style={{fontSize:"1.5rem",marginBottom:6}}>Ã°Å¸â€“Â¼Ã¯Â¸Â</div>
                   <div style={{fontSize:".78rem",fontWeight:700,color:C.navy}}>No media set</div>
                   <div style={{fontSize:".72rem",lineHeight:1.5,marginTop:4}}>Leave this slide text-led or upload a banner image.</div>
                 </div>
@@ -3442,8 +3572,8 @@ function BannerMediaTab({showToast}) {
                   <div style={{fontSize:".85rem",fontWeight:700,color:C.navy}}>Duration {slide.duration || 6}s</div>
                 </div>
                 <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
-                  <button onClick={()=>moveSlide(index,-1)} disabled={index===0} style={{padding:"7px 10px",background:index===0?C.g100:C.navy,color:index===0?C.g500:"#fff",border:"none",borderRadius:999,fontSize:".72rem",fontWeight:700,cursor:index===0?"not-allowed":"pointer",fontFamily:sans}}>â†‘ Move</button>
-                  <button onClick={()=>moveSlide(index,1)} disabled={index===bannerMedia.length-1} style={{padding:"7px 10px",background:index===bannerMedia.length-1?C.g100:C.navy,color:index===bannerMedia.length-1?C.g500:"#fff",border:"none",borderRadius:999,fontSize:".72rem",fontWeight:700,cursor:index===bannerMedia.length-1?"not-allowed":"pointer",fontFamily:sans}}>â†“ Move</button>
+                  <button onClick={()=>moveSlide(index,-1)} disabled={index===0} style={{padding:"7px 10px",background:index===0?C.g100:C.navy,color:index===0?C.g500:"#fff",border:"none",borderRadius:999,fontSize:".72rem",fontWeight:700,cursor:index===0?"not-allowed":"pointer",fontFamily:sans}}>Ã¢â€ â€˜ Move</button>
+                  <button onClick={()=>moveSlide(index,1)} disabled={index===bannerMedia.length-1} style={{padding:"7px 10px",background:index===bannerMedia.length-1?C.g100:C.navy,color:index===bannerMedia.length-1?C.g500:"#fff",border:"none",borderRadius:999,fontSize:".72rem",fontWeight:700,cursor:index===bannerMedia.length-1?"not-allowed":"pointer",fontFamily:sans}}>Ã¢â€ â€œ Move</button>
                 </div>
               </div>
               <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
@@ -3606,7 +3736,7 @@ function ReportsTab({reports,analysts,setReports,showToast}) {
           <h2 style={{fontFamily:serif,fontSize:"1.9rem",color:C.navy,fontWeight:500,margin:0,lineHeight:1.15}}>All Reports</h2>
           <div style={{width:32,height:2.5,background:C.gold,borderRadius:2,marginTop:10}}/>
         </div>
-        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search reportsâ€¦" style={{padding:"9px 14px",border:`1px solid ${C.g200}`,borderRadius:8,fontSize:".83rem",fontFamily:sans,color:C.navy,width:240,background:C.white}}/>
+        <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search reportsÃ¢â‚¬Â¦" style={{padding:"9px 14px",border:`1px solid ${C.g200}`,borderRadius:8,fontSize:".83rem",fontFamily:sans,color:C.navy,width:240,background:C.white}}/>
       </div>
       <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,overflow:"hidden"}}>
         <table style={{width:"100%",borderCollapse:"collapse"}}>
@@ -3615,7 +3745,7 @@ function ReportsTab({reports,analysts,setReports,showToast}) {
           </tr></thead>
           <tbody>{filtered.map((r,i)=>{
             const cat=gc(r.cat),pc=gpc(r.cat),a=r.aid?ga(r.aid,analysts):null;
-            const dc=cat?.p?`${pc?.name} Â· ${cat.name}`:cat?.name;
+            const dc=cat?.p?`${pc?.name} Ã‚Â· ${cat.name}`:cat?.name;
             return (
               <tr key={r.id} style={{borderBottom:`1px solid ${C.g100}`,background:i%2===0?C.white:C.offWhite}}>
                 <td style={{padding:"13px 14px",maxWidth:260}}><div style={{fontSize:".83rem",fontWeight:600,color:C.navy,lineHeight:1.35}}>{r.title}</div></td>
@@ -3626,7 +3756,7 @@ function ReportsTab({reports,analysts,setReports,showToast}) {
                       {accOpts.map(a=>(
                         <button key={a} onClick={()=>changeAccess(r.id,a)} style={{padding:"3px 8px",background:a===r.access?C.navy:C.g100,color:a===r.access?"#fff":C.g700,border:"none",borderRadius:4,fontSize:".68rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>{accLabel[a]}</button>
                       ))}
-                      <button onClick={()=>setEditAccessId(null)} style={{padding:"3px 7px",background:"none",border:"none",color:C.g500,fontSize:".7rem",cursor:"pointer",fontFamily:sans}}>âœ•</button>
+                      <button onClick={()=>setEditAccessId(null)} style={{padding:"3px 7px",background:"none",border:"none",color:C.g500,fontSize:".7rem",cursor:"pointer",fontFamily:sans}}>Ã¢Å“â€¢</button>
                     </div>
                   ):(
                     <span onClick={()=>setEditAccessId(r.id)} style={{cursor:"pointer"}} title="Click to change access tier"><AccessBadge access={r.access}/></span>
@@ -3676,8 +3806,8 @@ function AddReportTab({analysts,reports,setReports,showToast,onDone}) {
       setReports(prev=>prev.map(r=>r.id===optimistic.id?saved:r));
     }catch(e){console.warn("API save failed:",e.message);}
   };
-  const catOpts=CATS.map(c=>({v:c.id,l:c.p?`  â”” ${c.name}`:c.name}));
-  const anaOpts=[{v:"",l:"â€” Research Desk (no analyst) â€”"},...analysts.map(a=>({v:String(a.id),l:a.name}))];
+  const catOpts=CATS.map(c=>({v:c.id,l:c.p?`  Ã¢â€â€ ${c.name}`:c.name}));
+  const anaOpts=[{v:"",l:"Ã¢â‚¬â€ Research Desk (no analyst) Ã¢â‚¬â€"},...analysts.map(a=>({v:String(a.id),l:a.name}))];
   const accessOpts=[
     {v:"inherit",l:"Use category default"},
     {v:"free",l:"Free"},
@@ -3689,8 +3819,8 @@ function AddReportTab({analysts,reports,setReports,showToast,onDone}) {
       <SH title="Upload New Report"/>
       {error&&<div style={{background:"#fef2f2",color:C.red,padding:"9px 13px",borderRadius:7,fontSize:".83rem",marginBottom:14}}>{error}</div>}
       <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"26px"}}>
-        <Inp label="Report Title" value={form.title} onChange={f("title")} placeholder="e.g. Dangote Cement â€” Q2 2026 Preview" required/>
-        <Inp label="Excerpt / Summary" value={form.ex} onChange={f("ex")} as="textarea" rows={3} placeholder="2-3 sentence summary shown on the report cardâ€¦" required/>
+        <Inp label="Report Title" value={form.title} onChange={f("title")} placeholder="e.g. Dangote Cement Ã¢â‚¬â€ Q2 2026 Preview" required/>
+        <Inp label="Excerpt / Summary" value={form.ex} onChange={f("ex")} as="textarea" rows={3} placeholder="2-3 sentence summary shown on the report cardÃ¢â‚¬Â¦" required/>
         <Inp label="Full Report Body" value={form.body} onChange={f("body")} as="textarea" rows={7} placeholder="Full analysis (shown to all users). Separate paragraphs with a blank line."/>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12}}>
           <Inp label="Category" value={form.cat} onChange={f("cat")} as="select" options={catOpts}/>
@@ -3700,7 +3830,7 @@ function AddReportTab({analysts,reports,setReports,showToast,onDone}) {
         <Inp label="Publication Date" value={form.date} onChange={f("date")} type="date"/>
         <div style={{background:mailingList.length>0?C.goldSoft:"#f5f5f5",border:`1px solid ${mailingList.length>0?"rgba(185,114,49,0.3)":"#e5e5e5"}`,borderRadius:8,padding:"12px 14px",marginBottom:16,display:"flex",alignItems:"center",gap:10}}>
           <input type="checkbox" disabled={mailingList.length===0} checked={form.sendToMailing} onChange={e=>setForm({...form,sendToMailing:e.target.checked})} style={{cursor:mailingList.length>0?"pointer":"not-allowed",width:18,height:18,accentColor:C.gold,opacity:mailingList.length>0?1:0.5}}/>
-          <label style={{fontSize:".82rem",color:mailingList.length>0?C.navy:"#999",cursor:mailingList.length>0?"pointer":"default",flex:1}}>Send to mailing list ({mailingList.length} subscriber{mailingList.length!==1?"s":""}){mailingList.length===0?" â€” add emails in footer to enable":""}</label>
+          <label style={{fontSize:".82rem",color:mailingList.length>0?C.navy:"#999",cursor:mailingList.length>0?"pointer":"default",flex:1}}>Send to mailing list ({mailingList.length} subscriber{mailingList.length!==1?"s":""}){mailingList.length===0?" Ã¢â‚¬â€ add emails in footer to enable":""}</label>
         </div>
         <div style={{display:"flex",gap:10,marginTop:6}}>
           <button onClick={submit} style={{padding:"11px 24px",background:C.violet,color:"#fff",border:"none",borderRadius:7,fontSize:".86rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>Publish Report</button>
@@ -3769,8 +3899,8 @@ function AnalystsTab({analysts,setAnalysts,showToast}) {
                     </div>
                   </div>
                   <div style={{padding:"12px 18px",borderTop:`1px solid ${C.g100}`,display:"flex",gap:8}}>
-                    <button onClick={()=>approveBio(edit)} style={{padding:"7px 18px",background:"#16a34a",color:"#fff",border:"none",borderRadius:6,fontSize:".78rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>âœ“ Approve</button>
-                    <button onClick={()=>rejectBio(edit)} style={{padding:"7px 14px",background:"#fef2f2",color:C.red,border:"1px solid #fca5a5",borderRadius:6,fontSize:".78rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>âœ• Reject</button>
+                    <button onClick={()=>approveBio(edit)} style={{padding:"7px 18px",background:"#16a34a",color:"#fff",border:"none",borderRadius:6,fontSize:".78rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>Ã¢Å“â€œ Approve</button>
+                    <button onClick={()=>rejectBio(edit)} style={{padding:"7px 14px",background:"#fef2f2",color:C.red,border:"1px solid #fca5a5",borderRadius:6,fontSize:".78rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>Ã¢Å“â€¢ Reject</button>
                   </div>
                 </div>
               );
@@ -3786,7 +3916,7 @@ function AnalystsTab({analysts,setAnalysts,showToast}) {
               <AnalystAvatar analyst={a} size={46} fontSize="1rem"/>
               <div style={{flex:1,minWidth:0}}>
                 <div style={{fontWeight:700,fontSize:".88rem",color:C.navy}}>{a.name}</div>
-                <div style={{fontSize:".72rem",color:a.role==="intern"?"#0891b2":C.gold,fontWeight:600,marginTop:1}}>{a.title}{a.role==="intern"&&" Â· Intern"}</div>
+                <div style={{fontSize:".72rem",color:a.role==="intern"?"#0891b2":C.gold,fontWeight:600,marginTop:1}}>{a.title}{a.role==="intern"&&" Ã‚Â· Intern"}</div>
               </div>
             </div>
             <div style={{fontSize:".76rem",color:C.g500,marginBottom:6,lineHeight:1.5}}>{a.cov}</div>
@@ -3860,7 +3990,7 @@ function AddAnalystTab({analysts,setAnalysts,showToast,onDone}) {
             <div style={{width:72,height:72,borderRadius:"50%",overflow:"hidden",background:C.g100,border:`2px dashed ${C.g300}`,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
               {preview
                 ?<img src={preview} alt="preview" style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center top"}}/>
-                :<span style={{fontSize:"1.6rem",color:C.g300}}>ðŸ‘¤</span>}
+                :<span style={{fontSize:"1.6rem",color:C.g300}}>Ã°Å¸â€˜Â¤</span>}
             </div>
             <div>
               <label style={{display:"inline-block",padding:"8px 16px",background:C.g100,border:`1px solid ${C.g200}`,borderRadius:7,fontSize:".8rem",fontWeight:600,color:C.navy,cursor:"pointer",fontFamily:sans}}>
@@ -3868,7 +3998,7 @@ function AddAnalystTab({analysts,setAnalysts,showToast,onDone}) {
                 <input type="file" accept="image/*" style={{display:"none"}} onChange={e=>setPhotoFile(e.target.files[0]||null)}/>
               </label>
               {photoFile&&<button onClick={()=>setPhotoFile(null)} style={{marginLeft:8,background:"none",border:"none",color:C.g500,fontSize:".78rem",cursor:"pointer",fontFamily:sans}}>Remove</button>}
-              <p style={{fontSize:".72rem",color:C.g500,marginTop:5}}>JPG or PNG Â· will be shown on profile cards. Leave empty to use initials.</p>
+              <p style={{fontSize:".72rem",color:C.g500,marginTop:5}}>JPG or PNG Ã‚Â· will be shown on profile cards. Leave empty to use initials.</p>
             </div>
           </div>
         </div>
@@ -3879,7 +4009,7 @@ function AddAnalystTab({analysts,setAnalysts,showToast,onDone}) {
         <Inp label="Job Title" value={form.title} onChange={f("title")} placeholder="e.g. Research Analyst" required/>
         <Inp label="Coverage Areas" value={form.cov} onChange={f("cov")} placeholder="e.g. Consumer Goods, Retail"/>
         <Inp label="Email Address" value={form.email} onChange={f("email")} type="email" placeholder="e.g. anwosu@chapelhilldenham.com"/>
-        <Inp label="Biography" value={form.bio} onChange={f("bio")} as="textarea" rows={4} placeholder="Short bio shown on the public analyst profileâ€¦"/>
+        <Inp label="Biography" value={form.bio} onChange={f("bio")} as="textarea" rows={4} placeholder="Short bio shown on the public analyst profileÃ¢â‚¬Â¦"/>
         <div style={{display:"flex",gap:10,marginTop:6}}>
           <button onClick={submit} style={{padding:"11px 24px",background:C.violet,color:"#fff",border:"none",borderRadius:7,fontSize:".86rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>Add Analyst</button>
           <button onClick={()=>{setForm(blank);setPhotoFile(null);}} style={{padding:"11px 18px",background:C.g100,color:C.g700,border:"none",borderRadius:7,fontSize:".86rem",cursor:"pointer",fontFamily:sans}}>Clear</button>
@@ -3890,7 +4020,7 @@ function AddAnalystTab({analysts,setAnalysts,showToast,onDone}) {
 }
 
 function AddInternTab({analysts,setAnalysts,showToast,onDone}) {
-  const supervisorOpts=analysts.filter(a=>a.role==="analyst").map(a=>({v:String(a.id),l:`${a.name} â€” ${a.title}`}));
+  const supervisorOpts=analysts.filter(a=>a.role==="analyst").map(a=>({v:String(a.id),l:`${a.name} Ã¢â‚¬â€ ${a.title}`}));
   const blank={name:"",ini:"",cov:"",email:"",bio:"",supervisorId:""};
   const [form,setForm]=useState(blank);
   const [photoFile,setPhotoFile]=useState(null);
@@ -3933,7 +4063,7 @@ function AddInternTab({analysts,setAnalysts,showToast,onDone}) {
           <label style={{display:"block",fontSize:".75rem",fontWeight:600,color:C.navy,marginBottom:8,textTransform:"uppercase",letterSpacing:.4}}>Profile Photo</label>
           <div style={{display:"flex",alignItems:"center",gap:16}}>
             <div style={{width:64,height:64,borderRadius:"50%",overflow:"hidden",background:C.g100,border:`2px dashed ${C.g300}`,flexShrink:0,display:"flex",alignItems:"center",justifyContent:"center"}}>
-              {preview?<img src={preview} alt="preview" style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center top"}}/>:<span style={{fontSize:"1.4rem",color:C.g300}}>ðŸ‘¤</span>}
+              {preview?<img src={preview} alt="preview" style={{width:"100%",height:"100%",objectFit:"cover",objectPosition:"center top"}}/>:<span style={{fontSize:"1.4rem",color:C.g300}}>Ã°Å¸â€˜Â¤</span>}
             </div>
             <label style={{display:"inline-block",padding:"7px 14px",background:C.g100,border:`1px solid ${C.g200}`,borderRadius:7,fontSize:".78rem",fontWeight:600,color:C.navy,cursor:"pointer",fontFamily:sans}}>
               {photoFile?"Change Photo":"Upload Photo"}
@@ -3946,10 +4076,10 @@ function AddInternTab({analysts,setAnalysts,showToast,onDone}) {
           <Inp label="Initials" value={form.ini} onChange={f("ini")} placeholder="CE" required/>
         </div>
         <Inp label="Supervisor" value={form.supervisorId} onChange={f("supervisorId")} as="select"
-          options={[{v:"",l:"â€” Select supervisor â€”"},...supervisorOpts]} required/>
+          options={[{v:"",l:"Ã¢â‚¬â€ Select supervisor Ã¢â‚¬â€"},...supervisorOpts]} required/>
         <Inp label="Coverage / Focus Area" value={form.cov} onChange={f("cov")} placeholder="e.g. Banking, Financial Services"/>
         <Inp label="Email Address" value={form.email} onChange={f("email")} type="email" placeholder="e.g. ceze@chapelhilldenham.com"/>
-        <Inp label="Short Bio (optional)" value={form.bio} onChange={f("bio")} as="textarea" rows={3} placeholder="Brief description of role and focusâ€¦"/>
+        <Inp label="Short Bio (optional)" value={form.bio} onChange={f("bio")} as="textarea" rows={3} placeholder="Brief description of role and focusÃ¢â‚¬Â¦"/>
         <div style={{display:"flex",gap:10,marginTop:6}}>
           <button onClick={submit} style={{padding:"11px 24px",background:"#0891b2",color:"#fff",border:"none",borderRadius:7,fontSize:".86rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>Add Intern</button>
           <button onClick={()=>{setForm(blank);setPhotoFile(null);}} style={{padding:"11px 18px",background:C.g100,color:C.g700,border:"none",borderRadius:7,fontSize:".86rem",cursor:"pointer",fontFamily:sans}}>Clear</button>
@@ -3959,7 +4089,7 @@ function AddInternTab({analysts,setAnalysts,showToast,onDone}) {
   );
 }
 
-/* â•â•â• FUNDS ADMIN TAB â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â FUNDS ADMIN TAB Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function FundsAdminTab({funds,setFunds,showToast}) {
   const [editing,setEditing]=useState(null); /* fund id being edited */
   const [form,setForm]=useState({});
@@ -3975,7 +4105,7 @@ function FundsAdminTab({funds,setFunds,showToast}) {
     }catch{
       /* Optimistic update if API not yet live */
       setFunds(prev=>prev.map(f=>f.id===editing?{...f,...form}:f));
-      showToast("Saved locally â€” sync to server when live.");
+      showToast("Saved locally Ã¢â‚¬â€ sync to server when live.");
       setEditing(null);
     }finally{setSaving(false);}
   };
@@ -3993,15 +4123,15 @@ function FundsAdminTab({funds,setFunds,showToast}) {
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:12,marginBottom:12}}>
                   <Inp label="Fund Name" value={form.name} onChange={ff("name")}/>
                   <Inp label="Abbreviation" value={form.abbr} onChange={ff("abbr")}/>
-                  <Inp label="AUM (e.g. â‚¦47.3B)" value={form.aum} onChange={ff("aum")}/>
-                  <Inp label="NAV per unit (e.g. â‚¦100.00)" value={form.nav} onChange={ff("nav")}/>
+                  <Inp label="AUM (e.g. Ã¢â€šÂ¦47.3B)" value={form.aum} onChange={ff("aum")}/>
+                  <Inp label="NAV per unit (e.g. Ã¢â€šÂ¦100.00)" value={form.nav} onChange={ff("nav")}/>
                   <Inp label="Inception (e.g. Mar 2012)" value={form.inception} onChange={ff("inception")}/>
                   <Inp label="Data as at (YYYY-MM-DD)" value={form.dataAsAt} onChange={ff("dataAsAt")} type="date"/>
                 </div>
                 <Inp label="Description" value={form.description} onChange={ff("description")} as="textarea" rows={3}/>
                 <p style={{fontSize:".74rem",color:C.g500,marginBottom:12}}>To update performance figures (perf_json / spark_json), use the FUNDS-LIVE-DATA-GUIDE.md or the cron sync script.</p>
                 <div style={{display:"flex",gap:8}}>
-                  <button onClick={save} disabled={saving} style={{padding:"9px 20px",background:C.gold,color:"#fff",border:"none",borderRadius:7,fontSize:".84rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>{saving?"Savingâ€¦":"Save Changes"}</button>
+                  <button onClick={save} disabled={saving} style={{padding:"9px 20px",background:C.gold,color:"#fff",border:"none",borderRadius:7,fontSize:".84rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>{saving?"SavingÃ¢â‚¬Â¦":"Save Changes"}</button>
                   <button onClick={()=>setEditing(null)} style={{padding:"9px 16px",background:C.g100,color:C.g700,border:"none",borderRadius:7,fontSize:".84rem",cursor:"pointer",fontFamily:sans}}>Cancel</button>
                 </div>
               </div>
@@ -4012,9 +4142,9 @@ function FundsAdminTab({funds,setFunds,showToast}) {
                   <div>
                     <div style={{fontWeight:600,fontSize:".9rem",color:C.navy,marginBottom:2}}>{f.name}</div>
                     <div style={{fontSize:".74rem",color:C.g500,display:"flex",gap:16}}>
-                      <span>AUM: <strong style={{color:C.navy}}>{f.aum||"â€”"}</strong></span>
-                      <span>NAV: <strong style={{color:C.navy}}>{f.nav||"â€”"}</strong></span>
-                      <span>As at: <strong style={{color:C.navy}}>{f.dataAsAt?fd(f.dataAsAt):"â€”"}</strong></span>
+                      <span>AUM: <strong style={{color:C.navy}}>{f.aum||"Ã¢â‚¬â€"}</strong></span>
+                      <span>NAV: <strong style={{color:C.navy}}>{f.nav||"Ã¢â‚¬â€"}</strong></span>
+                      <span>As at: <strong style={{color:C.navy}}>{f.dataAsAt?fd(f.dataAsAt):"Ã¢â‚¬â€"}</strong></span>
                     </div>
                   </div>
                 </div>
@@ -4028,7 +4158,7 @@ function FundsAdminTab({funds,setFunds,showToast}) {
   );
 }
 
-/* â•â•â• FILE MANAGER TAB â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â FILE MANAGER TAB Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function FileManagerTab({showToast}) {
   const [files,setFiles]=useState([]);
   const [loading,setLoading]=useState(true);
@@ -4063,9 +4193,9 @@ function FileManagerTab({showToast}) {
   return (
     <div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:24}}>
-        <div><h2 style={{fontFamily:serif,fontSize:"1.4rem",color:C.navy,fontWeight:600,marginBottom:4}}>File Manager</h2><p style={{fontSize:".8rem",color:C.g500}}>Upload and manage files on the server â€” no cPanel needed.</p></div>
+        <div><h2 style={{fontFamily:serif,fontSize:"1.4rem",color:C.navy,fontWeight:600,marginBottom:4}}>File Manager</h2><p style={{fontSize:".8rem",color:C.g500}}>Upload and manage files on the server Ã¢â‚¬â€ no cPanel needed.</p></div>
         <label style={{display:"flex",alignItems:"center",gap:8,padding:"9px 18px",background:C.gold,color:"#fff",borderRadius:7,fontSize:".84rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>
-          {uploading?"Uploadingâ€¦":"+ Upload File"}
+          {uploading?"UploadingÃ¢â‚¬Â¦":"+ Upload File"}
           <input type="file" onChange={upload} style={{display:"none"}} disabled={uploading}/>
         </label>
       </div>
@@ -4076,14 +4206,14 @@ function FileManagerTab({showToast}) {
         ))}
       </div>
       <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,overflow:"hidden"}}>
-        {loading?<div style={{padding:40,textAlign:"center",color:C.g500}}>Loadingâ€¦</div>
+        {loading?<div style={{padding:40,textAlign:"center",color:C.g500}}>LoadingÃ¢â‚¬Â¦</div>
         :files.length===0?<div style={{padding:40,textAlign:"center",color:C.g500}}>No files in {folder}/. Upload one above.</div>
         :files.map((f,i)=>(
           <div key={f.path} style={{display:"flex",alignItems:"center",gap:14,padding:"14px 20px",borderBottom:i<files.length-1?`1px solid ${C.g100}`:"none"}}>
             <div style={{width:36,height:36,borderRadius:8,background:C.offWhite,display:"flex",alignItems:"center",justifyContent:"center",fontSize:".64rem",fontWeight:700,color:C.g500,flexShrink:0}}>{f.ext?.toUpperCase()||"FILE"}</div>
             <div style={{flex:1,minWidth:0}}>
               <div style={{fontSize:".86rem",fontWeight:500,color:C.navy,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{f.name}</div>
-              <div style={{fontSize:".72rem",color:C.g500}}>{f.size} Â· {f.modified}</div>
+              <div style={{fontSize:".72rem",color:C.g500}}>{f.size} Ã‚Â· {f.modified}</div>
             </div>
             <a href={f.url} target="_blank" rel="noopener noreferrer" style={{padding:"6px 14px",background:C.navy,color:"#fff",borderRadius:6,fontSize:".74rem",fontWeight:500,textDecoration:"none",flexShrink:0}}>Open</a>
             <button onClick={()=>del(f)} style={{padding:"6px 12px",background:C.g100,color:C.red,border:"none",borderRadius:6,fontSize:".74rem",cursor:"pointer",fontFamily:sans,flexShrink:0}}>Delete</button>
@@ -4094,7 +4224,7 @@ function FileManagerTab({showToast}) {
   );
 }
 
-/* â•â•â• USERS TAB â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â USERS TAB Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 const DEFAULT_PW="re5earch15life";
 function UsersTab({showToast}) {
   const [demoUsers,setDemoUsersState]=useState(()=>lsGet(LS.demoUsers)||[]);
@@ -4121,11 +4251,11 @@ function UsersTab({showToast}) {
         <p style={{fontSize:".8rem",color:C.g500}}>View and manage portal user accounts. Reset passwords for locally-registered users.</p>
       </div>
 
-      {/* Built-in demo accounts â€” read-only */}
+      {/* Built-in demo accounts Ã¢â‚¬â€ read-only */}
       <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,overflow:"hidden",marginBottom:24}}>
         <div style={{background:C.g100,padding:"10px 16px",borderBottom:`1px solid ${C.g200}`,display:"flex",alignItems:"center",gap:8}}>
           <span style={{fontSize:".72rem",fontWeight:700,color:C.g500,textTransform:"uppercase",letterSpacing:.5}}>Built-in Accounts</span>
-          <span style={{fontSize:".68rem",color:C.g500,fontStyle:"italic"}}>â€” hardcoded demo accounts</span>
+          <span style={{fontSize:".68rem",color:C.g500,fontStyle:"italic"}}>Ã¢â‚¬â€ hardcoded demo accounts</span>
         </div>
         <table style={{width:"100%",borderCollapse:"collapse"}}>
           <thead><tr style={{borderBottom:`1px solid ${C.g200}`}}>
@@ -4146,7 +4276,7 @@ function UsersTab({showToast}) {
       <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,overflow:"hidden"}}>
         <div style={{background:C.g100,padding:"10px 16px",borderBottom:`1px solid ${C.g200}`,display:"flex",alignItems:"center",gap:8}}>
           <span style={{fontSize:".72rem",fontWeight:700,color:C.g500,textTransform:"uppercase",letterSpacing:.5}}>Registered Users</span>
-          <span style={{fontSize:".68rem",color:C.g500,fontStyle:"italic"}}>â€” self-registered + intern accounts (local)</span>
+          <span style={{fontSize:".68rem",color:C.g500,fontStyle:"italic"}}>Ã¢â‚¬â€ self-registered + intern accounts (local)</span>
         </div>
         {demoUsers.length===0
           ?<div style={{padding:"28px",textAlign:"center",color:C.g500,fontSize:".84rem"}}>No registered users yet. Users who register via the portal appear here.</div>
@@ -4169,7 +4299,7 @@ function UsersTab({showToast}) {
             ))}</tbody>
           </table>}
         <div style={{padding:"10px 16px",borderTop:`1px solid ${C.g100}`,fontSize:".72rem",color:C.g500,display:"flex",alignItems:"center",gap:6,flexWrap:"wrap"}}>
-          <span style={{color:C.gold}}>â„¹</span> Default password for newly added interns: <code style={{background:C.g100,padding:"1px 6px",borderRadius:3,fontFamily:"monospace",color:C.navy,fontSize:".74rem"}}>re5earch15life</code>
+          <span style={{color:C.gold}}>Ã¢â€žÂ¹</span> Default password for newly added interns: <code style={{background:C.g100,padding:"1px 6px",borderRadius:3,fontFamily:"monospace",color:C.navy,fontSize:".74rem"}}>re5earch15life</code>
         </div>
       </div>
     </div>
@@ -4207,7 +4337,7 @@ function SubscriberAccessTab({showToast}) {
                   <div>
                     <div style={{fontSize:".86rem",fontWeight:700,color:C.navy,marginBottom:3}}>{u.name}</div>
                     <div style={{fontSize:".75rem",color:C.g500,marginBottom:2}}>{u.email}</div>
-                    <div style={{fontSize:".73rem",color:C.g500}}>{u.company || "Prospect account"} Â· {u.role || "Subscriber"}</div>
+                    <div style={{fontSize:".73rem",color:C.g500}}>{u.company || "Prospect account"} Ã‚Â· {u.role || "Subscriber"}</div>
                   </div>
                   <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"flex-end"}}>
                     <button onClick={()=>activateManually(u.id,"registered")} style={{padding:"8px 12px",background:"#eff6ff",color:"#2563eb",border:"1px solid #bfdbfe",borderRadius:999,fontSize:".72rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>Member</button>
@@ -4248,7 +4378,7 @@ function SubscriberAccessTab({showToast}) {
             <div key={u.id} style={{display:"grid",gridTemplateColumns:"1fr auto",gap:12,alignItems:"center",padding:"14px 16px",background:C.offWhite,border:`1px solid ${C.g200}`,borderRadius:14}}>
               <div>
                 <div style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>{u.name}</div>
-                <div style={{fontSize:".72rem",color:C.g500}}>{u.email} Â· {humanAccessState(u)}</div>
+                <div style={{fontSize:".72rem",color:C.g500}}>{u.email} Ã‚Â· {humanAccessState(u)}</div>
               </div>
               <button onClick={()=>revokeUser(u.id)} style={{padding:"8px 12px",background:"#fef2f2",color:C.red,border:"1px solid #fecaca",borderRadius:999,fontSize:".72rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>Return to limited</button>
             </div>
@@ -4287,7 +4417,7 @@ function AccessCodesTab({showToast}) {
         {accessCodes.map(code=>{
           const inst = institutions.find(i=>i.id===code.institutionId);
           return (
-            <SectionFrame key={code.id} title={code.code} sub={code.type==="individual" ? "Single-use activation for one subscriber account." : `Master institutional code${inst ? ` Â· ${inst.name}` : ""}`}>
+            <SectionFrame key={code.id} title={code.code} sub={code.type==="individual" ? "Single-use activation for one subscriber account." : `Master institutional code${inst ? ` Ã‚Â· ${inst.name}` : ""}`}>
               <div style={{display:"grid",gridTemplateColumns:"repeat(5,minmax(0,1fr))",gap:12}}>
                 <div><Eyebrow style={{marginBottom:4,color:C.g500}}>Type</Eyebrow><div style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>{code.type}</div></div>
                 <div><Eyebrow style={{marginBottom:4,color:C.g500}}>Tier</Eyebrow><div style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>{code.tier}</div></div>
@@ -4303,7 +4433,7 @@ function AccessCodesTab({showToast}) {
   );
 }
 
-/* â•â•â• SETTINGS TAB (portal config) â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â SETTINGS TAB (portal config) Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function SettingsTab({showToast}) {
   const [settings,setSettings]=useState({site_name:"CHD Research Portal",contact_email:"research@chapelhilldenham.com"});
   const [loading,setLoading]=useState(true);
@@ -4318,11 +4448,11 @@ function SettingsTab({showToast}) {
     try{
       await fetch("/api/settings.php",{method:"PUT",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify(settings)});
       showToast("Settings saved.");
-    }catch{showToast("Saved locally â€” will sync when backend is live.");}
+    }catch{showToast("Saved locally Ã¢â‚¬â€ will sync when backend is live.");}
     finally{setSaving(false);}
   };
   const f=(k)=>e=>setSettings(p=>({...p,[k]:e.target.value}));
-  if(loading) return <div style={{padding:40,textAlign:"center",color:C.g500}}>Loadingâ€¦</div>;
+  if(loading) return <div style={{padding:40,textAlign:"center",color:C.g500}}>LoadingÃ¢â‚¬Â¦</div>;
   return (
     <div style={{maxWidth:640}}>
       <h2 style={{fontFamily:serif,fontSize:"1.4rem",color:C.navy,fontWeight:600,marginBottom:4}}>Portal Settings</h2>
@@ -4336,12 +4466,12 @@ function SettingsTab({showToast}) {
         </div>
       </div>
 
-      <button onClick={save} disabled={saving} style={{padding:"11px 28px",background:C.navy,color:"#fff",border:"none",borderRadius:8,fontSize:".86rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>{saving?"Savingâ€¦":"Save Settings"}</button>
+      <button onClick={save} disabled={saving} style={{padding:"11px 28px",background:C.navy,color:"#fff",border:"none",borderRadius:8,fontSize:".86rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>{saving?"SavingÃ¢â‚¬Â¦":"Save Settings"}</button>
     </div>
   );
 }
 
-/* â•â•â• FIRST-LOGIN PASSWORD MODAL â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â FIRST-LOGIN PASSWORD MODAL Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 function FirstLoginModal({user,onDone}) {
   const [pw,setPw]=useState("");
   const [pw2,setPw2]=useState("");
@@ -4359,23 +4489,23 @@ function FirstLoginModal({user,onDone}) {
     <div style={{position:"fixed",inset:0,background:"rgba(6,38,45,0.72)",display:"flex",alignItems:"center",justifyContent:"center",zIndex:9999}}>
       <div style={{background:C.white,borderRadius:14,padding:"36px 32px",maxWidth:420,width:"90%",boxShadow:"0 28px 56px rgba(0,0,0,0.22)"}}>
         <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:20}}>
-          <div style={{width:44,height:44,borderRadius:"50%",background:C.goldSoft,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.4rem",flexShrink:0}}>ðŸ”</div>
+          <div style={{width:44,height:44,borderRadius:"50%",background:C.goldSoft,display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.4rem",flexShrink:0}}>Ã°Å¸â€Â</div>
           <div>
             <h2 style={{fontFamily:serif,fontSize:"1.25rem",color:C.navy,fontWeight:600,lineHeight:1.2}}>Set Your Password</h2>
-            <p style={{fontSize:".78rem",color:C.g500,marginTop:3}}>First sign-in Â· Please choose a secure password to continue.</p>
+            <p style={{fontSize:".78rem",color:C.g500,marginTop:3}}>First sign-in Ã‚Â· Please choose a secure password to continue.</p>
           </div>
         </div>
         <div style={{height:1,background:C.g200,marginBottom:20}}/>
         <Inp label="New Password" value={pw} onChange={e=>setPw(e.target.value)} type="password" placeholder="At least 8 characters"/>
         {pw.length>0&&<div style={{display:"flex",gap:18,marginTop:-8,marginBottom:14,fontSize:".73rem"}}>
-          <span style={{color:pw.length>=8?C.green:C.g300,display:"flex",alignItems:"center",gap:3}}><span>{pw.length>=8?"âœ“":"â—‹"}</span> 8+ chars</span>
-          <span style={{color:/[A-Z]/.test(pw)?C.green:C.g300,display:"flex",alignItems:"center",gap:3}}><span>{/[A-Z]/.test(pw)?"âœ“":"â—‹"}</span> Uppercase</span>
-          <span style={{color:/[0-9]/.test(pw)?C.green:C.g300,display:"flex",alignItems:"center",gap:3}}><span>{/[0-9]/.test(pw)?"âœ“":"â—‹"}</span> Number</span>
+          <span style={{color:pw.length>=8?C.green:C.g300,display:"flex",alignItems:"center",gap:3}}><span>{pw.length>=8?"Ã¢Å“â€œ":"Ã¢â€”â€¹"}</span> 8+ chars</span>
+          <span style={{color:/[A-Z]/.test(pw)?C.green:C.g300,display:"flex",alignItems:"center",gap:3}}><span>{/[A-Z]/.test(pw)?"Ã¢Å“â€œ":"Ã¢â€”â€¹"}</span> Uppercase</span>
+          <span style={{color:/[0-9]/.test(pw)?C.green:C.g300,display:"flex",alignItems:"center",gap:3}}><span>{/[0-9]/.test(pw)?"Ã¢Å“â€œ":"Ã¢â€”â€¹"}</span> Number</span>
         </div>}
         <Inp label="Confirm Password" value={pw2} onChange={e=>setPw2(e.target.value)} type="password" placeholder="Repeat password"/>
         {err&&<div style={{background:"#fef2f2",color:C.red,padding:"9px 13px",borderRadius:7,fontSize:".8rem",marginBottom:14,marginTop:-4}}>{err}</div>}
         <button onClick={submit} disabled={!ok||saving} style={{width:"100%",padding:13,background:ok&&!saving?C.gold:C.g200,color:C.white,border:"none",borderRadius:8,fontWeight:600,fontSize:".9rem",cursor:ok&&!saving?"pointer":"default",fontFamily:sans,marginTop:4,transition:"background .15s"}}>
-          {saving?"Savingâ€¦":"Set Password & Continue â†’"}
+          {saving?"SavingÃ¢â‚¬Â¦":"Set Password & Continue Ã¢â€ â€™"}
         </button>
         {user?.name&&<p style={{textAlign:"center",fontSize:".73rem",color:C.g500,marginTop:12}}>Signing in as <strong style={{color:C.navy}}>{user.name}</strong></p>}
       </div>
@@ -4383,7 +4513,7 @@ function FirstLoginModal({user,onDone}) {
   );
 }
 
-/* â•â•â• LOCAL STORAGE HELPERS â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â LOCAL STORAGE HELPERS Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 const LS={
   user:"chd_session",reports:"chd_reports",analysts:"chd_analysts",
   funds:"chd_funds",bioEdits:"chd_bioedits",demoUsers:"chd_demo_users",prices:"chd_prices",
@@ -4395,7 +4525,7 @@ function lsGet(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):nul
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
 function lsDel(k){try{localStorage.removeItem(k);}catch{}}
 
-/* â•â•â• APP â•â•â• */
+/* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â APP Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
 export default function App() {
   const [page,setPage]         = useState(()=>lsGet("chd_page")||"home");
   const [pageData,setPageData] = useState(()=>lsGet("chd_pageData")||{});
@@ -4419,7 +4549,7 @@ export default function App() {
   const [digest,setDigest] = useState(()=>lsGet(LS.digest)||INIT_DIGEST);
   const [featuredReportIds,setFeaturedReportIds] = useState(()=>lsGet(LS.featuredReports)||DEFAULT_FEATURED_REPORT_IDS);
 
-  /* â”€â”€ Persist state to localStorage whenever it changes â”€â”€ */
+  /* Ã¢â€â‚¬Ã¢â€â‚¬ Persist state to localStorage whenever it changes Ã¢â€â‚¬Ã¢â€â‚¬ */
   useEffect(()=>{ if(user) lsSet(LS.user,user); else lsDel(LS.user); },[user]);
   useEffect(()=>{ lsSet(LS.reports,reports); },[reports]);
   useEffect(()=>{ lsSet(LS.analysts,analysts); },[analysts]);
@@ -4438,7 +4568,7 @@ export default function App() {
   useEffect(()=>{ lsSet("chd_page",page); },[page]);
   useEffect(()=>{ lsSet("chd_pageData",pageData); },[pageData]);
 
-  /* â”€â”€ Try live API on mount; falls back to localStorage state already loaded â”€â”€ */
+  /* Ã¢â€â‚¬Ã¢â€â‚¬ Try live API on mount; falls back to localStorage state already loaded Ã¢â€â‚¬Ã¢â€â‚¬ */
   useEffect(()=>{
     /* Validate / refresh session from API (won't clear localStorage-restored user if API offline) */
     api.auth.me()
@@ -4562,30 +4692,30 @@ export default function App() {
           input,textarea,select{color:${C.navy}}
           @keyframes heroFade{from{opacity:.2;transform:scale(1.015)}to{opacity:1;transform:scale(1)}}
 
-          /* â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-             MOBILE  â‰¤ 640 px
-          â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• */
+          /* Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â
+             MOBILE  Ã¢â€°Â¤ 640 px
+          Ã¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢ÂÃ¢â€¢Â */
           @media(max-width:640px){
             /* Clip horizontal overflow without breaking position:sticky */
             body{overflow-x:clip}
             #root,#root>div{overflow-x:clip}
 
-            /* â”€â”€ Containers: full-width, compact padding â”€â”€ */
+            /* Ã¢â€â‚¬Ã¢â€â‚¬ Containers: full-width, compact padding Ã¢â€â‚¬Ã¢â€â‚¬ */
             *[style*="max-width: 1260px"]{max-width:100% !important}
             *[style*="padding: 0 40px"]{padding-left:14px !important;padding-right:14px !important}
             *[style*="padding: 0 36px"]{padding-left:10px !important;padding-right:10px !important}
 
-            /* â”€â”€ Section vertical padding: reduce on mobile â”€â”€ */
+            /* Ã¢â€â‚¬Ã¢â€â‚¬ Section vertical padding: reduce on mobile Ã¢â€â‚¬Ã¢â€â‚¬ */
             *[style*="padding: 60px 0"]{padding-top:36px !important;padding-bottom:36px !important}
             *[style*="padding: 52px 0"]{padding-top:28px !important;padding-bottom:28px !important}
             *[style*="padding: 48px 0"]{padding-top:24px !important;padding-bottom:24px !important}
 
-            /* â”€â”€ Hero heading â”€â”€ */
+            /* Ã¢â€â‚¬Ã¢â€â‚¬ Hero heading Ã¢â€â‚¬Ã¢â€â‚¬ */
             h1[style*="2.9rem"]{font-size:1.85rem !important;line-height:1.15 !important}
             *[style*="max-width: 640px"]{max-width:100% !important}
             *[style*="max-width: 480px"]{max-width:100% !important}
 
-            /* â”€â”€ All repeat() grids â†’ single column â”€â”€ */
+            /* Ã¢â€â‚¬Ã¢â€â‚¬ All repeat() grids Ã¢â€ â€™ single column Ã¢â€â‚¬Ã¢â€â‚¬ */
             *[style*="repeat(3,1fr)"]{grid-template-columns:1fr !important}
             *[style*="repeat(3, 1fr)"]{grid-template-columns:1fr !important}
             *[style*="repeat(2,1fr)"]{grid-template-columns:1fr !important}
@@ -4595,16 +4725,16 @@ export default function App() {
             /* Large gaps: tighten */
             *[style*="gap: 48px"]{gap:20px !important}
 
-            /* â”€â”€ Search inputs: flexible width â”€â”€ */
+            /* Ã¢â€â‚¬Ã¢â€â‚¬ Search inputs: flexible width Ã¢â€â‚¬Ã¢â€â‚¬ */
             input[style*="width: 230px"]{width:100px !important;min-width:0}
             input[style*="width: 240px"]{flex:1 !important;width:auto !important;min-width:0}
 
-            /* â”€â”€ Reports filter row: stack pills above search/sort â”€â”€ */
+            /* Ã¢â€â‚¬Ã¢â€â‚¬ Reports filter row: stack pills above search/sort Ã¢â€â‚¬Ã¢â€â‚¬ */
             *[style*="margin-bottom: 18px"][style*="justify-content: space-between"]{flex-direction:column !important;align-items:stretch !important}
             *[style*="margin-bottom: 18px"][style*="justify-content: space-between"]>div:last-child{width:100% !important;flex-wrap:wrap !important}
             *[style*="margin-bottom: 18px"][style*="justify-content: space-between"] input{flex:1 !important;width:auto !important;min-width:0 !important}
 
-            /* â”€â”€ Header: sticky, compact â”€â”€ */
+            /* Ã¢â€â‚¬Ã¢â€â‚¬ Header: sticky, compact Ã¢â€â‚¬Ã¢â€â‚¬ */
             header{position:sticky !important;top:0 !important;z-index:100 !important}
             header>div{padding:0 10px !important;height:56px !important;display:flex !important;align-items:center !important;justify-content:space-between !important;gap:8px !important}
             /* Logo area */
@@ -4622,7 +4752,7 @@ export default function App() {
             header>div>div:last-child>div button{padding:4px 8px !important;font-size:.6rem !important;white-space:nowrap}
             header>div>div:last-child>button{padding:6px 10px !important;font-size:.66rem !important;white-space:nowrap}
 
-            /* â”€â”€ Contact page: stack cleanly â”€â”€ */
+            /* Ã¢â€â‚¬Ã¢â€â‚¬ Contact page: stack cleanly Ã¢â€â‚¬Ã¢â€â‚¬ */
             .contact-hero{padding-top:36px !important;padding-bottom:28px !important}
             .contact-hero h1{font-size:1.75rem !important;line-height:1.12 !important}
             .contact-grid{grid-template-columns:1fr !important}
@@ -4637,10 +4767,10 @@ export default function App() {
             .contact-detail-grid{grid-template-columns:1fr !important}
             .contact-map-head h2{font-size:1.12rem !important}
             .contact-map-head p{font-size:.8rem !important}
-            .digest-grid,.funds-hero-grid,.infra-fund-grid,.analyst-hero-grid,.analyst-profile-grid{grid-template-columns:1fr !important}
+            .digest-grid,.funds-hero-grid,.infra-fund-grid,.analyst-hero-grid,.analyst-profile-grid,.fund-modal-metrics{grid-template-columns:1fr !important}
             .mutual-funds-grid{grid-template-columns:1fr !important}
 
-            /* â”€â”€ Home hero / library: collapse cleanly â”€â”€ */
+            /* Ã¢â€â‚¬Ã¢â€â‚¬ Home hero / library: collapse cleanly Ã¢â€â‚¬Ã¢â€â‚¬ */
             .home-hero-grid{grid-template-columns:1fr !important;gap:18px !important}
             .home-hero-grid > div:first-child{padding-top:0 !important}
             .home-hero-grid h1{font-size:2rem !important;line-height:1.08 !important;max-width:100% !important}
@@ -4699,13 +4829,14 @@ export default function App() {
         {user?.mustChange&&<FirstLoginModal user={user} onDone={completePwChange}/>}
         {toast&&(
           <div style={{position:"fixed",left:24,bottom:24,background:C.navy,color:"#fff",padding:"12px 18px",borderRadius:10,boxShadow:"0 16px 40px rgba(17,37,48,0.22)",fontSize:".83rem",zIndex:200,display:"flex",alignItems:"center",gap:8}}>
-            <span style={{color:C.gold}}>âœ“</span>{toast}
+            <span style={{color:C.gold}}>Ã¢Å“â€œ</span>{toast}
           </div>
         )}
       </div>
     </DataCtx.Provider>
   );
 }
+
 
 
 
