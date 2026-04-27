@@ -1743,77 +1743,287 @@ function PriceUploadTab({isIntern,showToast}) {
 }
 
 /* ═══ ANALYST PORTAL (own dashboard) ═══ */
+function PortalShell({hero,sections,tab,setTab,children,accent=C.gold}) {
+  return (
+    <div style={{minHeight:"80vh",background:C.offWhite}}>
+      <section style={{background:hero.bg,padding:"44px 0"}}>
+        <div style={{maxWidth:1260,margin:"0 auto",padding:"0 40px",display:"flex",alignItems:"center",gap:18}}>
+          {hero.avatar}
+          <div style={{minWidth:0}}>
+            <p style={{color:hero.eyebrowColor||C.gold,fontSize:".68rem",textTransform:"uppercase",letterSpacing:1.5,fontWeight:700,marginBottom:4}}>{hero.eyebrow}</p>
+            <h1 style={{fontFamily:serif,fontSize:"1.85rem",color:C.white,fontWeight:500,marginBottom:3}}>{hero.title}</h1>
+            <p style={{color:"rgba(255,255,255,0.58)",fontSize:".84rem"}}>{hero.sub}</p>
+          </div>
+          <div style={{marginLeft:"auto",display:"grid",gridTemplateColumns:`repeat(${Math.max(hero.stats.length,1)}, minmax(90px, 1fr))`,gap:14,minWidth:"min(440px, 42vw)"}}>
+            {hero.stats.map(stat=>(
+              <div key={stat.l} style={{textAlign:"right"}}>
+                <p style={{color:"rgba(255,255,255,0.38)",fontSize:".68rem",marginBottom:4,textTransform:"uppercase",letterSpacing:.4}}>{stat.l}</p>
+                <p style={{color:C.white,fontFamily:serif,fontSize:"1.65rem",fontWeight:500,lineHeight:1}}>{stat.v}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <div className="admin-cms-shell" style={{maxWidth:1260,margin:"0 auto",padding:"34px 40px",display:"grid",gridTemplateColumns:"240px 1fr",gap:24,alignItems:"start"}}>
+        <aside style={{background:C.white,border:`1px solid ${C.g200}`,borderRadius:12,padding:"18px 14px",position:"sticky",top:96}}>
+          <div style={{padding:"0 8px 14px",borderBottom:`1px solid ${C.g100}`,marginBottom:14}}>
+            <div style={{fontSize:".68rem",fontWeight:800,letterSpacing:1.8,textTransform:"uppercase",color:accent,marginBottom:5}}>Workspace</div>
+            <p style={{fontSize:".78rem",lineHeight:1.55,color:C.g500,margin:0}}>Everything for this role sits here: overview, actions, submissions, and reading signals.</p>
+          </div>
+          {sections.map(group=>(
+            <div key={group.l} style={{marginBottom:14}}>
+              <div style={{fontSize:".62rem",fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",color:C.g500,margin:"0 8px 8px"}}>{group.l}</div>
+              <div style={{display:"grid",gap:4}}>
+                {group.items.map(item=>{
+                  const active=tab===item.k;
+                  return (
+                    <button key={item.k} onClick={()=>setTab(item.k)} style={{width:"100%",display:"flex",alignItems:"center",gap:10,textAlign:"left",padding:"10px 10px",background:active?"rgba(6,38,45,0.06)":"transparent",border:`1px solid ${active?"rgba(185,114,49,0.22)":"transparent"}`,borderRadius:9,color:active?C.navy:C.g700,fontSize:".8rem",fontWeight:active?700:500,cursor:"pointer",fontFamily:sans}}>
+                      <span style={{flex:1}}>{item.l}</span>
+                      {item.badge>0&&<span style={{background:C.red,color:"#fff",borderRadius:10,fontSize:".6rem",fontWeight:700,padding:"1px 6px",minWidth:18,textAlign:"center"}}>{item.badge}</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </aside>
+        <main style={{minWidth:0}}>{children}</main>
+      </div>
+    </div>
+  );
+}
+
+function OverviewMetricGrid({items}) {
+  return (
+    <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:18,marginBottom:24}}>
+      {items.map(item=>(
+        <div key={item.l} style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"22px 18px"}}>
+          <div style={{width:38,height:38,borderRadius:9,background:item.bg,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:12,color:item.c,fontWeight:700,fontSize:".9rem"}}>{item.v}</div>
+          <div style={{fontWeight:700,fontSize:"1.5rem",color:C.navy,fontFamily:serif,marginBottom:2}}>{item.v}</div>
+          <div style={{fontSize:".8rem",fontWeight:600,color:C.navy,marginBottom:2}}>{item.l}</div>
+          <div style={{fontSize:".72rem",color:C.g500}}>{item.sub}</div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function PendingReportsTab({pendingReports,analysts,setReports,showToast,title="Pending Reports",emptyTitle="All clear - no pending submissions",emptySub="New submissions will appear here for review.",approverId=1,approveToast="Report approved and published.",rejectToast="Report sent back for revision.",submitterLabelFn}) {
+  const [rejectId,setRejectId]=useState(null);
+  const [reason,setReason]=useState("");
+  const approve=id=>{
+    setReports(p=>p.map(r=>r.id===id?{...r,status:"published",approved_at:new Date().toISOString(),approved_by:approverId,rejectedReason:""}:r));
+    showToast(approveToast);
+    api.reports.approve(id).catch(()=>{});
+  };
+  const reject=id=>{
+    if(!reason.trim()) return;
+    setReports(p=>p.map(r=>r.id===id?{...r,status:"rejected",rejectedReason:reason}:r));
+    showToast(rejectToast);
+    api.reports.reject(id,reason).catch(()=>{});
+    setRejectId(null); setReason("");
+  };
+  if(pendingReports.length===0) return (
+    <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"48px",textAlign:"center",color:C.g500}}>
+      <div style={{fontSize:"2rem",marginBottom:12}}>OK</div>
+      <p style={{fontWeight:600,color:C.navy,marginBottom:6}}>{emptyTitle}</p>
+      <p style={{fontSize:".84rem"}}>{emptySub}</p>
+    </div>
+  );
+  return (
+    <div>
+      <SH title={title} sub={`${pendingReports.length} ${pendingReports.length===1?"submission":"submissions"} awaiting review`}/>
+      <div style={{display:"flex",flexDirection:"column",gap:16}}>
+        {pendingReports.map(r=>{
+          const submitter=analysts.find(a=>a.id===r.aid);
+          const cat=gc(r.cat),pc=gpc(r.cat);
+          const dc=cat?.p?`${pc?.name} · ${cat.name}`:cat?.name;
+          const submitterLabel = submitterLabelFn ? submitterLabelFn(r,submitter) : `Submitted by ${submitter?.name||"Team member"}`;
+          return (
+            <div key={r.id} style={{background:C.white,borderRadius:12,border:"1px solid #fde047",overflow:"hidden"}}>
+              <div style={{background:"#fef9c3",padding:"10px 20px",display:"flex",alignItems:"center",gap:10,borderBottom:"1px solid #fde047"}}>
+                <span style={{fontSize:".72rem",fontWeight:700,color:"#854d0e",textTransform:"uppercase",letterSpacing:.4}}>Pending Review</span>
+                <span style={{fontSize:".72rem",color:"#92400e",marginLeft:"auto"}}>{submitterLabel} · {fd(r.date)}</span>
+              </div>
+              <div style={{padding:"20px"}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:16,marginBottom:12}}>
+                  <div>
+                    <span style={{background:C.goldSoft,color:C.gold,fontSize:".6rem",fontWeight:700,textTransform:"uppercase",padding:"3px 8px",borderRadius:3,marginBottom:8,display:"inline-block"}}>{dc}</span>
+                    <h3 style={{fontFamily:serif,fontSize:"1.1rem",color:C.navy,fontWeight:600,marginBottom:6}}>{r.title}</h3>
+                    <p style={{color:C.g500,fontSize:".84rem",lineHeight:1.6}}>{r.ex}</p>
+                  </div>
+                </div>
+                <ReportBodyPreview body={r.body} ex={r.ex}/>
+                {rejectId===r.id?(
+                  <div style={{display:"flex",gap:8,alignItems:"flex-end"}}>
+                    <div style={{flex:1}}>
+                      <label style={{fontSize:".72rem",fontWeight:600,color:C.navy,display:"block",marginBottom:5,textTransform:"uppercase",letterSpacing:.3}}>Reason for rejection <span style={{color:C.red}}>*</span></label>
+                      <input value={reason} onChange={e=>setReason(e.target.value)} placeholder="Provide revision guidance..." style={{width:"100%",padding:"10px 12px",border:`1px solid ${C.g200}`,borderRadius:7,fontSize:".84rem",fontFamily:sans}}/>
+                    </div>
+                    <button onClick={()=>reject(r.id)} style={{padding:"10px 18px",background:C.red,color:"#fff",border:"none",borderRadius:7,fontSize:".8rem",fontWeight:600,cursor:"pointer",fontFamily:sans,flexShrink:0}}>Return</button>
+                    <button onClick={()=>{setRejectId(null);setReason("");}} style={{padding:"10px 14px",background:C.g100,color:C.g700,border:"none",borderRadius:7,fontSize:".8rem",cursor:"pointer",fontFamily:sans,flexShrink:0}}>Cancel</button>
+                  </div>
+                ):(
+                  <div style={{display:"flex",gap:8}}>
+                    <button onClick={()=>approve(r.id)} style={{padding:"9px 22px",background:"#16a34a",color:"#fff",border:"none",borderRadius:7,fontSize:".82rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>Approve and Publish</button>
+                    <button onClick={()=>setRejectId(r.id)} style={{padding:"9px 18px",background:"#fef2f2",color:C.red,border:"1px solid #fca5a5",borderRadius:7,fontSize:".82rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>Return for Revision</button>
+                  </div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function StaffOverviewTab({user,reports,analysts,pendingReports,nav}) {
+  const isDirector = user?.tier==="director";
+  const myReports = reports.filter(r=>r.aid===user.analystId);
+  const recentPublished = reports.filter(r=>r.status==="published").sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,5);
+  const directReports = isDirector ? analysts.filter(a=>a.role==="analyst"||a.role==="intern") : analysts.filter(a=>a.role==="intern"&&a.supervisorId===user.analystId);
+  return (
+    <div>
+      <OverviewMetricGrid items={[
+        {l:isDirector?"My Output":"My Reports",v:myReports.length,sub:isDirector?"Director-authored publications":"Published from your coverage",c:C.navy,bg:"#eef2f7"},
+        {l:"Pending Review",v:pendingReports.length,sub:isDirector?"Team items awaiting approval":"Intern items awaiting review",c:"#b45309",bg:"#fef3c7"},
+        {l:"Direct Reports",v:directReports.length,sub:isDirector?"Analysts and interns visible":"Interns assigned to you",c:C.gold,bg:"#f7eedf"},
+        {l:"Reader Activity",v:(lsGet(LS.recentViews)||[]).length,sub:"Recent tracked opens",c:C.green,bg:"#edf4ef"},
+      ]}/>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:22}}>
+        <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"24px"}}>
+          <SH title={isDirector?"Director Overview":"Coverage Overview"} sub={isDirector?"A quick view of active submissions and publishing flow.":"What is moving inside your coverage area right now."}/>
+          <div style={{display:"grid",gap:12}}>
+            <div style={{display:"flex",justifyContent:"space-between",padding:"12px 14px",background:C.offWhite,borderRadius:10}}><span style={{fontSize:".82rem",color:C.navy}}>Pending approvals</span><strong style={{color:C.navy}}>{pendingReports.length}</strong></div>
+            <div style={{display:"flex",justifyContent:"space-between",padding:"12px 14px",background:C.offWhite,borderRadius:10}}><span style={{fontSize:".82rem",color:C.navy}}>Published this month</span><strong style={{color:C.navy}}>{reports.filter(r=>r.status==="published"&&r.date>="2026-04-01").length}</strong></div>
+            <div style={{display:"flex",justifyContent:"space-between",padding:"12px 14px",background:C.offWhite,borderRadius:10}}><span style={{fontSize:".82rem",color:C.navy}}>Most active staff type</span><strong style={{color:C.navy}}>{isDirector?"Research team":"Intern support"}</strong></div>
+          </div>
+        </div>
+        <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"24px"}}>
+          <SH title="Recent Publications" sub="Latest published reports visible from the portal."/>
+          <div style={{display:"grid",gap:10}}>
+            {recentPublished.map(r=>(
+              <button key={r.id} onClick={()=>nav("report",{id:r.id})} style={{textAlign:"left",padding:"12px 14px",background:C.offWhite,border:`1px solid ${C.g200}`,borderRadius:10,cursor:"pointer",fontFamily:sans}}>
+                <div style={{fontSize:".82rem",fontWeight:700,color:C.navy,marginBottom:4}}>{r.title}</div>
+                <div style={{fontSize:".72rem",color:C.g500,display:"flex",justifyContent:"space-between"}}><span>{gc(r.cat)?.name||"Research"}</span><span>{fd(r.date)}</span></div>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function InternOverviewTab({myReports,pending,published,supervisor}) {
+  const rejected=myReports.filter(r=>r.status==="rejected");
+  return (
+    <div>
+      <OverviewMetricGrid items={[
+        {l:"Submitted",v:myReports.length,sub:"Total drafts and submissions",c:C.navy,bg:"#eef2f7"},
+        {l:"Pending Review",v:pending.length,sub:"Awaiting supervisor action",c:"#b45309",bg:"#fef3c7"},
+        {l:"Published",v:published.length,sub:"Live on the portal",c:C.green,bg:"#edf4ef"},
+        {l:"Needs Revision",v:rejected.length,sub:"Items sent back",c:C.red,bg:"#fef2f2"},
+      ]}/>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:22}}>
+        <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"24px"}}>
+          <SH title="Submission Status" sub="Keep an eye on what needs follow-up next."/>
+          <div style={{display:"grid",gap:12}}>
+            {[
+              {label:"Pending review",value:pending.length},
+              {label:"Published",value:published.length},
+              {label:"Needs revision",value:rejected.length},
+            ].map(item=>(
+              <div key={item.label} style={{display:"flex",justifyContent:"space-between",padding:"12px 14px",background:C.offWhite,borderRadius:10}}>
+                <span style={{fontSize:".82rem",color:C.navy}}>{item.label}</span>
+                <strong style={{color:C.navy}}>{item.value}</strong>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"24px"}}>
+          <SH title="Supervisor Guidance" sub="Use this area to stay clear on how reviews move."/>
+          <div style={{display:"grid",gap:10}}>
+            <div style={{padding:"12px 14px",background:C.offWhite,borderRadius:10,fontSize:".82rem",lineHeight:1.7,color:C.g700}}>
+              {supervisor?`${supervisor.name} reviews your submissions before they go live.`:"Your submissions move to supervisor review before publishing."}
+            </div>
+            <div style={{padding:"12px 14px",background:C.offWhite,borderRadius:10,fontSize:".82rem",lineHeight:1.7,color:C.g700}}>
+              Use Reader Activity to see what the team is currently opening while you shape the next draft.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function AnalystPortalPage({user,nav}) {
   const {reports,analysts,setReports}=useData();
   const analyst=analysts.find(a=>a.id===user.analystId);
   const myReports=reports.filter(r=>r.aid===user.analystId);
-  const [tab,setTab]=useState("profile");
+  const [tab,setTab]=useState("overview");
   const [toast,setToast]=useState("");
   const showToast=msg=>{setToast(msg);setTimeout(()=>setToast(""),3000);};
 
   if(!analyst) return <div style={{padding:80,textAlign:"center",color:C.g500}}>Analyst profile not linked. Contact the administrator.</div>;
 
+  const isDirector = user?.tier==="director";
   const myInterns=analysts.filter(a=>a.role==="intern"&&a.supervisorId===user.analystId);
   const pendingReports=reports.filter(r=>r.status==="pending"&&myInterns.some(i=>i.id===r.aid));
-  const pendingCount=pendingReports.length;
-  const tabs=[
-    {k:"profile",  l:"My Profile",        i:"ME"},
-    {k:"reports",  l:"My Reports",        i:"RP"},
-    {k:"activity", l:"Reader Activity",   i:"RA"},
-    {k:"approvals",l:`Approvals`,         i:"OK", badge:pendingCount},
-    {k:"pricelist",l:"Price Lists",       i:"PL"},
-  ];  return (
-    <div style={{minHeight:"80vh",background:C.offWhite}}>
-      <section style={{background:`linear-gradient(135deg,${C.navy} 0%,${C.navyLight} 100%)`,padding:"44px 0"}}>
-        <div style={{maxWidth:1260,margin:"0 auto",padding:"0 40px",display:"flex",alignItems:"center",gap:20}}>
-          <AnalystAvatar analyst={analyst} size={64} fontSize="1.5rem"/>
-          <div>
-            <p style={{color:C.gold,fontSize:".68rem",textTransform:"uppercase",letterSpacing:1.5,fontWeight:600,marginBottom:4}}>My Research Portal</p>
-            <h1 style={{fontFamily:serif,fontSize:"1.8rem",color:C.white,fontWeight:500,marginBottom:2}}>{analyst.name}</h1>
-            <p style={{color:"rgba(255,255,255,0.5)",fontSize:".84rem"}}>{analyst.title} · {analyst.cov}</p>
-          </div>
-          <div style={{marginLeft:"auto",textAlign:"right"}}>
-            <p style={{color:"rgba(255,255,255,0.35)",fontSize:".72rem",marginBottom:3}}>Reports Published</p>
-            <p style={{color:C.white,fontFamily:serif,fontSize:"2rem",fontWeight:500}}>{myReports.length}</p>
-          </div>
-        </div>
-      </section>
-      <div style={{background:C.white,borderBottom:`1px solid ${C.g200}`,position:"sticky",top:68,zIndex:50}}>
-        <div style={{maxWidth:1260,margin:"0 auto",padding:"0 40px",display:"flex",gap:0}}>
-          {tabs.map(t=>(
-            <button key={t.k} onClick={()=>setTab(t.k)} style={{padding:"15px 18px",background:"none",border:"none",borderBottom:`2px solid ${tab===t.k?C.gold:"transparent"}`,color:tab===t.k?C.navy:C.g500,fontSize:".8rem",fontWeight:tab===t.k?600:400,cursor:"pointer",fontFamily:sans,display:"flex",alignItems:"center",gap:6,transition:"color .15s",position:"relative"}}>
-              {t.i} {t.l}
-              {t.badge>0&&<span style={{background:C.red,color:"#fff",borderRadius:10,fontSize:".6rem",fontWeight:700,padding:"1px 6px",minWidth:18,textAlign:"center"}}>{t.badge}</span>}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div style={{maxWidth:1260,margin:"0 auto",padding:"36px 40px"}}>
-        {tab==="profile"&&(
-          <AnalystProfileTab analyst={analyst} user={user} nav={nav} showToast={showToast}/>
-        )}
+  const sections=[
+    {l:"Workspace",items:[
+      {k:"overview",l:isDirector?"Director Overview":"Overview"},
+      {k:"profile",l:"My Profile"},
+      {k:"reports",l:"My Reports"},
+      {k:"activity",l:"Reader Activity"},
+    ]},
+    {l:"Workflow",items:[
+      {k:"approvals",l:isDirector?"Team Approvals":"Approvals",badge:pendingReports.length},
+      {k:"pricelist",l:"Price Lists"},
+    ]},
+  ];
+
+  return (
+    <>
+      <PortalShell
+        tab={tab}
+        setTab={setTab}
+        sections={sections}
+        hero={{
+          bg:`linear-gradient(135deg,${C.navy} 0%,${C.navyLight} 100%)`,
+          avatar:<AnalystAvatar analyst={analyst} size={64} fontSize="1.5rem"/>,
+          eyebrow:isDirector?"Director Workspace":"Analyst Workspace",
+          title:analyst.name,
+          sub:`${analyst.title} · ${analyst.cov}`,
+          stats:[
+            {l:"Published",v:myReports.filter(r=>r.status==="published").length},
+            {l:"Pending Review",v:pendingReports.length},
+            {l:isDirector?"Team Coverage":"Assigned Interns",v:isDirector?analysts.filter(a=>a.role==="analyst"||a.role==="intern").length:myInterns.length},
+          ],
+        }}>
+        {tab==="overview"&&<StaffOverviewTab user={user} reports={reports} analysts={analysts} pendingReports={pendingReports} nav={nav}/>}
+        {tab==="profile"&&<AnalystProfileTab analyst={analyst} user={user} nav={nav} showToast={showToast}/>}
         {tab==="reports"&&(
           <div>
             <AnalystUploadTab analystId={user.analystId} isIntern={false} reports={reports} setReports={setReports} showToast={showToast} onDone={()=>{}}/>
             <div style={{marginTop:40}}>
-              <SH title="My Reports" sub={`${myReports.length} report${myReports.length!==1?"s":""} published`}/>
+              <SH title="My Reports" sub={`${myReports.length} report${myReports.length!==1?"s":""} visible in your workspace`}/>
               {myReports.length===0
-                ?<div style={{padding:"48px",textAlign:"center",color:C.g500,background:C.white,borderRadius:12,border:`1px solid ${C.g200}`}}>You haven't published any reports yet. Use the form above to submit your first report.</div>
-                :<div style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:20}}>{myReports.map(r=><RC key={r.id} r={r} nav={nav} user={user}/>)}</div>
+                ?<div style={{padding:"48px",textAlign:"center",color:C.g500,background:C.white,borderRadius:12,border:`1px solid ${C.g200}`}}>You have not published any reports yet. Use the form above to create the next one.</div>
+                :<div className="report-grid-mobile" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:20}}>{myReports.map(r=><RC key={r.id} r={r} nav={nav} user={user}/>)}</div>
               }
             </div>
           </div>
         )}
         {tab==="activity"&&<ReaderActivityTab nav={nav} sub="Track what users are opening now and jump straight back into those reports or library files."/>}
-        {tab==="approvals"&&<ApprovalsTab pendingReports={pendingReports} analysts={analysts} setReports={setReports} showToast={showToast}/>}
-        {tab==="pricelist"&&<PriceUploadTab isIntern={false} showToast={showToast}/>}
-      </div>
+        {tab==="approvals"&&<PendingReportsTab pendingReports={pendingReports} analysts={analysts} setReports={setReports} showToast={showToast} title={isDirector?"Team Approvals":"Pending Approvals"} emptySub={isDirector?"Analyst and intern submissions will appear here for review.":"Intern submissions assigned to you will appear here for review."} submitterLabelFn={(r,submitter)=>`Submitted by ${submitter?.name||"Team member"}`}/>} 
+        {tab==="pricelist"&&<PriceUploadTab isIntern={false} showToast={showToast}/>} 
+      </PortalShell>
       {toast&&<div style={{position:"fixed",right:24,bottom:24,background:C.navy,color:"#fff",padding:"13px 18px",borderRadius:10,boxShadow:"0 16px 40px rgba(17,37,48,0.2)",fontSize:".83rem",zIndex:300,display:"flex",alignItems:"center",gap:8}}><span style={{color:C.gold}}>✓</span>{toast}</div>}
-    </div>
+    </>
   );
 }
-
-/* ── Expandable report body for approvals review ── */
 function ReportBodyPreview({body,ex}) {
   const [open,setOpen]=useState(false);
   if(!body) return null;
@@ -1836,75 +2046,6 @@ function ReportBodyPreview({body,ex}) {
 }
 
 /* ── Approvals Tab (analyst sees intern pending reports) ── */
-function ApprovalsTab({pendingReports,analysts,setReports,showToast}) {
-  const [rejectId,setRejectId]=useState(null);
-  const [reason,setReason]=useState("");
-  const approve=id=>{
-    setReports(p=>p.map(r=>r.id===id?{...r,status:"published",approved_at:new Date().toISOString(),approved_by:1,rejectedReason:""}:r));
-    showToast("Report approved and published.");
-    api.reports.approve(id).catch(()=>{});
-  };
-  const reject=id=>{
-    if(!reason.trim()){return;}
-    setReports(p=>p.map(r=>r.id===id?{...r,status:"rejected",rejectedReason:reason}:r));
-    showToast("Report returned to intern.");
-    api.reports.reject(id,reason).catch(()=>{});
-    setRejectId(null);setReason("");
-  };
-  if(pendingReports.length===0) return (
-    <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"48px",textAlign:"center",color:C.g500}}>
-      <div style={{fontSize:"2rem",marginBottom:12}}>✅</div>
-      <p style={{fontWeight:600,color:C.navy,marginBottom:6}}>All clear — no pending submissions</p>
-      <p style={{fontSize:".84rem"}}>Intern report submissions will appear here for your review.</p>
-    </div>
-  );
-  return (
-    <div>
-      <SH title="Pending Approvals" sub={`${pendingReports.length} submission${pendingReports.length!==1?"s":""} awaiting your review`}/>
-      <div style={{display:"flex",flexDirection:"column",gap:16}}>
-        {pendingReports.map(r=>{
-          const intern=analysts.find(a=>a.id===r.aid);
-          const cat=gc(r.cat),pc=gpc(r.cat);
-          const dc=cat?.p?`${pc?.name} · ${cat.name}`:cat?.name;
-          return (
-            <div key={r.id} style={{background:C.white,borderRadius:12,border:"1px solid #fde047",overflow:"hidden"}}>
-              <div style={{background:"#fef9c3",padding:"10px 20px",display:"flex",alignItems:"center",gap:10,borderBottom:"1px solid #fde047"}}>
-                <span style={{fontSize:".72rem",fontWeight:700,color:"#854d0e",textTransform:"uppercase",letterSpacing:.4}}>⏳ Pending Review</span>
-                <span style={{fontSize:".72rem",color:"#92400e",marginLeft:"auto"}}>Submitted by {intern?.name||"Intern"} · {fd(r.date)}</span>
-              </div>
-              <div style={{padding:"20px"}}>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:16,marginBottom:12}}>
-                  <div>
-                    <span style={{background:C.goldSoft,color:C.gold,fontSize:".6rem",fontWeight:700,textTransform:"uppercase",padding:"3px 8px",borderRadius:3,marginBottom:8,display:"inline-block"}}>{dc}</span>
-                    <h3 style={{fontFamily:serif,fontSize:"1.1rem",color:C.navy,fontWeight:600,marginBottom:6}}>{r.title}</h3>
-                    <p style={{color:C.g500,fontSize:".84rem",lineHeight:1.6}}>{r.ex}</p>
-                  </div>
-                </div>
-                <ReportBodyPreview body={r.body} ex={r.ex}/>
-                {rejectId===r.id?(
-                  <div style={{display:"flex",gap:8,alignItems:"flex-end"}}>
-                    <div style={{flex:1}}>
-                      <label style={{fontSize:".72rem",fontWeight:600,color:C.navy,display:"block",marginBottom:5,textTransform:"uppercase",letterSpacing:.3}}>Reason for rejection <span style={{color:C.red}}>*</span></label>
-                      <input value={reason} onChange={e=>setReason(e.target.value)} placeholder="Provide feedback so the intern can revise…" style={{width:"100%",padding:"10px 12px",border:`1px solid ${C.g200}`,borderRadius:7,fontSize:".84rem",fontFamily:sans}}/>
-                    </div>
-                    <button onClick={()=>reject(r.id)} style={{padding:"10px 18px",background:C.red,color:"#fff",border:"none",borderRadius:7,fontSize:".8rem",fontWeight:600,cursor:"pointer",fontFamily:sans,flexShrink:0}}>Send Back</button>
-                    <button onClick={()=>{setRejectId(null);setReason("");}} style={{padding:"10px 14px",background:C.g100,color:C.g700,border:"none",borderRadius:7,fontSize:".8rem",cursor:"pointer",fontFamily:sans,flexShrink:0}}>Cancel</button>
-                  </div>
-                ):(
-                  <div style={{display:"flex",gap:8}}>
-                    <button onClick={()=>approve(r.id)} style={{padding:"9px 22px",background:"#16a34a",color:"#fff",border:"none",borderRadius:7,fontSize:".82rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>✓ Approve & Publish</button>
-                    <button onClick={()=>setRejectId(r.id)} style={{padding:"9px 18px",background:"#fef2f2",color:C.red,border:"1px solid #fca5a5",borderRadius:7,fontSize:".82rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}>✕ Return to Intern</button>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
 function AnalystUploadTab({analystId,isIntern,reports,setReports,showToast,onDone}) {
   const {analysts,mailingList}=useData();
   const internEntry=analysts.find(a=>a.id===analystId);
@@ -1966,56 +2107,52 @@ function InternPortalPage({user,nav}) {
   const myReports=reports.filter(r=>r.aid===user.analystId);
   const pending=myReports.filter(r=>r.status==="pending");
   const published=myReports.filter(r=>r.status==="published");
-  const [tab,setTab]=useState("submissions");
+  const [tab,setTab]=useState("overview");
   const [toast,setToast]=useState("");
   const showToast=msg=>{setToast(msg);setTimeout(()=>setToast(""),3000);};
 
-  const tabs=[
-    {k:"submissions",l:"My Submissions",i:"SB"},
-    {k:"activity",   l:"Reader Activity",i:"RA"},
-    {k:"pricelist",  l:"Price Lists",   i:"PL"},
-  ];  const StatusChip=({status})=>{
+  const sections=[
+    {l:"Workspace",items:[
+      {k:"overview",l:"Overview"},
+      {k:"submissions",l:"My Submissions"},
+      {k:"activity",l:"Reader Activity"},
+    ]},
+    {l:"Workflow",items:[
+      {k:"pricelist",l:"Price Lists"},
+    ]},
+  ];
+
+  const StatusChip=({status})=>{
     const m={
       published:{bg:"#dcfce7",color:"#16a34a",label:"Published"},
-      pending:  {bg:"#fef9c3",color:"#854d0e",label:"Pending Review"},
-      rejected: {bg:"#fef2f2",color:C.red,    label:"Needs Revision"},
+      pending:{bg:"#fef9c3",color:"#854d0e",label:"Pending Review"},
+      rejected:{bg:"#fef2f2",color:C.red,label:"Needs Revision"},
     };
     const st=m[status]||m.published;
     return <span style={{background:st.bg,color:st.color,fontSize:".62rem",fontWeight:700,padding:"2px 8px",borderRadius:3,textTransform:"uppercase",letterSpacing:.5}}>{st.label}</span>;
   };
 
   return (
-    <div style={{minHeight:"80vh",background:C.offWhite}}>
-      <section style={{background:`linear-gradient(135deg,#0c4a6e 0%,#0369a1 50%,#0891b2 100%)`,padding:"44px 0"}}>
-        <div style={{maxWidth:1260,margin:"0 auto",padding:"0 40px",display:"flex",alignItems:"center",gap:20}}>
-          <AnalystAvatar analyst={internEntry} size={64} fontSize="1.5rem"/>
-          <div>
-            <p style={{color:"rgba(255,255,255,0.6)",fontSize:".68rem",textTransform:"uppercase",letterSpacing:1.5,fontWeight:600,marginBottom:4}}>Research Intern Portal</p>
-            <h1 style={{fontFamily:serif,fontSize:"1.8rem",color:C.white,fontWeight:500,marginBottom:2}}>{internEntry?.name||user.name}</h1>
-            {supervisor&&<p style={{color:"rgba(255,255,255,0.5)",fontSize:".84rem"}}>Supervisor: {supervisor.name} · {supervisor.title}</p>}
-          </div>
-          <div style={{marginLeft:"auto",display:"flex",gap:18}}>
-            {[{l:"Submitted",v:myReports.length},{l:"Published",v:published.length},{l:"Pending",v:pending.length}].map((s,i)=>(
-              <div key={i} style={{textAlign:"center"}}>
-                <p style={{color:C.white,fontFamily:serif,fontSize:"1.7rem",fontWeight:500,lineHeight:1}}>{s.v}</p>
-                <p style={{color:"rgba(255,255,255,0.45)",fontSize:".68rem",textTransform:"uppercase",letterSpacing:.4,marginTop:3}}>{s.l}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <div style={{background:C.white,borderBottom:`1px solid ${C.g200}`,position:"sticky",top:68,zIndex:50}}>
-        <div style={{maxWidth:1260,margin:"0 auto",padding:"0 40px",display:"flex",gap:0}}>
-          {tabs.map(t=>(
-            <button key={t.k} onClick={()=>setTab(t.k)} style={{padding:"15px 18px",background:"none",border:"none",borderBottom:`2px solid ${tab===t.k?"#0891b2":"transparent"}`,color:tab===t.k?C.navy:C.g500,fontSize:".8rem",fontWeight:tab===t.k?600:400,cursor:"pointer",fontFamily:sans,display:"flex",alignItems:"center",gap:6,transition:"color .15s"}}>
-              {t.i} {t.l}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div style={{maxWidth:1260,margin:"0 auto",padding:"36px 40px"}}>
+    <>
+      <PortalShell
+        tab={tab}
+        setTab={setTab}
+        sections={sections}
+        accent="#0891b2"
+        hero={{
+          bg:'linear-gradient(135deg,#0c4a6e 0%,#0369a1 50%,#0891b2 100%)',
+          eyebrow:'Intern Workspace',
+          eyebrowColor:'rgba(255,255,255,0.7)',
+          avatar:<AnalystAvatar analyst={internEntry} size={64} fontSize="1.5rem"/>,
+          title:internEntry?.name||user.name,
+          sub:supervisor?`Supervisor: ${supervisor.name} · ${supervisor.title}`:'Supervisor review required before publishing.',
+          stats:[
+            {l:'Submitted',v:myReports.length},
+            {l:'Pending',v:pending.length},
+            {l:'Published',v:published.length},
+          ],
+        }}>
+        {tab==="overview"&&<InternOverviewTab myReports={myReports} pending={pending} published={published} supervisor={supervisor}/>} 
         {tab==="submissions"&&(
           <div>
             <AnalystUploadTab analystId={user.analystId} isIntern={true} reports={reports} setReports={setReports} showToast={showToast} onDone={()=>{}}/>
@@ -2023,56 +2160,52 @@ function InternPortalPage({user,nav}) {
               <SH title="My Submissions" sub={`${myReports.length} report${myReports.length!==1?"s":""} submitted`}/>
               {myReports.length===0?(
                 <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"48px",textAlign:"center",color:C.g500}}>
-                  <div style={{fontSize:"2rem",marginBottom:12}}>📝</div>
+                  <div style={{fontSize:"2rem",marginBottom:12}}>SB</div>
                   <p style={{fontWeight:600,color:C.navy,marginBottom:6}}>No submissions yet</p>
                   <p style={{fontSize:".84rem",marginBottom:18}}>Use the form above to submit your first report for supervisor review.</p>
                 </div>
               ):(
-              <div style={{display:"flex",flexDirection:"column",gap:16}}>
-                {myReports.map(r=>{
-                  const cat=gc(r.cat),pc=gpc(r.cat);
-                  const dc=cat?.p?`${pc?.name} · ${cat.name}`:cat?.name;
-                  return (
-                    <div key={r.id} style={{background:C.white,borderRadius:12,border:`1px solid ${r.status==="rejected"?"#fca5a5":r.status==="pending"?"#fde047":C.g200}`,overflow:"hidden"}}>
-                      {r.status==="rejected"&&(
-                        <div style={{background:"#fef2f2",padding:"10px 20px",borderBottom:"1px solid #fca5a5",display:"flex",alignItems:"center",gap:8}}>
-                          <span style={{fontSize:".72rem",fontWeight:700,color:C.red,textTransform:"uppercase",letterSpacing:.4}}>✕ Needs Revision</span>
-                          {r.rejectedReason&&<span style={{fontSize:".78rem",color:C.red,marginLeft:4}}>— {r.rejectedReason}</span>}
-                        </div>
-                      )}
-                      {r.status==="pending"&&(
-                        <div style={{background:"#fef9c3",padding:"10px 20px",borderBottom:"1px solid #fde047"}}>
-                          <span style={{fontSize:".72rem",fontWeight:700,color:"#854d0e",textTransform:"uppercase",letterSpacing:.4}}>⏳ Awaiting supervisor review</span>
-                        </div>
-                      )}
-                      <div style={{padding:"20px",display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:16}}>
-                        <div style={{flex:1}}>
-                          <span style={{background:C.goldSoft,color:C.gold,fontSize:".6rem",fontWeight:700,textTransform:"uppercase",padding:"3px 8px",borderRadius:3,marginBottom:8,display:"inline-block"}}>{dc}</span>
-                          <h3 style={{fontFamily:serif,fontSize:"1.05rem",color:C.navy,fontWeight:600,marginBottom:6}}>{r.title}</h3>
-                          <p style={{color:C.g500,fontSize:".82rem",lineHeight:1.6}}>{r.ex}</p>
-                          <p style={{color:C.g500,fontSize:".74rem",marginTop:8}}>{fd(r.date)}</p>
-                        </div>
-                        <div style={{flexShrink:0}}>
-                          <StatusChip status={r.status}/>
+                <div style={{display:"flex",flexDirection:"column",gap:16}}>
+                  {myReports.map(r=>{
+                    const cat=gc(r.cat),pc=gpc(r.cat);
+                    const dc=cat?.p?`${pc?.name} · ${cat.name}`:cat?.name;
+                    return (
+                      <div key={r.id} style={{background:C.white,borderRadius:12,border:`1px solid ${r.status==="rejected"?"#fca5a5":r.status==="pending"?"#fde047":C.g200}`,overflow:"hidden"}}>
+                        {r.status==="rejected"&&(
+                          <div style={{background:"#fef2f2",padding:"10px 20px",borderBottom:"1px solid #fca5a5",display:"flex",alignItems:"center",gap:8}}>
+                            <span style={{fontSize:".72rem",fontWeight:700,color:C.red,textTransform:"uppercase",letterSpacing:.4}}>Needs Revision</span>
+                            {r.rejectedReason&&<span style={{fontSize:".78rem",color:C.red,marginLeft:4}}>· {r.rejectedReason}</span>}
+                          </div>
+                        )}
+                        {r.status==="pending"&&(
+                          <div style={{background:"#fef9c3",padding:"10px 20px",borderBottom:"1px solid #fde047"}}>
+                            <span style={{fontSize:".72rem",fontWeight:700,color:"#854d0e",textTransform:"uppercase",letterSpacing:.4}}>Awaiting supervisor review</span>
+                          </div>
+                        )}
+                        <div style={{padding:"20px",display:"flex",justifyContent:"space-between",alignItems:"flex-start",gap:16}}>
+                          <div style={{flex:1}}>
+                            <span style={{background:C.goldSoft,color:C.gold,fontSize:".6rem",fontWeight:700,textTransform:"uppercase",padding:"3px 8px",borderRadius:3,marginBottom:8,display:"inline-block"}}>{dc}</span>
+                            <h3 style={{fontFamily:serif,fontSize:"1.05rem",color:C.navy,fontWeight:600,marginBottom:6}}>{r.title}</h3>
+                            <p style={{color:C.g500,fontSize:".82rem",lineHeight:1.6}}>{r.ex}</p>
+                            <p style={{color:C.g500,fontSize:".74rem",marginTop:8}}>{fd(r.date)}</p>
+                          </div>
+                          <div style={{flexShrink:0}}><StatusChip status={r.status}/></div>
                         </div>
                       </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         )}
         {tab==="activity"&&<ReaderActivityTab nav={nav} sub="Track what is currently being opened so you can align drafts and follow-up with the active discussion."/>}
-        {tab==="pricelist"&&<PriceUploadTab isIntern={true} showToast={showToast}/>}
-      </div>
+        {tab==="pricelist"&&<PriceUploadTab isIntern={true} showToast={showToast}/>} 
+      </PortalShell>
       {toast&&<div style={{position:"fixed",right:24,bottom:24,background:"#0891b2",color:"#fff",padding:"13px 18px",borderRadius:10,boxShadow:"0 16px 40px rgba(8,145,178,0.3)",fontSize:".83rem",zIndex:300,display:"flex",alignItems:"center",gap:8}}><span>✓</span>{toast}</div>}
-    </div>
+    </>
   );
 }
-
-/* ═══ FUNDS PERFORMANCE PAGE ═══ */
 function Sparkline({pts,color,w=200,h=52}) {
   if(!pts||pts.length<2) return null;
   const line=sparkPath(pts,w,h,false);
@@ -2772,88 +2905,70 @@ function ManagePage({nav}) {
   const [toast,setToast]=useState("");
   const showToast=msg=>{setToast(msg);setTimeout(()=>setToast(""),3000);};
   const pendingBioCount=bioEdits.filter(e=>e.status==="pending").length;
+  const pendingReports=reports.filter(r=>r.status==="pending");
 
-  /* Reload bio edits from API when manage page opens */
   useEffect(()=>{
     api.bioEdits.list().then(rows=>{ if(rows) setBioEdits(rows); }).catch(()=>{});
   },[setBioEdits]);
+
   const tabs=[
-    {k:"overview",  l:"Overview",    i:"📊"},
-    {k:"access",    l:"Paywalls",    i:"🔒"},
-    {k:"banner",    l:"Banner Media",i:"🖼️"},
-    {k:"reports",   l:"Reports",     i:"📄"},
-    {k:"addreport", l:"Publish Report",i:"➕"},
-    {k:"analysts",  l:"Analysts",    i:"👤",badge:pendingBioCount},
-    {k:"addanalyst",l:"Add Analyst", i:"➕"},
-    {k:"addintern", l:"Add Intern",  i:"🎓"},
-    {k:"funds",     l:"Funds",       i:"📈"},
-    {k:"files",     l:"File Library",i:"📁"},
-    {k:"users",     l:"User Accounts",i:"👥"},
-    {k:"settings",  l:"Portal Settings",i:"⚙️"},
+    {k:"overview",l:"Overview"},
+    {k:"pending",l:"Pending Reports",badge:pendingReports.length},
+    {k:"reports",l:"Reports"},
+    {k:"addreport",l:"Publish Report"},
+    {k:"banner",l:"Banner Media"},
+    {k:"files",l:"File Library"},
+    {k:"analysts",l:"Analysts",badge:pendingBioCount},
+    {k:"addanalyst",l:"Add Analyst"},
+    {k:"addintern",l:"Add Intern"},
+    {k:"users",l:"User Accounts"},
+    {k:"access",l:"Paywalls"},
+    {k:"funds",l:"Funds"},
+    {k:"settings",l:"Portal Settings"},
   ];
   const tabGroups=[
-    {l:"Dashboard",items:["overview"]},
-    {l:"Content",items:["reports","addreport","files","banner"]},
-    {l:"People",items:["analysts","addanalyst","addintern","users"]},
-    {l:"Governance",items:["access","funds","settings"]},
+    {l:"Dashboard",items:[tabs[0],tabs[1]]},
+    {l:"Content",items:[tabs[2],tabs[3],tabs[4],tabs[5]]},
+    {l:"People",items:[tabs[6],tabs[7],tabs[8],tabs[9]]},
+    {l:"Governance",items:[tabs[10],tabs[11],tabs[12]]},
   ];
-  const tabByKey=Object.fromEntries(tabs.map(t=>[t.k,t]));
+
   return (
-    <div style={{minHeight:"80vh",background:C.offWhite}}>
-      <section style={{background:`linear-gradient(135deg,#06262d 0%,#0b3540 52%,#134450 100%)`,padding:"44px 0"}}>
-        <div style={{maxWidth:1260,margin:"0 auto",padding:"0 40px",display:"flex",alignItems:"center",gap:16}}>
-          <div style={{width:48,height:48,borderRadius:12,background:"rgba(255,255,255,0.12)",display:"flex",alignItems:"center",justifyContent:"center",fontSize:"1.3rem"}}>⚙️</div>
-          <div><h1 style={{fontFamily:serif,fontSize:"1.9rem",color:C.white,fontWeight:500,marginBottom:2}}>Administrator Console</h1><p style={{color:"rgba(255,255,255,0.5)",fontSize:".84rem"}}>Publish reports, manage analysts, and maintain the portal</p></div>
-          <div style={{marginLeft:"auto",background:"rgba(255,255,255,0.06)",border:"1px solid rgba(255,255,255,0.12)",borderRadius:8,padding:"6px 14px"}}>
-            <span style={{color:"rgba(255,255,255,0.5)",fontSize:".68rem",textTransform:"uppercase",letterSpacing:.5}}>Role</span>
-            <div style={{color:C.gold,fontWeight:700,fontSize:".78rem",marginTop:1}}>Administrator</div>
-          </div>
-        </div>
-      </section>
-      <div className="admin-cms-shell" style={{maxWidth:1260,margin:"0 auto",padding:"34px 40px",display:"grid",gridTemplateColumns:"240px 1fr",gap:24,alignItems:"start"}}>
-        <aside style={{background:C.white,border:`1px solid ${C.g200}`,borderRadius:12,padding:"18px 14px",position:"sticky",top:96}}>
-          <div style={{padding:"0 8px 14px",borderBottom:`1px solid ${C.g100}`,marginBottom:14}}>
-            <div style={{fontSize:".68rem",fontWeight:800,letterSpacing:1.8,textTransform:"uppercase",color:C.gold,marginBottom:5}}>CMS Sections</div>
-            <p style={{fontSize:".78rem",lineHeight:1.55,color:C.g500,margin:0}}>Manage content, people, access, and portal settings from one place.</p>
-          </div>
-          {tabGroups.map(group=>(
-            <div key={group.l} style={{marginBottom:14}}>
-              <div style={{fontSize:".62rem",fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",color:C.g500,margin:"0 8px 8px"}}>{group.l}</div>
-              <div style={{display:"grid",gap:4}}>
-                {group.items.map(k=>{
-                  const t=tabByKey[k];
-                  const active=tab===k;
-                  return (
-                    <button key={k} onClick={()=>setTab(k)} style={{width:"100%",display:"flex",alignItems:"center",gap:9,textAlign:"left",padding:"10px 10px",background:active?"rgba(6,38,45,0.06)":"transparent",border:`1px solid ${active?"rgba(185,114,49,0.22)":"transparent"}`,borderRadius:9,color:active?C.navy:C.g700,fontSize:".8rem",fontWeight:active?700:500,cursor:"pointer",fontFamily:sans}}>
-                      <span style={{width:20,textAlign:"center",opacity:active?1:.75}}>{t.i}</span>
-                      <span style={{flex:1}}>{t.l}</span>
-                      {t.badge>0&&<span style={{background:C.red,color:"#fff",borderRadius:10,fontSize:".6rem",fontWeight:700,padding:"1px 6px",minWidth:18,textAlign:"center"}}>{t.badge}</span>}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
-        </aside>
-        <main style={{minWidth:0}}>
-          {tab==="overview"   &&<OverviewTab    reports={reports} analysts={analysts} categoryRules={categoryRules}/>}
-          {tab==="access"     &&<AccessRulesTab categoryRules={categoryRules} setCategoryRules={setCategoryRules}/>}
-          {tab==="banner"     &&<BannerMediaTab showToast={showToast}/>}
-          {tab==="reports"    &&<ReportsTab     reports={reports} analysts={analysts} setReports={setReports} showToast={showToast}/>}
-          {tab==="addreport"  &&<AddReportTab   analysts={analysts} reports={reports} setReports={setReports} showToast={showToast} onDone={()=>setTab("reports")}/>}
-          {tab==="analysts"   &&<AnalystsTab    analysts={analysts} setAnalysts={setAnalysts} showToast={showToast}/>}
-          {tab==="addanalyst" &&<AddAnalystTab  analysts={analysts} setAnalysts={setAnalysts} showToast={showToast} onDone={()=>setTab("analysts")}/>}
-          {tab==="addintern"  &&<AddInternTab   analysts={analysts} setAnalysts={setAnalysts} showToast={showToast} onDone={()=>setTab("analysts")}/>}
-          {tab==="funds"      &&<FundsAdminTab  funds={funds} setFunds={setFunds} showToast={showToast}/>}
-          {tab==="files"      &&<FileManagerTab showToast={showToast}/>}
-          {tab==="users"      &&<UsersTab       showToast={showToast}/>}
-          {tab==="settings"   &&<SettingsTab    showToast={showToast}/>}
-        </main>
-      </div>`r`n      {toast&&<div style={{position:"fixed",right:24,bottom:24,background:C.navy,color:"#fff",padding:"13px 18px",borderRadius:10,boxShadow:"0 16px 40px rgba(6,38,45,0.24)",fontSize:".83rem",zIndex:300,display:"flex",alignItems:"center",gap:8,border:`1px solid rgba(185,114,49,0.18)`}}><span style={{color:C.gold}}>✓</span>{toast}</div>}
-    </div>
+    <>
+      <PortalShell
+        tab={tab}
+        setTab={setTab}
+        sections={tabGroups}
+        hero={{
+          bg:'linear-gradient(135deg,#06262d 0%,#0b3540 52%,#134450 100%)',
+          avatar:<div style={{width:48,height:48,borderRadius:12,background:'rgba(255,255,255,0.12)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.2rem',color:'#fff'}}>AD</div>,
+          eyebrow:'Administrator Console',
+          title:'Research Portal CMS',
+          sub:'Publish reports, manage analysts, approve pending submissions, and maintain the portal.',
+          stats:[
+            {l:'Pending Reports',v:pendingReports.length},
+            {l:'Published',v:reports.filter(r=>r.status==='published').length},
+            {l:'Team Members',v:analysts.length},
+          ],
+        }}>
+        {tab==="overview"&&<OverviewTab reports={reports} analysts={analysts} categoryRules={categoryRules}/>}
+        {tab==="pending"&&<PendingReportsTab pendingReports={pendingReports} analysts={analysts} setReports={setReports} showToast={showToast} title="Pending Reports" emptySub="All pending analyst and intern submissions will appear here for administrator review." submitterLabelFn={(r,submitter)=>`${submitter?.role==='intern'?'Intern':'Analyst'} ${submitter?.name||'Unknown'}`}/>}
+        {tab==="reports"&&<ReportsTab reports={reports} analysts={analysts} setReports={setReports} showToast={showToast}/>}
+        {tab==="addreport"&&<AddReportTab analysts={analysts} reports={reports} setReports={setReports} showToast={showToast} onDone={()=>setTab('reports')}/>}
+        {tab==="banner"&&<BannerMediaTab showToast={showToast}/>}
+        {tab==="files"&&<FileManagerTab showToast={showToast}/>}
+        {tab==="analysts"&&<AnalystsTab analysts={analysts} setAnalysts={setAnalysts} showToast={showToast}/>}
+        {tab==="addanalyst"&&<AddAnalystTab analysts={analysts} setAnalysts={setAnalysts} showToast={showToast} onDone={()=>setTab('analysts')}/>}
+        {tab==="addintern"&&<AddInternTab analysts={analysts} setAnalysts={setAnalysts} showToast={showToast} onDone={()=>setTab('analysts')}/>}
+        {tab==="users"&&<UsersTab showToast={showToast}/>}
+        {tab==="access"&&<AccessRulesTab categoryRules={categoryRules} setCategoryRules={setCategoryRules}/>}
+        {tab==="funds"&&<FundsAdminTab funds={funds} setFunds={setFunds} showToast={showToast}/>}
+        {tab==="settings"&&<SettingsTab showToast={showToast}/>}
+      </PortalShell>
+      {toast&&<div style={{position:"fixed",right:24,bottom:24,background:C.navy,color:"#fff",padding:"13px 18px",borderRadius:10,boxShadow:"0 16px 40px rgba(6,38,45,0.24)",fontSize:".83rem",zIndex:300,display:"flex",alignItems:"center",gap:8,border:`1px solid rgba(185,114,49,0.18)`}}><span style={{color:C.gold}}>✓</span>{toast}</div>}
+    </>
   );
 }
-
 function OverviewTab({reports,analysts,categoryRules}) {
   const publishedReports = reports.filter(r=>r.status==="published");
   const pendingReports = reports.filter(r=>r.status==="pending");
