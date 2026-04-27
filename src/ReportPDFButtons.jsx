@@ -49,7 +49,7 @@ export function ApproveWithPDFButton({ reportId, report, onApprove, isLoading, l
         fontSize: '.82rem',
         fontWeight: 600,
         cursor: isLoading || generating ? 'not-allowed' : 'pointer',
-        fontFamily: "'Outfit',system-ui,sans-serif",
+        fontFamily: "Calibri, Arial, sans-serif",
         opacity: isLoading || generating ? 0.7 : 1,
         transition: 'opacity 0.15s',
       }}
@@ -101,7 +101,7 @@ export function DownloadReportPDFButton({ report, logoPath = '/chd-logo.png' }) 
         fontSize: '.76rem',
         fontWeight: 600,
         cursor: generating ? 'not-allowed' : 'pointer',
-        fontFamily: "'Outfit',system-ui,sans-serif",
+        fontFamily: "Calibri, Arial, sans-serif",
         opacity: generating ? 0.7 : 1,
         transition: 'opacity 0.15s',
       }}

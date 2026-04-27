@@ -104,6 +104,13 @@ const INIT_REPORTS = [
   {id:10,status:"published",title:"Market Opening Summary — April 2026",ex:"A compact morning brief assembled by the desk, combining overnight headlines, FX moves, and the most important analyst asks.",cat:"daily",aid:8,date:"2026-04-11",access:"inherit",body:"The morning brief is intentionally short and operational. It is designed for customers who want a quick read before opening their dashboards or checking their library."},
   {id:11,status:"published",title:"Equity Strategy — Portfolio Entry Points",ex:"A client-friendly equity note explaining when to add exposure, what to watch, and which names the desk prefers under current conditions.",cat:"equities",aid:8,date:"2026-04-08",access:"inherit",body:"This report is framed for client discussions and account manager follow-up. It is not a deep-dive valuation note, but a practical guide to entry points and positioning."},
   {id:12,status:"published",title:"Fixed Income Laddering Guide — Q2 2026",ex:"A desk guide for customers who want a simpler way to think about duration, reinvestment, and monthly cash flow.",cat:"fixed-income",aid:8,date:"2026-04-05",access:"inherit",body:"The guide explains laddering across short, medium, and long tenors and how different client profiles can use the structure to match liquidity needs."},
+  {id:14,status:"published",title:"Banking Sector Pulse - Deposit Costs and NIMs",ex:"We review funding cost pressure across tier-1 banks and highlight where net interest margins remain best protected in Q2 2026.",cat:"sector-report",aid:6,date:"2026-04-22",access:"premium",body:"Deposit repricing remains the main watch item for bank earnings. Tier-1 banks with stronger CASA franchises should protect margins better than peers, while smaller banks may see faster pressure from wholesale deposits."},
+  {id:15,status:"published",title:"Oil and Gas Monitor - Downstream Margins",ex:"A short review of downstream pricing, inventory replacement cost, and working-capital pressure across covered energy names.",cat:"sector-report",aid:4,date:"2026-04-21",access:"registered",body:"Downstream operators continue to balance margin recovery with volume retention. The key swing factors are FX availability, landing cost movement, and the ability to reprice inventory without slowing demand."},
+  {id:16,status:"published",title:"Consumer Goods Tracker - Volume Recovery Watch",ex:"We assess early signs of volume recovery across staples, beverages, and household products after a difficult inflation cycle.",cat:"company-updates",aid:2,date:"2026-04-19",access:"premium",body:"Consumer names are showing mixed volume trends. Premium categories remain resilient, while mass-market products are still exposed to weak disposable income and tighter retail inventory cycles."},
+  {id:17,status:"published",title:"Cement Dispatches - Regional Demand Checks",ex:"Field checks point to firmer demand in Lagos, Abuja, and select northern markets as construction activity improves.",cat:"company-updates",aid:3,date:"2026-04-18",access:"registered",body:"Our channel checks suggest regional demand has improved from Q1 levels. We continue to monitor energy cost, logistics availability, and the timing of further price adjustments."},
+  {id:18,status:"published",title:"Treasury Bills Strategy - Reinvestment Notes",ex:"We outline reinvestment options for clients facing near-term maturities and compare bill yields with short bond alternatives.",cat:"fixed-income",aid:1,date:"2026-04-17",access:"registered",body:"Clients with near-term maturities should compare rollover yields against selected short bonds. The decision depends on liquidity needs, duration comfort, and expectations for policy-rate stability."},
+  {id:19,status:"published",title:"Daily Market Wrap - 24 April 2026",ex:"The NGX closed modestly higher as banking and industrial names offset weakness in selected consumer counters.",cat:"daily",aid:8,date:"2026-04-24",access:"free",body:"Market breadth was mixed, but turnover improved across large-cap banking names. Fixed income trading remained selective as investors waited for clearer rate direction."},
+  {id:20,status:"published",title:"Macro Note - FX Liquidity and Import Cover",ex:"We discuss recent FX liquidity signals and what they imply for inflation expectations, imports, and investor sentiment.",cat:"macro",aid:1,date:"2026-04-23",access:"free",body:"Improved FX liquidity is important for inflation expectations and business confidence. We remain cautious on the pace of disinflation, but recent market signals suggest pressure may ease further if supply remains consistent."},
   /* Demo: intern-submitted report awaiting approval */
   {id:13,status:"pending",title:"Cement Sector Flash — Price Hikes Q2 2026",ex:"Cement prices across major markets have increased 12-15% in April, driven by supply tightness ahead of the construction season. We examine the implications for sector margins.",cat:"company-updates",aid:7,date:"2026-04-10",access:"registered",supervisorId:1,body:"Preliminary field checks indicate cement prices have risen to ₦8,800-9,200 per bag across Lagos and Abuja markets, representing a 12-15% increase month-on-month."},
 ];
@@ -291,8 +298,8 @@ function Header({page,nav,goBack,canGoBack,user,onLogout}) {
     {k:"analysts",l:"Analysts"},
     {k:"pricelists",l:"Price Lists"},
     {k:"contact",l:"Contact Us"},
-    ...(user?[{k:"library",l:"My Library"}]:[]),
-    ...(user&&["admin","director","analyst","intern"].includes(user.tier)?[{k:"docbank",l:"Research Library"}]:[]),
+    ...(user?.tier==="premium"?[{k:"library",l:"My Library"}]:[]),
+    ...(user&&["director","analyst","intern"].includes(user.tier)?[{k:"docbank",l:"Research Library"}]:[]),
     /* PAYMENT MODULE DISABLED: subscribe nav item removed */
     ...(isAdmin                   ?[{k:"manage",  l:"Administrator"}]:[]),
     ...(isDirector||isAnalyst||isIntern       ?[{k:"myportal",l:"My Portal"}]:[]),
@@ -1271,13 +1278,13 @@ function LibraryPage({nav,user}) {
   },[recentViews,reports]);
   const recentDocs = useMemo(()=>recentViews.filter(v=>v.type==="doc").slice(0,4),[recentViews]);
   const savedCount = accessible.length;
-  const tierText = tierLabel(user?.tier);
+  const newThisMonth = accessible.filter(r=>new Date(r.date) >= new Date("2026-04-01T00:00:00")).length;
   return (<>
     <section style={{background:`linear-gradient(160deg,${C.navy} 0%,${C.navyMid} 100%)`,padding:"52px 0"}}>
       <div style={{maxWidth:1260,margin:"0 auto",padding:"0 40px"}}>
-        <p style={{color:C.gold,fontSize:".6rem",textTransform:"uppercase",letterSpacing:3,fontWeight:700,marginBottom:10,opacity:.9}}>Personal Library</p>
+        <p style={{color:C.gold,fontSize:".6rem",textTransform:"uppercase",letterSpacing:3,fontWeight:700,marginBottom:10,opacity:.9}}>Subscriber Library</p>
         <h1 style={{fontFamily:serif,fontSize:"2.2rem",color:C.white,fontWeight:500,marginBottom:8}}>My Library</h1>
-        <p style={{color:"rgba(255,255,255,0.48)",fontSize:".88rem",maxWidth:720}}>Track what you have read, pick up where you left off, and return to the reports that matter most to your coverage or client profile.</p>
+        <p style={{color:"rgba(255,255,255,0.48)",fontSize:".88rem",maxWidth:720}}>Pick up where you left off and return to the reports, desk notes, and client-ready views that matter most.</p>
       </div>
     </section>
 
@@ -1287,7 +1294,7 @@ function LibraryPage({nav,user}) {
           {[
             {l:"Accessible Reports",v:savedCount,sub:"Current library size"},
             {l:"Recent Reads",v:recentReports.length,sub:"Recently opened"},
-            {l:"Your Tier",v:tierText,sub:"Access profile"},
+            {l:"New This Month",v:newThisMonth,sub:"April publications"},
             {l:"Research Desk",v:analysts.find(a=>a.name==="Research Desk")?.name?1:0,sub:"Desk support"},
           ].map((s,i)=>(
             <div key={i} style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"20px 18px"}}>
@@ -1322,13 +1329,13 @@ function LibraryPage({nav,user}) {
             </div>
             <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"20px 18px"}}>
               <div style={{fontSize:".68rem",fontWeight:800,letterSpacing:2,textTransform:"uppercase",color:C.gold,marginBottom:8}}>Reading list</div>
-              <p style={{fontSize:".84rem",color:C.g700,lineHeight:1.7,marginBottom:14}}>This is the live library view for signed-in users. The next step after a report opens is captured here automatically.</p>
+              <p style={{fontSize:".84rem",color:C.g700,lineHeight:1.7,marginBottom:14}}>Your most relevant published research is grouped here for quick scanning and follow-up.</p>
               <div style={{display:"grid",gap:10}}>
                 {accessible.slice(0,4).map(r=>(
                   <button key={r.id} onClick={()=>nav("report",{id:r.id})} style={{padding:"12px 14px",textAlign:"left",background:C.g100,border:"none",borderRadius:10,cursor:"pointer",fontFamily:sans}}>
                     <div style={{fontSize:".82rem",fontWeight:700,color:C.navy,marginBottom:4,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r.title}</div>
                     <div style={{fontSize:".72rem",color:C.g500,display:"flex",justifyContent:"space-between",gap:8}}>
-                      <span>{effectiveAccess(r,categoryRules)==="premium"?"Premium":effectiveAccess(r,categoryRules)==="registered"?"Member":"Public"}</span>
+                      <span>{gc(r.cat)?.name||"Research"}</span>
                       <span>{fd(r.date)}</span>
                     </div>
                   </button>
@@ -1356,6 +1363,93 @@ function LibraryPage({nav,user}) {
 }
 
 /* ═══ ANALYSTS LIST PAGE ═══ */
+function ReaderActivityTab({nav,title="Reader Activity",sub="Track what is being read right now from the current portal session."}) {
+  const {recentViews,reports,library}=useData();
+  const items = recentViews.slice(0,8).map(view=>{
+    if(view.type==="report"){
+      const report = reports.find(r=>String(r.id)===String(view.id));
+      return {
+        key:`report-${view.id}`,
+        title:view.title || report?.title || "Report",
+        meta:gc(view.category || report?.cat)?.name || "Research report",
+        when:view.viewedAt,
+        action:()=>nav("report",{id:Number(view.id)}),
+        cta:"Open report",
+      };
+    }
+    const doc = library.find(d=>String(d.id)===String(view.id));
+    return {
+      key:`doc-${view.id}`,
+      title:view.title || doc?.title || "Library document",
+      meta:"Research Library file",
+      when:view.viewedAt,
+      action:()=>nav("docbank"),
+      cta:"Open library",
+    };
+  });
+  const categorySummary = items.reduce((acc,item)=>{
+    acc[item.meta]=(acc[item.meta]||0)+1;
+    return acc;
+  },{});
+  const topCategories = Object.entries(categorySummary).sort((a,b)=>b[1]-a[1]).slice(0,3);
+
+  return (
+    <div>
+      <SH title={title} sub={sub}/>
+      {items.length===0 ? (
+        <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"44px 36px",color:C.g500}}>
+          No reading activity has been captured yet. Open reports or library files and the latest activity will appear here.
+        </div>
+      ) : (
+        <div className="reader-activity-grid" style={{display:"grid",gridTemplateColumns:"1.2fr .8fr",gap:20}}>
+          <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,overflow:"hidden"}}>
+            <div style={{padding:"18px 20px",borderBottom:`1px solid ${C.g100}`}}>
+              <div style={{fontSize:".68rem",fontWeight:800,letterSpacing:1.8,textTransform:"uppercase",color:C.gold,marginBottom:6}}>Current Reading</div>
+              <p style={{fontSize:".82rem",color:C.g500,lineHeight:1.6}}>Use this view to see what has been opened most recently and jump back into the exact report or library area.</p>
+            </div>
+            <div style={{display:"grid"}}>
+              {items.map(item=>(
+                <button key={item.key} onClick={item.action} style={{padding:"15px 18px",textAlign:"left",background:C.white,border:"none",borderBottom:`1px solid ${C.g100}`,cursor:"pointer",fontFamily:sans}}>
+                  <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"flex-start"}}>
+                    <div style={{minWidth:0}}>
+                      <div style={{fontSize:".84rem",fontWeight:700,color:C.navy,marginBottom:5,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{item.title}</div>
+                      <div style={{fontSize:".74rem",color:C.g500}}>{item.meta}</div>
+                    </div>
+                    <div style={{flexShrink:0,textAlign:"right"}}>
+                      <div style={{fontSize:".7rem",color:C.g500,marginBottom:6}}>{new Date(item.when).toLocaleString("en-GB",{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})}</div>
+                      <div style={{fontSize:".72rem",fontWeight:700,color:C.gold}}>{item.cta}</div>
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+          <div style={{display:"grid",gap:16,alignContent:"start"}}>
+            <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"20px 18px"}}>
+              <div style={{fontSize:".68rem",fontWeight:800,letterSpacing:1.8,textTransform:"uppercase",color:C.gold,marginBottom:8}}>Reading Summary</div>
+              <div style={{display:"grid",gap:8}}>
+                {topCategories.map(([label,count])=>(
+                  <div key={label} style={{display:"flex",justifyContent:"space-between",gap:10,fontSize:".8rem",color:C.g700}}>
+                    <span style={{overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{label}</span>
+                    <strong style={{color:C.navy}}>{count}</strong>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"20px 18px"}}>
+              <div style={{fontSize:".68rem",fontWeight:800,letterSpacing:1.8,textTransform:"uppercase",color:C.gold,marginBottom:8}}>What This Is</div>
+              <p style={{fontSize:".82rem",lineHeight:1.7,color:C.g700}}>This is not a subscriber library. It is the staff view for quickly tracking what is currently being read and reopening it without switching between sections.</p>
+            </div>
+            <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"20px 18px"}}>
+              <div style={{fontSize:".68rem",fontWeight:800,letterSpacing:1.8,textTransform:"uppercase",color:C.gold,marginBottom:8}}>Best Use</div>
+              <p style={{fontSize:".82rem",lineHeight:1.7,color:C.g700}}>Keep this open during demos, client follow-up, or editorial review so the team can return to the exact item being discussed.</p>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 function AnalystsPage({nav}) {
   const {analysts}=useData();
   const publicAnalysts=analysts.filter(a=>a.role!=="intern");
@@ -1663,13 +1757,12 @@ function AnalystPortalPage({user,nav}) {
   const pendingReports=reports.filter(r=>r.status==="pending"&&myInterns.some(i=>i.id===r.aid));
   const pendingCount=pendingReports.length;
   const tabs=[
-    {k:"profile",  l:"My Profile",        i:"👤"},
-    {k:"reports",  l:"My Reports",        i:"📄"},
-    {k:"approvals",l:`Approvals`,         i:"✅", badge:pendingCount},
-    {k:"pricelist",l:"Price Lists",       i:"📊"},
-  ];
-
-  return (
+    {k:"profile",  l:"My Profile",        i:"ME"},
+    {k:"reports",  l:"My Reports",        i:"RP"},
+    {k:"activity", l:"Reader Activity",   i:"RA"},
+    {k:"approvals",l:`Approvals`,         i:"OK", badge:pendingCount},
+    {k:"pricelist",l:"Price Lists",       i:"PL"},
+  ];  return (
     <div style={{minHeight:"80vh",background:C.offWhite}}>
       <section style={{background:`linear-gradient(135deg,${C.navy} 0%,${C.navyLight} 100%)`,padding:"44px 0"}}>
         <div style={{maxWidth:1260,margin:"0 auto",padding:"0 40px",display:"flex",alignItems:"center",gap:20}}>
@@ -1711,6 +1804,7 @@ function AnalystPortalPage({user,nav}) {
             </div>
           </div>
         )}
+        {tab==="activity"&&<ReaderActivityTab nav={nav} sub="Track what users are opening now and jump straight back into those reports or library files."/>}
         {tab==="approvals"&&<ApprovalsTab pendingReports={pendingReports} analysts={analysts} setReports={setReports} showToast={showToast}/>}
         {tab==="pricelist"&&<PriceUploadTab isIntern={false} showToast={showToast}/>}
       </div>
@@ -1877,11 +1971,10 @@ function InternPortalPage({user,nav}) {
   const showToast=msg=>{setToast(msg);setTimeout(()=>setToast(""),3000);};
 
   const tabs=[
-    {k:"submissions",l:"My Submissions",i:"📄"},
-    {k:"pricelist",  l:"Price Lists",   i:"📊"},
-  ];
-
-  const StatusChip=({status})=>{
+    {k:"submissions",l:"My Submissions",i:"SB"},
+    {k:"activity",   l:"Reader Activity",i:"RA"},
+    {k:"pricelist",  l:"Price Lists",   i:"PL"},
+  ];  const StatusChip=({status})=>{
     const m={
       published:{bg:"#dcfce7",color:"#16a34a",label:"Published"},
       pending:  {bg:"#fef9c3",color:"#854d0e",label:"Pending Review"},
@@ -1971,6 +2064,7 @@ function InternPortalPage({user,nav}) {
             </div>
           </div>
         )}
+        {tab==="activity"&&<ReaderActivityTab nav={nav} sub="Track what is currently being opened so you can align drafts and follow-up with the active discussion."/>}
         {tab==="pricelist"&&<PriceUploadTab isIntern={true} showToast={showToast}/>}
       </div>
       {toast&&<div style={{position:"fixed",right:24,bottom:24,background:"#0891b2",color:"#fff",padding:"13px 18px",borderRadius:10,boxShadow:"0 16px 40px rgba(8,145,178,0.3)",fontSize:".83rem",zIndex:300,display:"flex",alignItems:"center",gap:8}}><span>✓</span>{toast}</div>}
@@ -2697,6 +2791,13 @@ function ManagePage({nav}) {
     {k:"users",     l:"User Accounts",i:"👥"},
     {k:"settings",  l:"Portal Settings",i:"⚙️"},
   ];
+  const tabGroups=[
+    {l:"Dashboard",items:["overview"]},
+    {l:"Content",items:["reports","addreport","files","banner"]},
+    {l:"People",items:["analysts","addanalyst","addintern","users"]},
+    {l:"Governance",items:["access","funds","settings"]},
+  ];
+  const tabByKey=Object.fromEntries(tabs.map(t=>[t.k,t]));
   return (
     <div style={{minHeight:"80vh",background:C.offWhite}}>
       <section style={{background:`linear-gradient(135deg,#06262d 0%,#0b3540 52%,#134450 100%)`,padding:"44px 0"}}>
@@ -2709,46 +2810,78 @@ function ManagePage({nav}) {
           </div>
         </div>
       </section>
-      <div style={{background:C.white,borderBottom:`1px solid ${C.g200}`,position:"sticky",top:68,zIndex:50}}>
-        <div style={{maxWidth:1260,margin:"0 auto",padding:"0 40px",display:"flex"}}>
-          {tabs.map(t=>(
-            <button key={t.k} onClick={()=>setTab(t.k)} style={{padding:"15px 18px",background:"none",border:"none",borderBottom:`2px solid ${tab===t.k?C.gold:"transparent"}`,color:tab===t.k?C.navy:C.g500,fontSize:".79rem",fontWeight:tab===t.k?600:400,cursor:"pointer",fontFamily:sans,display:"flex",alignItems:"center",gap:5,whiteSpace:"nowrap",transition:"color .15s"}}>
-              {t.i} {t.l}
-              {t.badge>0&&<span style={{background:C.red,color:"#fff",borderRadius:10,fontSize:".6rem",fontWeight:700,padding:"1px 6px",minWidth:18,textAlign:"center"}}>{t.badge}</span>}
-            </button>
+      <div className="admin-cms-shell" style={{maxWidth:1260,margin:"0 auto",padding:"34px 40px",display:"grid",gridTemplateColumns:"240px 1fr",gap:24,alignItems:"start"}}>
+        <aside style={{background:C.white,border:`1px solid ${C.g200}`,borderRadius:12,padding:"18px 14px",position:"sticky",top:96}}>
+          <div style={{padding:"0 8px 14px",borderBottom:`1px solid ${C.g100}`,marginBottom:14}}>
+            <div style={{fontSize:".68rem",fontWeight:800,letterSpacing:1.8,textTransform:"uppercase",color:C.gold,marginBottom:5}}>CMS Sections</div>
+            <p style={{fontSize:".78rem",lineHeight:1.55,color:C.g500,margin:0}}>Manage content, people, access, and portal settings from one place.</p>
+          </div>
+          {tabGroups.map(group=>(
+            <div key={group.l} style={{marginBottom:14}}>
+              <div style={{fontSize:".62rem",fontWeight:800,letterSpacing:1.5,textTransform:"uppercase",color:C.g500,margin:"0 8px 8px"}}>{group.l}</div>
+              <div style={{display:"grid",gap:4}}>
+                {group.items.map(k=>{
+                  const t=tabByKey[k];
+                  const active=tab===k;
+                  return (
+                    <button key={k} onClick={()=>setTab(k)} style={{width:"100%",display:"flex",alignItems:"center",gap:9,textAlign:"left",padding:"10px 10px",background:active?"rgba(6,38,45,0.06)":"transparent",border:`1px solid ${active?"rgba(185,114,49,0.22)":"transparent"}`,borderRadius:9,color:active?C.navy:C.g700,fontSize:".8rem",fontWeight:active?700:500,cursor:"pointer",fontFamily:sans}}>
+                      <span style={{width:20,textAlign:"center",opacity:active?1:.75}}>{t.i}</span>
+                      <span style={{flex:1}}>{t.l}</span>
+                      {t.badge>0&&<span style={{background:C.red,color:"#fff",borderRadius:10,fontSize:".6rem",fontWeight:700,padding:"1px 6px",minWidth:18,textAlign:"center"}}>{t.badge}</span>}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           ))}
-        </div>
-      </div>
-      <div style={{maxWidth:1260,margin:"0 auto",padding:"36px 40px"}}>
-        {tab==="overview"   &&<OverviewTab    reports={reports} analysts={analysts} categoryRules={categoryRules}/>}
-        {tab==="access"     &&<AccessRulesTab categoryRules={categoryRules} setCategoryRules={setCategoryRules}/>}
-        {tab==="banner"     &&<BannerMediaTab showToast={showToast}/>}
-        {tab==="reports"    &&<ReportsTab     reports={reports} analysts={analysts} setReports={setReports} showToast={showToast}/>}
-        {tab==="addreport"  &&<AddReportTab   analysts={analysts} reports={reports} setReports={setReports} showToast={showToast} onDone={()=>setTab("reports")}/>}
-        {tab==="analysts"   &&<AnalystsTab    analysts={analysts} setAnalysts={setAnalysts} showToast={showToast}/>}
-        {tab==="addanalyst" &&<AddAnalystTab  analysts={analysts} setAnalysts={setAnalysts} showToast={showToast} onDone={()=>setTab("analysts")}/>}
-        {tab==="addintern"  &&<AddInternTab   analysts={analysts} setAnalysts={setAnalysts} showToast={showToast} onDone={()=>setTab("analysts")}/>}
-        {tab==="funds"      &&<FundsAdminTab  funds={funds} setFunds={setFunds} showToast={showToast}/>}
-        {tab==="files"      &&<FileManagerTab showToast={showToast}/>}
-        {tab==="users"      &&<UsersTab       showToast={showToast}/>}
-        {tab==="settings"   &&<SettingsTab    showToast={showToast}/>}
-      </div>
-      {toast&&<div style={{position:"fixed",right:24,bottom:24,background:C.navy,color:"#fff",padding:"13px 18px",borderRadius:10,boxShadow:"0 16px 40px rgba(6,38,45,0.24)",fontSize:".83rem",zIndex:300,display:"flex",alignItems:"center",gap:8,border:`1px solid rgba(185,114,49,0.18)`}}><span style={{color:C.gold}}>✓</span>{toast}</div>}
+        </aside>
+        <main style={{minWidth:0}}>
+          {tab==="overview"   &&<OverviewTab    reports={reports} analysts={analysts} categoryRules={categoryRules}/>}
+          {tab==="access"     &&<AccessRulesTab categoryRules={categoryRules} setCategoryRules={setCategoryRules}/>}
+          {tab==="banner"     &&<BannerMediaTab showToast={showToast}/>}
+          {tab==="reports"    &&<ReportsTab     reports={reports} analysts={analysts} setReports={setReports} showToast={showToast}/>}
+          {tab==="addreport"  &&<AddReportTab   analysts={analysts} reports={reports} setReports={setReports} showToast={showToast} onDone={()=>setTab("reports")}/>}
+          {tab==="analysts"   &&<AnalystsTab    analysts={analysts} setAnalysts={setAnalysts} showToast={showToast}/>}
+          {tab==="addanalyst" &&<AddAnalystTab  analysts={analysts} setAnalysts={setAnalysts} showToast={showToast} onDone={()=>setTab("analysts")}/>}
+          {tab==="addintern"  &&<AddInternTab   analysts={analysts} setAnalysts={setAnalysts} showToast={showToast} onDone={()=>setTab("analysts")}/>}
+          {tab==="funds"      &&<FundsAdminTab  funds={funds} setFunds={setFunds} showToast={showToast}/>}
+          {tab==="files"      &&<FileManagerTab showToast={showToast}/>}
+          {tab==="users"      &&<UsersTab       showToast={showToast}/>}
+          {tab==="settings"   &&<SettingsTab    showToast={showToast}/>}
+        </main>
+      </div>`r`n      {toast&&<div style={{position:"fixed",right:24,bottom:24,background:C.navy,color:"#fff",padding:"13px 18px",borderRadius:10,boxShadow:"0 16px 40px rgba(6,38,45,0.24)",fontSize:".83rem",zIndex:300,display:"flex",alignItems:"center",gap:8,border:`1px solid rgba(185,114,49,0.18)`}}><span style={{color:C.gold}}>✓</span>{toast}</div>}
     </div>
   );
 }
 
 function OverviewTab({reports,analysts,categoryRules}) {
+  const publishedReports = reports.filter(r=>r.status==="published");
+  const pendingReports = reports.filter(r=>r.status==="pending");
+  const rejectedReports = reports.filter(r=>r.status==="rejected");
   const stats=[
     {l:"Total Reports",v:reports.length,sub:"Published",c:C.navy,bg:"#eef2f7"},
     {l:"Team Access",v:reports.filter(r=>effectiveAccess(r,categoryRules)==="free").length,sub:"Free or inherited",c:C.green,bg:"#edf4ef"},
     {l:"Analysts",v:analysts.length,sub:"Active contributors",c:C.gold,bg:"#f7eedf"},
+    {l:"Pending Review",v:pendingReports.length,sub:"Awaiting action",c:C.red,bg:"#fef2f2"},
   ];
   const accessSummary = pCats().map(cat => ({ name: cat.name, access: categoryRules[cat.id] || CATEGORY_ACCESS_DEFAULTS[cat.id] || "free" }));
   const byCat=CATS.filter(c=>!c.p).map(c=>{
     const ch=childCats(c.id),count=reports.filter(r=>r.cat===c.id||ch.some(x=>x.id===r.cat)).length;
     return{name:c.name,count,icon:c.icon};
   }).filter(x=>x.count>0).sort((a,b)=>b.count-a.count);
+  const weekMap = reports.reduce((acc,report)=>{
+    const d = new Date(`${report.date}T00:00:00`);
+    const day = d.getDay();
+    const diff = (day + 6) % 7;
+    d.setDate(d.getDate() - diff);
+    const key = d.toISOString().slice(0,10);
+    if(!acc[key]) acc[key]={week:key,published:0,pending:0,rejected:0};
+    if(report.status==="published") acc[key].published += 1;
+    if(report.status==="pending") acc[key].pending += 1;
+    if(report.status==="rejected") acc[key].rejected += 1;
+    return acc;
+  },{});
+  const recentWeeks = Object.values(weekMap).sort((a,b)=>b.week.localeCompare(a.week)).slice(0,4);
   return (
     <div>
       <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:18,marginBottom:36}}>
@@ -2767,7 +2900,7 @@ function OverviewTab({reports,analysts,categoryRules}) {
           {accessSummary.map(item=><AccessBadge key={item.name} access={item.access}/>)}
         </div>
       </div>
-      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:22}}>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:22,marginBottom:22}}>
         <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"26px"}}>
           <h3 style={{fontFamily:serif,fontSize:"1.05rem",color:C.navy,marginBottom:18,fontWeight:600}}>Reports by Category</h3>
           {byCat.map((c,i)=>(
@@ -2788,6 +2921,36 @@ function OverviewTab({reports,analysts,categoryRules}) {
               <div style={{flex:1,minWidth:0}}><div style={{fontSize:".82rem",fontWeight:600,color:C.navy,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r.title}</div><div style={{fontSize:".7rem",color:C.g500,marginTop:1}}>{fd(r.date)}</div></div>
             </div>
           ))}
+        </div>
+      </div>
+      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:22}}>
+        <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"26px"}}>
+          <h3 style={{fontFamily:serif,fontSize:"1.05rem",color:C.navy,marginBottom:18,fontWeight:600}}>Editorial Workflow</h3>
+          <div style={{display:"grid",gap:12}}>
+            {[
+              {label:"Published",value:publishedReports.length,color:C.green,bg:"#edf4ef"},
+              {label:"Pending review",value:pendingReports.length,color:"#b45309",bg:"#fef3c7"},
+              {label:"Needs revision",value:rejectedReports.length,color:C.red,bg:"#fef2f2"},
+            ].map(item=>(
+              <div key={item.label} style={{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"12px 14px",borderRadius:10,background:item.bg}}>
+                <span style={{fontSize:".82rem",color:C.navy,fontWeight:600}}>{item.label}</span>
+                <span style={{fontSize:".92rem",fontWeight:700,color:item.color}}>{item.value}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"26px"}}>
+          <h3 style={{fontFamily:serif,fontSize:"1.05rem",color:C.navy,marginBottom:18,fontWeight:600}}>Publishing Calendar</h3>
+          <div style={{display:"grid",gap:10}}>
+            {recentWeeks.map(week=>(
+              <div key={week.week} style={{display:"grid",gridTemplateColumns:"1fr auto auto auto",gap:10,alignItems:"center",padding:"10px 0",borderBottom:`1px solid ${C.g100}`}}>
+                <span style={{fontSize:".8rem",color:C.navy}}>Week of {fd(week.week)}</span>
+                <span style={{fontSize:".74rem",color:C.green,fontWeight:700}}>Pub {week.published}</span>
+                <span style={{fontSize:".74rem",color:"#b45309",fontWeight:700}}>Pend {week.pending}</span>
+                <span style={{fontSize:".74rem",color:C.red,fontWeight:700}}>Rev {week.rejected}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
@@ -3844,6 +4007,9 @@ export default function App() {
             .library-stats{grid-template-columns:repeat(2, minmax(0, 1fr)) !important;gap:12px !important}
             .library-main-grid{grid-template-columns:1fr !important;gap:22px !important}
             .library-recent-grid{grid-template-columns:1fr !important;gap:14px !important}
+            .reader-activity-grid{grid-template-columns:1fr !important;gap:16px !important}
+            .admin-cms-shell{grid-template-columns:1fr !important;padding-left:14px !important;padding-right:14px !important}
+            .admin-cms-shell aside{position:static !important}
             .library-actions > div{margin-bottom:18px !important}
             .library-actions button{width:100% !important}
             .library-actions p{max-width:100% !important}
@@ -3864,15 +4030,15 @@ export default function App() {
         <div style={{flex:1}}>
           {page==="home"       &&<Home nav={nav} user={user}/>}
           {page==="reports"    &&<ReportsPage nav={nav} user={user} initCat={pageData.cat}/>}
-          {page==="library"    &&user&&<LibraryPage nav={nav} user={user}/>}
-          {page==="library"    &&!user&&<div style={{padding:80,textAlign:"center",color:C.g500}}>Please sign in to open your library.</div>}
+          {page==="library"    &&user?.tier==="premium"&&<LibraryPage nav={nav} user={user}/>}
+          {page==="library"    &&user?.tier!=="premium"&&<div style={{padding:80,textAlign:"center",color:C.g500}}>My Library is available to premium subscribers.</div>}
           {page==="report"     &&<ReportSingle id={pageData.id} nav={nav} user={user}/>}
           {page==="analysts"   &&<AnalystsPage nav={nav}/>}
           {page==="analyst"    &&<AnalystProfilePage id={pageData.id} nav={nav} user={user}/>}
           {page==="contact"    &&<ContactPage nav={nav}/>}
           {page==="pricelists" &&<PriceListsPage user={user} nav={nav}/>}
-          {page==="docbank"    &&["admin","director","analyst","intern"].includes(user?.tier)&&<DocumentBankPage nav={nav} user={user}/>}
-          {page==="docbank"    &&!["admin","director","analyst","intern"].includes(user?.tier)&&<div style={{padding:80,textAlign:"center",color:C.g500}}>Access restricted to CHD research staff.</div>}
+          {page==="docbank"    &&["director","analyst","intern"].includes(user?.tier)&&<DocumentBankPage nav={nav} user={user}/>}
+          {page==="docbank"    &&!["director","analyst","intern"].includes(user?.tier)&&<div style={{padding:80,textAlign:"center",color:C.g500}}>Access restricted to CHD research staff.</div>}
           {/* PAYMENT MODULE DISABLED: subscribe page removed */}
           {page==="subscribe"  &&<div style={{padding:80,textAlign:"center",color:C.g500}}>Subscriptions are not available in this version.</div>}
           {page==="myportal"   &&(user?.tier==="director"||user?.tier==="analyst")&&<AnalystPortalPage user={user} nav={nav}/>}
