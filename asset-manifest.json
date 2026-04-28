@@ -1,16 +1,16 @@
 {
   "files": {
-    "main.js": "/chd-research-portal-v2/static/js/main.015465bf.js",
+    "main.js": "/chd-research-portal-v2/static/js/main.77db6cbd.js",
     "static/js/239.1ffc5e41.chunk.js": "/chd-research-portal-v2/static/js/239.1ffc5e41.chunk.js",
     "static/js/213.cd8f36af.chunk.js": "/chd-research-portal-v2/static/js/213.cd8f36af.chunk.js",
     "static/js/732.fef97668.chunk.js": "/chd-research-portal-v2/static/js/732.fef97668.chunk.js",
     "index.html": "/chd-research-portal-v2/index.html",
-    "main.015465bf.js.map": "/chd-research-portal-v2/static/js/main.015465bf.js.map",
+    "main.77db6cbd.js.map": "/chd-research-portal-v2/static/js/main.77db6cbd.js.map",
     "239.1ffc5e41.chunk.js.map": "/chd-research-portal-v2/static/js/239.1ffc5e41.chunk.js.map",
     "213.cd8f36af.chunk.js.map": "/chd-research-portal-v2/static/js/213.cd8f36af.chunk.js.map",
     "732.fef97668.chunk.js.map": "/chd-research-portal-v2/static/js/732.fef97668.chunk.js.map"
   },
   "entrypoints": [
-    "static/js/main.015465bf.js"
+    "static/js/main.77db6cbd.js"
   ]
 }
