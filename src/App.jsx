@@ -719,7 +719,7 @@ function ContactPage({nav}) {
               <div style={{padding:"16px",border:`1px solid ${C.g200}`,borderRadius:12,background:"linear-gradient(180deg,#fff 0%,#f8fafc 100%)"}}>
                 <div style={{fontSize:".68rem",textTransform:"uppercase",letterSpacing:1.8,color:C.gold,fontWeight:800,marginBottom:8}}>InvestNaija</div>
                 <p style={{color:C.g700,fontSize:".86rem",lineHeight:1.7,marginBottom:10}}>InvestNaija is Chapel Hill Denham's retail savings and investment platform for customers moving from research into execution.</p>
-                <a href="https://chapelhilldenham.com/overview/" target="_blank" rel="noopener noreferrer" style={{display:"inline-flex",padding:"9px 14px",background:C.gold,color:"#fff",borderRadius:999,fontSize:".78rem",fontWeight:700,textDecoration:"none",fontFamily:sans}}>Open InvestNaija</a>
+                <a href="https://www.investnaija.com" target="_blank" rel="noopener noreferrer" style={{display:"inline-flex",padding:"9px 14px",background:C.gold,color:"#fff",borderRadius:999,fontSize:".78rem",fontWeight:700,textDecoration:"none",fontFamily:sans}}>Open InvestNaija</a>
               </div>
             </div>
             <Surface className="contact-map" style={{background:C.white,display:"flex",flexDirection:"column",overflow:"hidden"}}>
@@ -781,12 +781,22 @@ function GatedOverlay({access,user,nav}) {
   const tierText = access==="premium" ? "premium" : "member";
   return (
     <div style={{marginTop:26,background:`linear-gradient(135deg,rgba(6,38,45,0.98) 0%,rgba(11,53,64,0.98) 100%)`,borderRadius:16,padding:"26px 24px",color:"#fff",display:"flex",justifyContent:"space-between",alignItems:"center",gap:18,flexWrap:"wrap",boxShadow:"0 20px 44px rgba(6,38,45,0.14)"}}>
-      <div style={{maxWidth:540}}>
+      <div style={{display:"flex",gap:16,alignItems:"flex-start",maxWidth:680}}>
+        <div style={{width:50,height:50,borderRadius:"50%",background:"#dcfce7",display:"flex",alignItems:"center",justifyContent:"center",boxShadow:"0 8px 22px rgba(22,101,52,0.16)",flexShrink:0}}>
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <rect x="5" y="10" width="14" height="10" rx="2.4" fill="#166534"/>
+            <path d="M8.5 10V7.8C8.5 5.55 10.05 4 12 4C13.95 4 15.5 5.55 15.5 7.8V10" stroke="#166534" strokeWidth="2.2" strokeLinecap="round"/>
+            <circle cx="12" cy="15" r="1.3" fill="#dcfce7"/>
+            <path d="M12 16.1V17.7" stroke="#dcfce7" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+        </div>
+        <div style={{maxWidth:540}}>
         <p style={{fontSize:".62rem",textTransform:"uppercase",letterSpacing:2.4,color:C.gold,fontWeight:800,marginBottom:10}}>Access locked</p>
         <h3 style={{fontFamily:serif,fontSize:"1.25rem",fontWeight:600,marginBottom:8,color:C.white}}>This is a {tierText} report.</h3>
         <p style={{fontSize:".84rem",lineHeight:1.7,color:"rgba(255,255,255,0.68)"}}>
           Contact your account manager or office representative to confirm access. Once your access code is issued, sign in or register to unlock the relevant reports and your library.
         </p>
+        </div>
       </div>
       <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
         <button onClick={()=>nav("register")} style={{padding:"11px 16px",background:C.gold,color:"#fff",border:"none",borderRadius:999,fontSize:".8rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>Create account</button>
@@ -826,8 +836,13 @@ function RC({r,nav,user}) {
         <div style={{position:"relative",flexGrow:1,marginBottom:18,minHeight:148}}>
           <p style={{color:C.g500,fontSize:".83rem",lineHeight:1.65,filter:"blur(5px)",userSelect:"none",pointerEvents:"none",maxHeight:110,overflow:"hidden"}}>{r.ex}</p>
           <div style={{position:"absolute",inset:0,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",background:"rgba(248,249,251,0.82)",backdropFilter:"blur(4px)",borderRadius:8,padding:"16px 10px",textAlign:"center"}}>
-            <div style={{width:46,height:46,borderRadius:"50%",background:C.navy,display:"flex",alignItems:"center",justifyContent:"center",marginBottom:10,boxShadow:"0 4px 16px rgba(17,37,48,0.2)"}}>
-              <span style={{fontSize:"1.2rem"}}></span>
+            <div style={{width:46,height:46,borderRadius:"50%",background:"#dcfce7",display:"flex",alignItems:"center",justifyContent:"center",marginBottom:10,boxShadow:"0 4px 16px rgba(22,101,52,0.16)"}}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="5" y="10" width="14" height="10" rx="2.4" fill="#166534"/>
+                <path d="M8.5 10V7.8C8.5 5.55 10.05 4 12 4C13.95 4 15.5 5.55 15.5 7.8V10" stroke="#166534" strokeWidth="2.2" strokeLinecap="round"/>
+                <circle cx="12" cy="15" r="1.3" fill="#dcfce7"/>
+                <path d="M12 16.1V17.7" stroke="#dcfce7" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
             </div>
             <p style={{fontSize:".8rem",fontWeight:700,color:C.navy,marginBottom:4}}>{tierCta}</p>
             <p style={{fontSize:".72rem",color:C.g500,lineHeight:1.5,maxWidth:190}}>{user?`Upgrade to access`:"Sign in or register to access"}</p>
