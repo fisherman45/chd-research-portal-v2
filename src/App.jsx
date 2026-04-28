@@ -31,11 +31,13 @@ const tierLabel = tier => TIER_LABELS[tier] || tier || "Public";
 const CATEGORY_ACCESS_DEFAULTS = {
   macro: "free",
   strategy: "premium",
-  currency: "premium",
   equities: "premium",
   "fixed-income": "premium",
   outlook: "premium",
   daily: "free",
+  weekly: "free",
+  data: "premium",
+  media: "free",
 };
 const DEFAULT_BANNER_MEDIA = [
   {mediaUrl:"https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",mediaPosition:"center center",layout:"right",duration:10},
@@ -91,13 +93,26 @@ const INIT_ANALYSTS = [
   {id:8,role:"analyst",name:"Research Desk",ini:"RD",title:"Central Research Desk",cov:"Desk support, intern review, market synthesis, and report coordination",email:"researchdesk@chapelhilldenham.com",supervisorId:null,photo:null,bio:"The central research desk supports intern review, synthesis, and publishing coordination across the portal."},
 ];
 const CATS = [
-  {id:"macro",name:"Macroeconomy",icon:"",p:null},
+  {id:"macro",name:"Macroeconomic",icon:"",p:null},
   {id:"strategy",name:"Investment Strategy",icon:"",p:null},
-  {id:"fixed-income",name:"Fixed Income",icon:"",p:null},
-  {id:"currency",name:"Currency",icon:"",p:null},
+  {id:"fixed-income",name:"Fixed Income & Currency",icon:"",p:null},
   {id:"equities",name:"Equity",icon:"",p:null},
   {id:"outlook",name:"Outlook",icon:"",p:null},
   {id:"daily",name:"Daily Report",icon:"",p:null},
+  {id:"weekly",name:"Weekly Report",icon:"",p:null},
+  {id:"data",name:"Data & Analytics",icon:"",p:null},
+  {id:"media",name:"Media / Videos",icon:"",p:null},
+];
+const SAMPLE_INGESTION_QUEUE = [
+  {id:901,file:"2026 Outlook_final.pdf",title:"Yearly Outlook 2026",cat:"outlook",reportType:"Yearly Outlook",assetClass:"Multi-Asset",sector:"Multi-Asset",company:"",ticker:"",author:"Research Desk",date:"2026-04-28",access:"premium",confidence:94,tags:["outlook","macro","equity strategy","fixed income"],description:"A multi-asset outlook setting out CHD's house view across macroeconomic conditions, equity strategy, fixed income, currency, and portfolio positioning for 2026."},
+  {id:902,file:"MTNN FY-25 Company Update.pdf",title:"MTNN FY-25 Company Update",cat:"equities",reportType:"Company Update",assetClass:"Equity",sector:"Telecommunications",company:"MTN Nigeria",ticker:"MTNN",author:"Research Desk",date:"2026-04-28",access:"premium",confidence:91,tags:["MTNN","telecommunications","earnings","FY-25"],description:"A company update reviewing MTN Nigeria's FY-25 performance, key earnings drivers, operating pressures, and near-term equity outlook."},
+  {id:903,file:"UBA Initial Comments FY-25 and Q1-26_.pdf",title:"UBA Initial Comments FY-25 and Q1-26",cat:"equities",reportType:"Initial Comments",assetClass:"Equity",sector:"Banking",company:"United Bank for Africa",ticker:"UBA",author:"Research Desk",date:"2026-04-28",access:"premium",confidence:89,tags:["UBA","banking","earnings","Q1-26"],description:"Initial research comments on UBA's FY-25 and Q1-26 numbers, highlighting earnings quality, balance-sheet movement, and key items for follow-up."},
+  {id:904,file:"Aradel Holdings Plc Initiation of Coverage.pdf",title:"Aradel Holdings Plc Initiation of Coverage",cat:"equities",reportType:"Initiation of Coverage",assetClass:"Equity",sector:"Oil & Gas",company:"Aradel Holdings Plc",ticker:"ARADEL",author:"Research Desk",date:"2026-04-28",access:"premium",confidence:92,tags:["Aradel","oil and gas","initiation","valuation"],description:"An initiation of coverage report introducing Aradel Holdings Plc, its operating profile, valuation drivers, and the investment case for covered clients."},
+  {id:905,file:"March 2026 Inflation Review.pdf",title:"March 2026 Inflation Review",cat:"macro",reportType:"Inflation Review",assetClass:"Macroeconomic",sector:"Macroeconomic",company:"",ticker:"",author:"Research Desk",date:"2026-04-28",access:"free",confidence:96,tags:["inflation","CBN","monetary policy","Nigeria"],description:"A macroeconomic review of Nigeria's March 2026 inflation print and its implications for policy expectations, yields, and consumer-facing sectors."},
+  {id:906,file:"Q4-25 & FY-25 GDP Review and Outlook.pdf",title:"Q4-25 and FY-25 GDP Review and Outlook",cat:"macro",reportType:"GDP Review",assetClass:"Macroeconomic",sector:"Macroeconomic",company:"",ticker:"",author:"Research Desk",date:"2026-04-28",access:"free",confidence:94,tags:["GDP","growth","Nigeria","outlook"],description:"A GDP review covering Q4-25 and FY-25 growth trends, sector contributions, and the macro outlook for the next planning period."},
+  {id:907,file:"Agriculture Sector Report.pdf",title:"Agriculture Sector Report",cat:"equities",reportType:"Sector Report",assetClass:"Equity",sector:"Agriculture",company:"",ticker:"",author:"Research Desk",date:"2026-04-28",access:"premium",confidence:86,tags:["agriculture","sector report","food inflation","Nigeria"],description:"A sector report assessing agriculture trends, industry drivers, food inflation links, and listed or investable exposures relevant to clients."},
+  {id:908,file:"Daily Market Report (27-04-2026).pdf",title:"Daily Market Report - 27 April 2026",cat:"daily",reportType:"Daily Market Report",assetClass:"Multi-Asset",sector:"Multi-Asset",company:"",ticker:"NGX",author:"Research Desk",date:"2026-04-27",access:"free",confidence:97,tags:["daily report","NGX","market wrap","fixed income"],description:"A daily market report summarising equity market performance, fixed-income activity, currency signals, and the main data points from 27 April 2026."},
+  {id:909,file:"Paramount Index.xlsx",title:"Paramount Index Performance Data",cat:"data",reportType:"Index Data",assetClass:"Equity",sector:"Multi-Asset",company:"",ticker:"PARAMOUNT",author:"Research Desk",date:"2026-04-28",access:"premium",confidence:90,tags:["Paramount","index","NGX30","NGX All Share","analytics"],description:"A structured data workbook tracking Paramount Index performance against NGX30 and NGX All Share benchmarks for analytics and client-facing charting."},
 ];
 const INIT_REPORTS = [
   {id:1,status:"published",title:"Dangote Cement Q1 2026 Earnings Preview",ex:"We preview Dangote Cement's Q1 results, expecting revenue growth of 18% YoY driven by robust demand across West Africa and improved pricing power. EBITDA margins set to expand 200bps to 42%. BUY, TP 485.",cat:"equities",aid:3,date:"2026-03-28",access:"premium",body:"Revenue is expected to reach 1.2 trillion in Q1 2026, up from 1.02 trillion in Q1 2025. The key driver is volume growth across Nigerian and Pan-African operations, with the Obajana and Ibese plants operating at near-full capacity.\n\nCement prices have remained firm at 7,500-8,000 per bag in most markets, providing strong pricing support. We note that the company has successfully passed through cost increases to consumers without material demand destruction.\n\nOperating costs have benefited from the switch to CNG at the Obajana plant, reducing energy costs by approximately 35% compared to AGO. This structural cost advantage is not yet fully reflected in market expectations.\n\nWe forecast net profit of 180 billion for Q1 2026, representing 22% YoY growth. At the current price, the stock trades at 8.2x forward P/E, a discount to the 5-year average of 10.5x."},
@@ -140,9 +155,9 @@ const INIT_LIBRARY = [
   {id:107,title:"Cement Sector  Cost Structure Analysis (Working File)",description:"Detailed cost breakdown for Dangote, BUA, and Lafarge including energy cost per tonne, logistics, and COGS bridge. For internal use  not for external distribution.",docType:"data",visibility:"private",category:"cement",pubDate:"2026-03-15",filePath:null,createdAt:"2026-03-15T14:00:00Z",uploaderName:"Gideon Oshadumi",uploadedBy:3},
 ];
 const INIT_DIGEST = {
-  title:"2026 Yearly Digest",
-  period:"Annual report",
-  overview:"A concise annual digest covering the market themes, portfolio ideas, and macro calls that mattered most across the year.",
+  title:"Yearly Outlook 2026",
+  period:"Outlook",
+  overview:"A concise outlook briefing covering the house view, market themes, portfolio ideas, and macro calls that matter most for the year.",
   highlights:[
     "Inflation moderated more gradually than the market first expected, which kept duration positioning selective.",
     "Banking and selected industrial names led conviction levels as recapitalisation improved balance-sheet confidence.",
@@ -150,7 +165,7 @@ const INIT_DIGEST = {
   ],
   filePath:"",
   fileDataUrl:"",
-  fileName:"chd-2026-yearly-digest.txt",
+  fileName:"chd-yearly-outlook-2026.txt",
   updatedAt:"2026-04-27T12:00:00Z",
 };
 
@@ -343,6 +358,7 @@ const normalizeAccessTier = access => access === "registered" ? "premium" : acce
 const normalizeCategoryId = cat => ({
   "company-updates": "equities",
   "sector-report": "equities",
+  currency: "fixed-income",
 }[cat] || cat);
 const normalizeAnalysts = rows => (rows || INIT_ANALYSTS).map(analyst =>
   analyst?.id === 6 || analyst?.name === "Nabila Mohammed"
@@ -396,6 +412,43 @@ const compactButton = {
   cursor:"pointer",
   fontFamily:sans,
   border:"none",
+};
+const enrichedReport = (report, analysts=INIT_ANALYSTS) => {
+  const cat = normalizeCategoryId(report.cat || report.category || "macro");
+  const analyst = report.aid ? ga(report.aid, analysts) : null;
+  const title = report.title || "";
+  const text = `${title} ${report.ex || ""} ${report.body || ""}`.toLowerCase();
+  const isEquity = cat==="equities" || /mtnn|uba|aradel|bank|cement|oil|agriculture|equity|earnings|company/.test(text);
+  const isMacro = cat==="macro" || /inflation|gdp|macro|monetary|fiscal|cbn/.test(text);
+  const isFixed = cat==="fixed-income" || /fixed income|currency|fx|naira|bond|treasury|yield|auction/.test(text);
+  const reportType =
+    /outlook/.test(text) ? "Outlook Report" :
+    /daily|market wrap/.test(text) ? "Daily Market Report" :
+    /weekly/.test(text) ? "Weekly Market Report" :
+    /initiation/.test(text) ? "Initiation of Coverage" :
+    /initial comments/.test(text) ? "Initial Comments" :
+    /inflation/.test(text) ? "Inflation Review" :
+    /gdp/.test(text) ? "GDP Review" :
+    /sector/.test(text) ? "Sector Report" :
+    /company|earnings/.test(text) ? "Company Update" :
+    "Research Note";
+  const assetClass = isEquity ? "Equity" : isFixed ? "Fixed Income & Currency" : isMacro ? "Macroeconomic" : cat==="outlook" ? "Multi-Asset" : "Multi-Asset";
+  const sector =
+    /bank|uba|zenith|gtco/.test(text) ? "Banking" :
+    /mtn|telecom/.test(text) ? "Telecommunications" :
+    /aradel|oil|gas|energy/.test(text) ? "Oil & Gas" :
+    /agriculture|food/.test(text) ? "Agriculture" :
+    /cement|dangote|bua|lafarge/.test(text) ? "Cement" :
+    isMacro ? "Macroeconomic" : assetClass;
+  const tags = [cat, reportType, assetClass, sector, analyst?.name].filter(Boolean).map(String);
+  return {...report, cat, reportType, assetClass, sector, analystName: analyst?.name || "Research Desk", tags:[...new Set(tags)]};
+};
+const reportMatchesQuery = (report, query, analysts=INIT_ANALYSTS) => {
+  const enriched = enrichedReport(report, analysts);
+  const q = query.trim().toLowerCase();
+  if(!q) return true;
+  const haystack = [enriched.title,enriched.ex,enriched.body,enriched.cat,enriched.reportType,enriched.assetClass,enriched.sector,enriched.analystName,(enriched.tags||[]).join(" ")].join(" ").toLowerCase();
+  return q.split(/\s+/).filter(Boolean).some(term => haystack.includes(term));
 };
 /*  ANALYST AVATAR  */
 function AnalystAvatar({analyst,size=80,fontSize="1.4rem"}) {
@@ -529,9 +582,11 @@ function Header({page,nav,goBack,canGoBack,user,onLogout}) {
   const items = [
     {k:"home",l:"Home"},
     {k:"reports",l:"Reports"},
+    {k:"guide",l:"Ask Research"},
     {k:"analysts",l:"Analysts"},
     {k:"pricelists",l:"Price Lists"},
     {k:"contact",l:"Contact Us"},
+    ...(user?.tier==="premium"?[{k:"analytics",l:"Data & Analytics"}]:[]),
     ...(user?.tier==="premium"?[{k:"library",l:"My Library"}]:[]),
     ...(user&&["director","analyst","intern"].includes(user.tier)?[{k:"docbank",l:"Research Library"}]:[]),
     /* PAYMENT MODULE DISABLED: subscribe nav item removed */
@@ -618,7 +673,7 @@ function Footer({nav}) {
   const lnk={background:"none",border:"none",color:"rgba(255,255,255,0.54)",cursor:"pointer",padding:0,fontFamily:sans,fontSize:".82rem",textAlign:"left",display:"block",marginBottom:9,transition:"color .15s"};
   const lnkH={color:"rgba(255,255,255,0.92)"};
   const researchLinks=[
-    ...["macro","strategy","fixed-income","currency","equities","outlook","daily"].map(id=>{
+    ...["macro","strategy","fixed-income","equities","outlook","daily","weekly","data","media"].map(id=>{
       const cat = gc(id);
       return {l:cat?.name || id,a:()=>nav("reports",{cat:id})};
     }),
@@ -1391,19 +1446,19 @@ function Home({nav,user}) {
   },[featuredReportIds,published]);
   const carouselSlides = useMemo(()=>[
     {
-      title:"2026 Yearly Digest",
-      tag:"Annual report",
+      title:"Yearly Outlook 2026",
+      tag:"Outlook",
       bgA:"rgba(6,38,45,0.98)",
       bgB:"rgba(11,53,64,0.96)",
       bgC:"rgba(8,18,21,0.94)",
-      streamTitle:"Featured reading",
-      excerpt:digest?.overview || "A concise annual digest with the most important market themes, portfolio ideas, and macro calls in one place.",
-      ctaLabel:"View digest",
+      streamTitle:"Outlook briefing",
+      excerpt:digest?.overview || "A concise outlook with the most important market themes, portfolio ideas, and macro calls in one place.",
+      ctaLabel:"View outlook",
       ctaRoute:"digest",
       duration:10,
       metrics:[{l:"Reports",v:published.length},{l:"Desk",v:deskReports.length},{l:"Tier",v:tierLabel(user?.tier)}],
       cards:[
-        {badge:"Digest", title:published[0]?.title||"Latest report", text:published[0]?.ex||"Latest summary from the research desk.", tag:published[0]?.access||"free", color:C.gold},
+        {badge:"Outlook", title:published[0]?.title||"Latest report", text:published[0]?.ex||"Latest summary from the research desk.", tag:published[0]?.access||"free", color:C.gold},
         {badge:"Macro", title:"What moved markets", text:"A short read on rates, FX, inflation, and sector leadership.", tag:"free", color:"#22c55e"},
         {badge:"Desk", title:"Research desk support", text:"Central coordination for interns and submissions.", tag:"desk", color:"#60a5fa"},
       ],
@@ -1475,8 +1530,8 @@ function Home({nav,user}) {
               Independent research since 2005
             </div>
             <h1 style={{fontFamily:serif,fontSize:"3.05rem",color:C.white,fontWeight:500,lineHeight:1.04,marginBottom:16,maxWidth:680}}>
-              <span style={{display:"block"}}>A premium research</span>
-              <span style={{display:"block",fontStyle:"italic",color:C.gold,marginTop:2}}>workspace for market conviction</span>
+              <span style={{display:"block"}}>Premium research</span>
+              <span style={{display:"block",fontStyle:"italic",color:C.gold,marginTop:2}}>conduit for market insight</span>
             </h1>
             <p style={{fontSize:".95rem",color:"rgba(255,255,255,0.68)",lineHeight:1.85,maxWidth:560,marginBottom:24}}>Institutional-grade equity, macroeconomic, and fixed-income coverage presented with the clarity of an editorial product and the discipline of a working research desk.</p>
             <div style={{display:"flex",gap:12,flexWrap:"wrap",marginBottom:20}}>
@@ -1507,17 +1562,17 @@ function Home({nav,user}) {
     <section style={{padding:"34px 0 58px",background:"linear-gradient(180deg,#f5f7fa 0%,#ffffff 34%)"}}>
       <div style={{maxWidth:1320,margin:"0 auto",padding:"0 40px"}}>
         <div className="home-brief-grid" style={{display:"grid",gridTemplateColumns:"1.1fr .9fr",gap:22,marginBottom:28}}>
-          <SectionFrame title="Research desk highlights" sub="The day starts with the strongest pieces on the desk, then moves into deeper category-specific reads.">
+          <SectionFrame title="Latest reports" sub="The newest published notes update automatically as the Research Desk approves and releases coverage.">
             <div className="report-grid-mobile" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:18}}>
               {featuredReports.map(r=><RC key={r.id} r={r} nav={nav} user={user}/>)}
             </div>
           </SectionFrame>
-          <SectionFrame title="Digest briefing" sub="A quick route into the current house view, plus the access action that matters for this user.">
+          <SectionFrame title="Outlook briefing" sub="A quick route into the current house view, plus the access action that matters for this user.">
             <div style={{display:"grid",gap:14}}>
               <div style={{padding:"18px 18px 16px",background:`linear-gradient(160deg,${C.navy} 0%,${C.navyMid} 100%)`,borderRadius:16,color:"#fff",overflow:"hidden",position:"relative"}}>
                 <div style={{position:"absolute",right:-34,top:-34,width:120,height:120,borderRadius:"50%",background:"rgba(185,114,49,.18)"}}/>
                 <Eyebrow color={C.gold} style={{marginBottom:8}}>Latest house view</Eyebrow>
-                <div style={{fontFamily:serif,fontSize:"1.18rem",fontWeight:600,marginBottom:8,lineHeight:1.2}}>{digest?.title || "2026 Yearly Digest"}</div>
+                <div style={{fontFamily:serif,fontSize:"1.18rem",fontWeight:600,marginBottom:8,lineHeight:1.2}}>{digest?.title || "Yearly Outlook 2026"}</div>
                 <div style={{fontSize:".8rem",lineHeight:1.72,color:"rgba(255,255,255,.74)",marginBottom:12}}>{digest?.overview}</div>
                 <div style={{display:"grid",gap:8,marginBottom:14}}>
                   {(digest?.highlights||[]).slice(0,3).map((h,i)=>(
@@ -1527,7 +1582,7 @@ function Home({nav,user}) {
                     </div>
                   ))}
                 </div>
-                <button onClick={()=>nav("digest")} style={{...compactButton,padding:"9px 14px",background:C.gold,color:"#fff",border:`1px solid ${C.gold}`,whiteSpace:"nowrap"}}>Open digest</button>
+                <button onClick={()=>nav("digest")} style={{...compactButton,padding:"9px 14px",background:C.gold,color:"#fff",border:`1px solid ${C.gold}`,whiteSpace:"nowrap"}}>Open outlook</button>
               </div>
               <div style={{padding:"16px 18px",background:C.offWhite,border:`1px solid ${C.g200}`,borderRadius:16,display:"grid",gridTemplateColumns:"1fr auto",gap:14,alignItems:"center"}}>
                 <div>
@@ -1598,11 +1653,11 @@ function DigestPage({nav}) {
         <div style={{maxWidth:1240,margin:"0 auto",padding:"0 40px",position:"relative",zIndex:1}}>
           <div className="digest-grid" style={{display:"grid",gridTemplateColumns:"1.1fr .9fr",gap:28,alignItems:"end"}}>
             <div>
-              <p style={{color:C.gold,fontSize:".7rem",fontWeight:800,letterSpacing:2.2,textTransform:"uppercase",marginBottom:10}}>{digest?.period || "Digest"}</p>
-              <h1 style={{fontFamily:serif,fontSize:"2.55rem",fontWeight:500,color:C.white,lineHeight:1.04,marginBottom:12}}>{digest?.title || "CHD Digest"}</h1>
+              <p style={{color:C.gold,fontSize:".7rem",fontWeight:800,letterSpacing:2.2,textTransform:"uppercase",marginBottom:10}}>{digest?.period || "Outlook"}</p>
+              <h1 style={{fontFamily:serif,fontSize:"2.55rem",fontWeight:500,color:C.white,lineHeight:1.04,marginBottom:12}}>{digest?.title || "Yearly Outlook"}</h1>
               <p style={{fontSize:".95rem",lineHeight:1.85,color:"rgba(255,255,255,0.72)",maxWidth:720,marginBottom:20}}>{digest?.overview}</p>
               <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-                <a href={downloadHref} download={digestDownloadName(digest)} style={{...premiumButton,background:C.gold,color:"#fff",textDecoration:"none",display:"inline-flex",alignItems:"center",justifyContent:"center"}}>Download digest</a>
+                <a href={downloadHref} download={digestDownloadName(digest)} style={{...premiumButton,background:C.gold,color:"#fff",textDecoration:"none",display:"inline-flex",alignItems:"center",justifyContent:"center"}}>Download outlook</a>
                 <button onClick={()=>nav("reports")} style={{...premiumButton,background:"transparent",color:"#fff",border:"1px solid rgba(255,255,255,0.14)"}}>Browse reports</button>
               </div>
             </div>
@@ -1626,7 +1681,7 @@ function DigestPage({nav}) {
       <section style={{padding:"34px 0 58px",background:"linear-gradient(180deg,#f5f7fa 0%,#ffffff 34%)"}}>
         <div style={{maxWidth:1240,margin:"0 auto",padding:"0 40px"}}>
           <div className="digest-detail-grid" style={{display:"grid",gridTemplateColumns:"1.05fr .95fr",gap:22}}>
-            <SectionFrame title="What the digest covers" sub="Use the digest as a briefing layer before diving into the full stream of notes, sector reports, and fixed-income pieces.">
+            <SectionFrame title="What the outlook covers" sub="Use the outlook as a briefing layer before diving into the full stream of notes, sector reports, and fixed-income pieces.">
               <div style={{display:"grid",gap:12}}>
                 {(digest?.highlights || []).map((item,index)=>(
                   <div key={index} style={{display:"grid",gridTemplateColumns:"28px 1fr",gap:12,alignItems:"start",padding:"12px 0",borderBottom:index < (digest.highlights.length - 1) ? `1px solid ${C.g100}` : "none"}}>
@@ -1636,7 +1691,7 @@ function DigestPage({nav}) {
                 ))}
               </div>
             </SectionFrame>
-            <SectionFrame title="Related research" sub="The digest should lead naturally into the live report flow instead of feeling like a dead-end page.">
+            <SectionFrame title="Related research" sub="The outlook should lead naturally into the live report flow instead of feeling like a dead-end page.">
               <div style={{display:"grid",gap:14,marginBottom:16}}>
                 {digestReports.map(report=>(
                   <button key={report.id} onClick={()=>nav("report",{id:report.id})} style={{textAlign:"left",padding:"14px 16px",background:C.offWhite,border:`1px solid ${C.g200}`,borderRadius:14,cursor:"pointer",fontFamily:sans}}>
@@ -1905,6 +1960,137 @@ function ReportsPage({nav,user,initCat}) {
       </div>
     </div></section>
   </>); 
+}
+
+function ResearchGuidePage({nav,user}) {
+  const {reports,analysts}=useData();
+  const [query,setQuery]=useState("where do I see how well the equities market is doing?");
+  const published=useMemo(()=>reports.filter(r=>r.status==="published").map(r=>enrichedReport(r,analysts)),[reports,analysts]);
+  const infer=useMemo(()=>{
+    const q=query.toLowerCase();
+    const categories=[];
+    if(/equity|equities|stock|ngx|market/.test(q)) categories.push("equities","daily","weekly","strategy");
+    if(/fixed|income|bond|bill|yield|rates|fx|currency|naira|dollar/.test(q)) categories.push("fixed-income");
+    if(/macro|inflation|gdp|economy|cbn|policy/.test(q)) categories.push("macro");
+    if(/outlook|year|annual|2026|legacy/.test(q)) categories.push("outlook");
+    if(/data|analytics|history|p&l|financials|chart/.test(q)) categories.push("data");
+    const unique=[...new Set(categories.length?categories:["daily","weekly","strategy"])];
+    const results=published
+      .filter(r=>unique.includes(r.cat)||reportMatchesQuery(r,query,analysts))
+      .sort((a,b)=>new Date(b.date)-new Date(a.date))
+      .slice(0,6);
+    const clarification = /equity|equities|market/.test(q)
+      ? "Do you want the latest market performance, a weekly equity view, or company-level equity research?"
+      : /data|history|p&l/.test(q)
+        ? "Do you want company financial history, index performance, or downloadable analytics?"
+        : "I can narrow this by asset class, report type, company, ticker, analyst, or date.";
+    return {categories:unique,results,clarification};
+  },[query,published,analysts]);
+  const examples=[
+    "where do I see how well the equities market is doing?",
+    "show me the latest inflation view",
+    "find fixed income and currency reports",
+    "where is the Yearly Outlook 2026?",
+    "show reports on MTNN or telecoms",
+    "what data is available for company P&L history?"
+  ];
+  return (
+    <>
+      <section style={{background:`linear-gradient(145deg,${C.navy} 0%,${C.navyMid} 58%,#071b22 100%)`,padding:"54px 0 42px",position:"relative",overflow:"hidden"}}>
+        <div style={{position:"absolute",inset:0,opacity:.07,backgroundImage:"linear-gradient(rgba(255,255,255,.3) 1px, transparent 1px),linear-gradient(90deg,rgba(255,255,255,.3) 1px, transparent 1px)",backgroundSize:"76px 76px"}}/>
+        <div style={{maxWidth:1240,margin:"0 auto",padding:"0 40px",position:"relative",zIndex:1}}>
+          <div className="guide-hero-grid" style={{display:"grid",gridTemplateColumns:"1.02fr .98fr",gap:28,alignItems:"end"}}>
+            <div>
+              <p style={{color:C.gold,fontSize:".7rem",fontWeight:900,letterSpacing:2.4,textTransform:"uppercase",marginBottom:10}}>Research Guide</p>
+              <h1 style={{fontFamily:serif,fontSize:"2.55rem",fontWeight:500,color:"#fff",lineHeight:1.05,marginBottom:12}}>Ask for research the way a client would ask.</h1>
+              <p style={{fontSize:".95rem",lineHeight:1.82,color:"rgba(255,255,255,.68)",maxWidth:700}}>This preview uses rules, taxonomy, metadata, and report relationships first. AI can later help parse inconsistent PDFs and phrase answers, but the result set remains grounded in approved portal records.</p>
+            </div>
+            <Surface style={{padding:"22px",background:"rgba(255,255,255,.05)",border:"1px solid rgba(255,255,255,.1)"}}>
+              <Eyebrow color={C.gold}>Assistant model</Eyebrow>
+              <div style={{display:"grid",gap:10}}>
+                {["Interpret the question","Map to taxonomy and metadata","Ask a clarifying question if needed","Surface approved reports with reasons"].map((step,i)=>(
+                  <div key={step} style={{display:"grid",gridTemplateColumns:"26px 1fr",gap:10,alignItems:"center"}}>
+                    <span style={{width:26,height:26,borderRadius:"50%",background:"rgba(185,114,49,.16)",color:C.gold,display:"flex",alignItems:"center",justifyContent:"center",fontSize:".72rem",fontWeight:900}}>{i+1}</span>
+                    <span style={{fontSize:".82rem",color:"rgba(255,255,255,.82)",lineHeight:1.55}}>{step}</span>
+                  </div>
+                ))}
+              </div>
+            </Surface>
+          </div>
+        </div>
+      </section>
+      <section style={{padding:"38px 0 58px",background:"linear-gradient(180deg,#f5f7fa 0%,#fff 38%)"}}>
+        <div style={{maxWidth:1240,margin:"0 auto",padding:"0 40px"}}>
+          <div className="guide-grid" style={{display:"grid",gridTemplateColumns:"1fr 1.25fr",gap:22,alignItems:"start"}}>
+            <SectionFrame title="Ask Research" sub="Type naturally. The assistant turns the question into filters and report routes.">
+              <textarea value={query} onChange={e=>setQuery(e.target.value)} rows={5} style={{width:"100%",padding:"15px",border:`1px solid ${C.g200}`,borderRadius:14,fontFamily:sans,fontSize:".9rem",lineHeight:1.7,color:C.navy,resize:"vertical",marginBottom:14}}/>
+              <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+                {examples.map(ex=><button key={ex} onClick={()=>setQuery(ex)} style={{padding:"8px 11px",borderRadius:999,border:`1px solid ${C.g200}`,background:C.offWhite,color:C.g700,fontSize:".72rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>{ex}</button>)}
+              </div>
+              <div style={{marginTop:18,padding:"14px 15px",background:C.goldSoft,border:`1px solid rgba(185,114,49,.18)`,borderRadius:14}}>
+                <div style={{fontSize:".7rem",fontWeight:900,color:C.gold,textTransform:"uppercase",letterSpacing:1.7,marginBottom:6}}>Clarifying prompt</div>
+                <p style={{fontSize:".84rem",lineHeight:1.7,color:C.navy}}>{infer.clarification}</p>
+              </div>
+            </SectionFrame>
+            <SectionFrame title="Recommended routes" sub="Results are explained so users know why a report was surfaced.">
+              <div style={{display:"flex",gap:8,flexWrap:"wrap",marginBottom:16}}>
+                {infer.categories.map(cat=><AccessBadge key={cat} access={cat==="daily"||cat==="weekly"||cat==="macro"?"free":"premium"}/>)}
+                {infer.categories.map(cat=><span key={`${cat}-label`} style={{fontSize:".7rem",fontWeight:800,color:C.navy,background:C.g100,border:`1px solid ${C.g200}`,padding:"5px 9px",borderRadius:999}}>{gc(cat)?.name||cat}</span>)}
+              </div>
+              <div style={{display:"grid",gap:12}}>
+                {infer.results.map(r=>(
+                  <button key={r.id} onClick={()=>nav("report",{id:r.id})} style={{textAlign:"left",display:"grid",gridTemplateColumns:"1fr auto",gap:12,padding:"15px 16px",borderRadius:14,border:`1px solid ${C.g200}`,background:C.offWhite,cursor:"pointer",fontFamily:sans}}>
+                    <span>
+                      <span style={{display:"block",fontSize:".9rem",fontWeight:800,color:C.navy,marginBottom:4}}>{r.title}</span>
+                      <span style={{display:"block",fontSize:".74rem",color:C.g500,lineHeight:1.55}}>Matched by {gc(r.cat)?.name}, {r.reportType}, {r.sector}. {r.analystName}.</span>
+                    </span>
+                    <span style={{fontSize:".7rem",fontWeight:900,color:C.gold,whiteSpace:"nowrap"}}>{fd(r.date)}</span>
+                  </button>
+                ))}
+              </div>
+            </SectionFrame>
+          </div>
+        </div>
+      </section>
+    </>
+  );
+}
+
+function DataAnalyticsPage({nav}) {
+  const datasets=[
+    {title:"Paramount Index history",range:"Mar 2018 - Mar 2026",type:"Index performance",access:"Subscriber",points:"Paramount, NGX30, NGX All Share"},
+    {title:"Covered company P&L history",range:"5-year and 10-year view",type:"Company financials",access:"Subscriber",points:"Revenue, EBITDA, PAT, margins"},
+    {title:"Fixed income and currency dashboard",range:"Weekly series",type:"Market data",access:"Subscriber",points:"Yields, auction results, FX liquidity"},
+    {title:"Sector valuation comp sheets",range:"Latest research cycle",type:"Valuation",access:"Subscriber",points:"Multiples, target prices, recommendations"},
+  ];
+  return (
+    <>
+      <section style={{background:`linear-gradient(150deg,${C.navy} 0%,${C.navyMid} 60%,#071920 100%)`,padding:"54px 0 42px"}}>
+        <div style={{maxWidth:1240,margin:"0 auto",padding:"0 40px"}}>
+          <p style={{color:C.gold,fontSize:".7rem",fontWeight:900,letterSpacing:2.4,textTransform:"uppercase",marginBottom:10}}>Subscriber data product</p>
+          <h1 style={{fontFamily:serif,fontSize:"2.45rem",fontWeight:500,color:"#fff",lineHeight:1.06,marginBottom:10}}>Data & Analytics</h1>
+          <p style={{fontSize:".92rem",lineHeight:1.8,color:"rgba(255,255,255,.68)",maxWidth:760}}>A premium workspace for historical financials, index history, valuation snapshots, and client-ready analytics that sit alongside the research library.</p>
+        </div>
+      </section>
+      <section style={{padding:"38px 0 60px",background:C.offWhite}}>
+        <div style={{maxWidth:1240,margin:"0 auto",padding:"0 40px"}}>
+          <div className="analytics-grid" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:20}}>
+            {datasets.map(item=>(
+              <Surface key={item.title} style={{padding:"24px"}}>
+                <div style={{fontSize:".66rem",fontWeight:900,color:C.gold,textTransform:"uppercase",letterSpacing:1.8,marginBottom:8}}>{item.type}</div>
+                <h3 style={{fontFamily:serif,fontSize:"1.25rem",fontWeight:600,color:C.navy,marginBottom:8}}>{item.title}</h3>
+                <p style={{fontSize:".84rem",lineHeight:1.72,color:C.g700,marginBottom:16}}>{item.points}</p>
+                <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"center",paddingTop:14,borderTop:`1px solid ${C.g100}`}}>
+                  <span style={{fontSize:".78rem",color:C.g500}}>{item.range}</span>
+                  <button onClick={()=>nav("contact")} style={{padding:"8px 12px",borderRadius:999,border:"none",background:C.navy,color:"#fff",fontSize:".72rem",fontWeight:800,cursor:"pointer",fontFamily:sans}}>Request access</button>
+                </div>
+              </Surface>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
+  );
 }
 
 /*  PERSONAL LIBRARY  */
@@ -3524,7 +3710,8 @@ function ManagePage({nav}) {
     {k:"pending",l:"Pending Reports",badge:pendingReports.length},
     {k:"reports",l:"Reports"},
     {k:"addreport",l:"Desk Publish"},
-    {k:"digest",l:"Digest"},
+    {k:"digest",l:"Outlook"},
+    {k:"ingestion",l:"Ingestion"},
     {k:"banner",l:"Banner Media"},
     {k:"files",l:"File Library"},
     {k:"analysts",l:"Analysts",badge:pendingBioCount},
@@ -3539,11 +3726,11 @@ function ManagePage({nav}) {
     {k:"settings",l:"Backend Readiness"},
   ];
   const tabGroups=[
-    {l:"Command",items:[tabs[0],tabs[1],tabs[14]]},
-    {l:"Content",items:[tabs[2],tabs[3],tabs[4],tabs[5],tabs[6]]},
-    {l:"People",items:[tabs[7],tabs[8],tabs[9],tabs[10]]},
-    {l:"Access",items:[tabs[11],tabs[12],tabs[13]]},
-    {l:"Data",items:[tabs[15],tabs[16]]},
+    {l:"Command",items:[tabs[0],tabs[1],tabs[15]]},
+    {l:"Content",items:[tabs[2],tabs[3],tabs[4],tabs[5],tabs[6],tabs[7]]},
+    {l:"People",items:[tabs[8],tabs[9],tabs[10],tabs[11]]},
+    {l:"Access",items:[tabs[12],tabs[13],tabs[14]]},
+    {l:"Data",items:[tabs[16],tabs[17]]},
   ];
 
   return (
@@ -3569,6 +3756,7 @@ function ManagePage({nav}) {
         {tab==="reports"&&<ReportsTab reports={reports} analysts={analysts} setReports={setReports} showToast={showToast}/>}
         {tab==="addreport"&&<AddReportTab analysts={analysts} reports={reports} setReports={setReports} showToast={showToast} onDone={()=>setTab('reports')}/>}
         {tab==="digest"&&<DigestAdminTab showToast={showToast}/>}
+        {tab==="ingestion"&&<IngestionWorkbenchTab reports={reports} setReports={setReports} showToast={showToast}/>}
         {tab==="banner"&&<BannerMediaTab showToast={showToast}/>}
         {tab==="files"&&<FileManagerTab showToast={showToast}/>}
         {tab==="analysts"&&<AnalystsTab analysts={analysts} setAnalysts={setAnalysts} showToast={showToast}/>}
@@ -3694,7 +3882,7 @@ function GovernanceTab({reports,analysts,categoryRules}) {
   const missingAnalyst = reports.filter(r=>r.status==="published"&&!r.aid);
   const premiumReports = reports.filter(r=>effectiveAccess(r,categoryRules)==="premium");
   const workflow = [
-    {step:"1",title:"Intake",body:"Interns or desk staff upload drafts, archive files, price lists, and digest material into controlled queues."},
+    {step:"1",title:"Intake",body:"Interns or desk staff upload drafts, archive files, price lists, and outlook material into controlled queues."},
     {step:"2",title:"Editorial review",body:"Assigned analysts review submissions. Directors and authorised desk users can approve broader team content."},
     {step:"3",title:"Compliance check",body:"Each published report must carry attribution, date, access tier, source context, and disclaimer language."},
     {step:"4",title:"Publish and distribute",body:"Approved items move live, optionally notify subscribers, and remain visible in the publishing calendar."},
@@ -3717,7 +3905,7 @@ function GovernanceTab({reports,analysts,categoryRules}) {
     "approvals",
     "analysts",
     "library_documents",
-    "digests",
+    "outlooks",
     "fund_snapshots",
     "audit_log",
   ];
@@ -3771,7 +3959,7 @@ function GovernanceTab({reports,analysts,categoryRules}) {
                 "No report goes live without owner, date, category, access tier, and disclaimer.",
                 "Subscriber access is approved before activation and can be revoked.",
                 "Interns can handle uploads, but approvals remain with analysts, directors, or authorised desk owners.",
-                "Digest, banner, featured reports, funds, and library files have named maintenance surfaces.",
+                "Outlook, banner, featured reports, funds, and library files have named maintenance surfaces.",
               ].map(line=><div key={line} style={{fontSize:".82rem",lineHeight:1.65,color:"rgba(255,255,255,0.82)"}}>{line}</div>)}
             </div>
           </div>
@@ -3999,7 +4187,7 @@ function DigestAdminTab({showToast}) {
       fileName:draft.fileName.trim() || prev.fileName,
       updatedAt:new Date().toISOString(),
     }));
-    showToast("Digest content updated.");
+    showToast("Outlook content updated.");
   };
   const upload = async file => {
     if(!file) return;
@@ -4007,14 +4195,14 @@ function DigestAdminTab({showToast}) {
       const fileDataUrl = await fileToDataURL(file);
       setDigest(prev=>({...prev,fileDataUrl,fileName:file.name,updatedAt:new Date().toISOString()}));
       setDraft(prev=>({...prev,fileName:file.name}));
-      showToast("Digest file uploaded.");
+      showToast("Outlook file uploaded.");
     }catch{
-      showToast("Unable to read the selected digest file.");
+      showToast("Unable to read the selected outlook file.");
     }
   };
   return (
     <div>
-      <SH title="Digest" sub="Manage the standalone digest page, its summary, and the downloadable file shown from the home hero." />
+      <SH title="Outlook" sub="Manage the standalone outlook page, its summary, and the downloadable file shown from the home hero." />
       <div style={{display:"grid",gridTemplateColumns:"1.1fr .9fr",gap:20}}>
         <Surface style={{padding:"22px"}}>
           <div style={{display:"grid",gap:14}}>
@@ -4035,14 +4223,14 @@ function DigestAdminTab({showToast}) {
               <textarea rows={6} value={draft.highlights} onChange={e=>setDraft(prev=>({...prev,highlights:e.target.value}))} style={{width:"100%",padding:"10px 12px",border:`1px solid ${C.g200}`,borderRadius:8,fontSize:".86rem",fontFamily:sans,resize:"vertical"}} />
             </label>
             <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
-              <button onClick={save} style={{...premiumButton,background:C.navy,color:"#fff"}}>Save digest details</button>
+              <button onClick={save} style={{...premiumButton,background:C.navy,color:"#fff"}}>Save outlook details</button>
               <a href={digestDownloadUrl(digest)} download={digestDownloadName(digest)} style={{...premiumButton,background:C.g100,color:C.navy,textDecoration:"none",display:"inline-flex",alignItems:"center"}}>Download current file</a>
             </div>
           </div>
         </Surface>
         <Surface style={{padding:"22px"}}>
-          <Eyebrow>Digest file</Eyebrow>
-          <p style={{fontSize:".82rem",lineHeight:1.7,color:C.g700,marginBottom:14}}>Upload the current digest PDF or leave the summary-only fallback in place for the demo.</p>
+          <Eyebrow>Outlook file</Eyebrow>
+          <p style={{fontSize:".82rem",lineHeight:1.7,color:C.g700,marginBottom:14}}>Upload the current outlook PDF or leave the summary-only fallback in place for the demo.</p>
           <input type="file" accept=".pdf,.doc,.docx,.txt,.ppt,.pptx" onChange={e=>upload(e.target.files?.[0]||null)} style={{width:"100%",fontSize:".82rem",fontFamily:sans,marginBottom:14}} />
           <div style={{padding:"14px 16px",background:C.offWhite,borderRadius:12,border:`1px solid ${C.g200}`}}>
             <div style={{fontSize:".72rem",fontWeight:800,textTransform:"uppercase",letterSpacing:1.4,color:C.g500,marginBottom:6}}>Current file</div>
@@ -4853,6 +5041,82 @@ function AccessCodesTab({showToast}) {
   );
 }
 
+function IngestionWorkbenchTab({reports,setReports,showToast}) {
+  const [items,setItems]=useState(SAMPLE_INGESTION_QUEUE);
+  const createDraft = item => {
+    const exists = reports.some(r=>r.title===item.title);
+    if(exists){showToast("A draft or report with this title already exists.");return;}
+    const draft = {
+      id: nextId(reports),
+      status:"pending",
+      title:item.title,
+      ex:item.description,
+      body:`Suggested metadata from bulk ingestion:\n\nFile: ${item.file}\nReport type: ${item.reportType}\nAsset class: ${item.assetClass}\nSector: ${item.sector}\nCompany: ${item.company || "N/A"}\nTicker: ${item.ticker || "N/A"}\nTags: ${item.tags.join(", ")}\n\nThis draft should be reviewed by the Research Desk before publication.`,
+      cat:item.cat,
+      aid:8,
+      date:item.date,
+      access:item.access,
+      metadata:{
+        reportType:item.reportType,
+        assetClass:item.assetClass,
+        sector:item.sector,
+        company:item.company,
+        ticker:item.ticker,
+        tags:item.tags,
+        sourceFile:item.file,
+        ingestionConfidence:item.confidence,
+      },
+    };
+    setReports([draft,...reports]);
+    setItems(prev=>prev.map(x=>x.id===item.id?{...x,status:"draft_created"}:x));
+    showToast("Draft created for Research Desk review.");
+  };
+  const confidenceColor = score => score >= 93 ? C.green : score >= 88 ? C.gold : "#b45309";
+  return (
+    <div>
+      <SH title="Bulk Ingestion Workbench" sub="Preview of how uploaded PDFs and workbooks become reviewed research drafts with structured metadata."/>
+      <div style={{display:"grid",gridTemplateColumns:"repeat(4,minmax(0,1fr))",gap:12,marginBottom:22}}>
+        {[
+          {l:"Files staged",v:items.length},
+          {l:"High confidence",v:items.filter(i=>i.confidence>=92).length},
+          {l:"Needs review",v:items.filter(i=>i.confidence<90).length},
+          {l:"Drafts created",v:items.filter(i=>i.status==="draft_created").length},
+        ].map(card=>(
+          <div key={card.l} style={{background:C.white,border:`1px solid ${C.g200}`,borderRadius:14,padding:"18px"}}>
+            <div style={{fontFamily:serif,fontSize:"1.55rem",fontWeight:700,color:C.navy,marginBottom:4}}>{card.v}</div>
+            <div style={{fontSize:".75rem",fontWeight:800,color:C.g500,textTransform:"uppercase",letterSpacing:1.4}}>{card.l}</div>
+          </div>
+        ))}
+      </div>
+      <div style={{display:"grid",gap:14}}>
+        {items.map(item=>(
+          <SectionFrame key={item.id} title={item.title} sub={item.file}>
+            <div style={{display:"grid",gridTemplateColumns:"1.3fr .7fr auto",gap:16,alignItems:"start"}}>
+              <div>
+                <p style={{fontSize:".84rem",lineHeight:1.72,color:C.g700,marginBottom:12}}>{item.description}</p>
+                <div style={{display:"flex",gap:7,flexWrap:"wrap"}}>
+                  {[gc(item.cat)?.name,item.reportType,item.assetClass,item.sector,item.company,item.ticker,...item.tags.slice(0,4)].filter(Boolean).map(tag=>(
+                    <span key={tag} style={{fontSize:".66rem",fontWeight:800,color:C.navy,background:C.g100,border:`1px solid ${C.g200}`,borderRadius:999,padding:"5px 8px"}}>{tag}</span>
+                  ))}
+                </div>
+              </div>
+              <div style={{display:"grid",gap:8}}>
+                <div><Eyebrow style={{marginBottom:3,color:C.g500}}>Suggested author</Eyebrow><div style={{fontSize:".82rem",fontWeight:800,color:C.navy}}>{item.author}</div></div>
+                <div><Eyebrow style={{marginBottom:3,color:C.g500}}>Access</Eyebrow><div style={{fontSize:".82rem",fontWeight:800,color:C.navy}}>{item.access==="free"?"Public":"Subscriber"}</div></div>
+                <div><Eyebrow style={{marginBottom:3,color:C.g500}}>Confidence</Eyebrow><div style={{fontSize:"1rem",fontWeight:900,color:confidenceColor(item.confidence)}}>{item.confidence}%</div></div>
+              </div>
+              <div style={{display:"flex",flexDirection:"column",gap:8,alignItems:"stretch",minWidth:150}}>
+                <button onClick={()=>createDraft(item)} disabled={item.status==="draft_created"} style={{padding:"10px 13px",border:"none",borderRadius:999,background:item.status==="draft_created"?C.g100:C.navy,color:item.status==="draft_created"?C.g500:"#fff",fontSize:".74rem",fontWeight:800,cursor:item.status==="draft_created"?"default":"pointer",fontFamily:sans}}>{item.status==="draft_created"?"Draft created":"Create draft"}</button>
+                <button onClick={()=>setItems(prev=>prev.map(x=>x.id===item.id?{...x,access:x.access==="free"?"premium":"free"}:x))} style={{padding:"10px 13px",border:`1px solid ${C.g200}`,borderRadius:999,background:C.offWhite,color:C.navy,fontSize:".74rem",fontWeight:800,cursor:"pointer",fontFamily:sans}}>Toggle access</button>
+              </div>
+            </div>
+          </SectionFrame>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /*  SETTINGS TAB (portal config)  */
 function SettingsTab({showToast}) {
   const [settings,setSettings]=useState({site_name:"CHD Research Portal",contact_email:"research@chapelhilldenham.com"});
@@ -5206,7 +5470,7 @@ export default function App() {
             .contact-detail-grid{grid-template-columns:1fr !important}
             .contact-map-head h2{font-size:1.12rem !important}
             .contact-map-head p{font-size:.8rem !important}
-            .digest-grid,.funds-hero-grid,.infra-fund-grid,.analyst-hero-grid,.analyst-profile-grid,.fund-modal-metrics{grid-template-columns:1fr !important}
+            .digest-grid,.funds-hero-grid,.infra-fund-grid,.analyst-hero-grid,.analyst-profile-grid,.fund-modal-metrics,.guide-hero-grid,.guide-grid,.analytics-grid{grid-template-columns:1fr !important}
             .digest-detail-grid{grid-template-columns:1fr !important;gap:16px !important}
             .digest-grid h1{font-size:1.9rem !important;line-height:1.1 !important}
             .digest-grid a,.digest-grid button{width:100% !important}
@@ -5279,6 +5543,7 @@ export default function App() {
         <div style={{flex:1}}>
           {page==="home"       &&<Home nav={nav} user={user}/>}
           {page==="reports"    &&<ReportsPage nav={nav} user={user} initCat={pageData.cat}/>}
+          {page==="guide"      &&<ResearchGuidePage nav={nav} user={user}/>}
           {page==="digest"     &&<DigestPage nav={nav}/>}
           {page==="library"    &&user?.tier==="premium"&&<LibraryPage nav={nav} user={user}/>}
           {page==="library"    &&user?.tier!=="premium"&&<div style={{padding:80,textAlign:"center",color:C.g500}}>My Library is available to activated subscribers.</div>}
@@ -5287,6 +5552,8 @@ export default function App() {
           {page==="analyst"    &&<AnalystProfilePage id={pageData.id} nav={nav} user={user}/>}
           {page==="contact"    &&<ContactPage nav={nav}/>}
           {page==="pricelists" &&<PriceListsPage user={user} nav={nav}/>}
+          {page==="analytics"  &&user?.tier==="premium"&&<DataAnalyticsPage nav={nav}/>}
+          {page==="analytics"  &&user?.tier!=="premium"&&<div style={{padding:80,textAlign:"center",color:C.g500}}>Data & Analytics is available to activated subscribers.</div>}
           {page==="docbank"    &&["director","analyst","intern"].includes(user?.tier)&&<DocumentBankPage nav={nav} user={user}/>}
           {page==="docbank"    &&!["director","analyst","intern"].includes(user?.tier)&&<div style={{padding:80,textAlign:"center",color:C.g500}}>Access restricted to CHD research staff.</div>}
           {/* PAYMENT MODULE DISABLED: subscribe page removed */}
