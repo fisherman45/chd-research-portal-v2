@@ -81,7 +81,7 @@ function fileToDataURL(file) {
 /*  INITIAL DATA  */
 const INIT_ANALYSTS = [
   {id:1,role:"director",name:"Tajudeen Ibrahim",ini:"TI",title:"Director, Research",cov:"Macro Strategy, Banking, Financial Services",email:"tiibrahim@chapelhilldenham.com",supervisorId:null,photo:"/analysts/taj.jpg",bio:"Tajudeen leads the research team at Chapel Hill Denham, overseeing all equity, fixed income, and macroeconomic research output. With over 15 years of experience in Nigerian capital markets, he brings deep insight to macroeconomic analysis and strategic investment positioning."},
-  {id:6,role:"analyst",name:"Nabila Mohammed",ini:"NM",title:"Research Analyst",cov:"Banking, Financial Services",email:"nmohammed@chapelhilldenham.com",supervisorId:null,photo:"/analysts/taj.jpg",bio:"Nabila covers the Nigerian banking sector, providing research coverage on tier-1 and tier-2 banks with a focus on earnings quality, capital adequacy, and credit risk."},
+  {id:6,role:"analyst",name:"Nabila Mohammed",ini:"NM",title:"Research Analyst",cov:"Banking, Financial Services",email:"nmohammed@chapelhilldenham.com",supervisorId:null,photo:"/analysts/nabila.jpg",bio:"Nabila covers the Nigerian banking sector, providing research coverage on tier-1 and tier-2 banks with a focus on earnings quality, capital adequacy, and credit risk."},
   {id:4,role:"analyst",name:"Bolade Agboola",ini:"BA",title:"Research Analyst",cov:"Oil & Gas, Energy",email:"bagboola@chapelhilldenham.com",supervisorId:null,photo:"/analysts/bolade.jpg",bio:"Bolade covers the Nigerian oil & gas and energy sector across West Africa, tracking upstream production, refining margins, and downstream distribution dynamics."},
   {id:2,role:"analyst",name:"Boluwatife Ishola",ini:"BI",title:"Research Analyst",cov:"Consumer Goods, Industrials",email:"bishola@chapelhilldenham.com",supervisorId:null,photo:"/analysts/boluwatife.jpg",bio:"Boluwatife covers equity research with a focus on consumer goods and industrials, tracking volume trends, pricing power, and margin dynamics across the sector."},
   {id:3,role:"analyst",name:"Gideon Oshadumi",ini:"GO",title:"Research Analyst",cov:"Cement, Building Materials",email:"goshadumi@chapelhilldenham.com",supervisorId:null,photo:"/analysts/gideon.jpg",bio:"Gideon covers the cement and building materials sector, providing granular analysis of capacity utilisation, energy costs, and regional demand trends."},
@@ -1005,6 +1005,16 @@ function AuthPage({mode,nav,onLogin}) {
       setSubmitting(false);
     }
   };
+
+  if(user && !isRequest){
+    return (
+      <div className="auth-page" style={{minHeight:"82vh",display:"flex",alignItems:"center",justifyContent:"center",background:`linear-gradient(160deg,${C.navy} 0%,${C.navyMid} 52%,#091d24 100%)`,padding:"60px 20px"}}>
+        <div style={{maxWidth:560,width:"100%"}}>
+          <ActivationPanel user={user} onActivate={activateAccessCode} nav={nav} compact/>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="auth-page" style={{minHeight:"82vh",display:"flex",alignItems:"center",justifyContent:"center",background:`radial-gradient(circle at 10% 10%, rgba(185,114,49,0.16), transparent 25%), linear-gradient(160deg,${C.navy} 0%,${C.navyMid} 52%,#091d24 100%)`,padding:"60px 20px"}}>
