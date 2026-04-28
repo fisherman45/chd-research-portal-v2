@@ -17,25 +17,25 @@ const serif = "Calibri, Arial, sans-serif";
 const sans  = "Calibri, Arial, sans-serif";
 
 const STAFF_TIERS = new Set(["admin","director","analyst","intern"]);
-const TIER_ORDER = { free: 0, registered: 1, premium: 2 };
+const TIER_ORDER = { free: 0, registered: 0, premium: 2 };
 const TIER_LABELS = {
   free: "Public Access",
-  registered: "Member Access",
-  premium: "Premium Access",
-  admin: "Administrator",
-  director: "Director",
-  analyst: "Analyst",
-  intern: "Intern",
+  registered: "Limited Account",
+  premium: "Subscriber Access",
+  admin: "Research Desk Admin",
+  director: "Research Director",
+  analyst: "Research Analyst",
+  intern: "Research Intern",
 };
 const tierLabel = tier => TIER_LABELS[tier] || tier || "Public";
 const CATEGORY_ACCESS_DEFAULTS = {
   macro: "free",
-  daily: "free",
-  equities: "registered",
-  "company-updates": "premium",
-  "sector-report": "premium",
-  "fixed-income": "registered",
+  strategy: "premium",
+  currency: "premium",
+  equities: "premium",
+  "fixed-income": "premium",
   outlook: "premium",
+  daily: "free",
 };
 const DEFAULT_BANNER_MEDIA = [
   {mediaUrl:"https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",mediaPosition:"center center",layout:"right",duration:10},
@@ -91,36 +91,36 @@ const INIT_ANALYSTS = [
   {id:8,role:"analyst",name:"Research Desk",ini:"RD",title:"Central Research Desk",cov:"Desk support, intern review, market synthesis, and report coordination",email:"researchdesk@chapelhilldenham.com",supervisorId:null,photo:null,bio:"The central research desk supports intern review, synthesis, and publishing coordination across the portal."},
 ];
 const CATS = [
-  {id:"macro",name:"Macroeconomic Updates",icon:"",p:null},
-  {id:"equities",name:"Equities",icon:"",p:null},
-  {id:"company-updates",name:"Company Updates",icon:"",p:"equities"},
-  {id:"sector-report",name:"Sector Report",icon:"",p:"equities"},
+  {id:"macro",name:"Macroeconomy",icon:"",p:null},
+  {id:"strategy",name:"Investment Strategy",icon:"",p:null},
   {id:"fixed-income",name:"Fixed Income",icon:"",p:null},
-  {id:"outlook",name:"Outlook Report",icon:"",p:null},
+  {id:"currency",name:"Currency",icon:"",p:null},
+  {id:"equities",name:"Equity",icon:"",p:null},
+  {id:"outlook",name:"Outlook",icon:"",p:null},
   {id:"daily",name:"Daily Report",icon:"",p:null},
 ];
 const INIT_REPORTS = [
-  {id:1,status:"published",title:"Dangote Cement Q1 2026 Earnings Preview",ex:"We preview Dangote Cement's Q1 results, expecting revenue growth of 18% YoY driven by robust demand across West Africa and improved pricing power. EBITDA margins set to expand 200bps to 42%. BUY, TP 485.",cat:"company-updates",aid:3,date:"2026-03-28",access:"premium",body:"Revenue is expected to reach 1.2 trillion in Q1 2026, up from 1.02 trillion in Q1 2025. The key driver is volume growth across Nigerian and Pan-African operations, with the Obajana and Ibese plants operating at near-full capacity.\n\nCement prices have remained firm at 7,500-8,000 per bag in most markets, providing strong pricing support. We note that the company has successfully passed through cost increases to consumers without material demand destruction.\n\nOperating costs have benefited from the switch to CNG at the Obajana plant, reducing energy costs by approximately 35% compared to AGO. This structural cost advantage is not yet fully reflected in market expectations.\n\nWe forecast net profit of 180 billion for Q1 2026, representing 22% YoY growth. At the current price, the stock trades at 8.2x forward P/E, a discount to the 5-year average of 10.5x."},
+  {id:1,status:"published",title:"Dangote Cement Q1 2026 Earnings Preview",ex:"We preview Dangote Cement's Q1 results, expecting revenue growth of 18% YoY driven by robust demand across West Africa and improved pricing power. EBITDA margins set to expand 200bps to 42%. BUY, TP 485.",cat:"equities",aid:3,date:"2026-03-28",access:"premium",body:"Revenue is expected to reach 1.2 trillion in Q1 2026, up from 1.02 trillion in Q1 2025. The key driver is volume growth across Nigerian and Pan-African operations, with the Obajana and Ibese plants operating at near-full capacity.\n\nCement prices have remained firm at 7,500-8,000 per bag in most markets, providing strong pricing support. We note that the company has successfully passed through cost increases to consumers without material demand destruction.\n\nOperating costs have benefited from the switch to CNG at the Obajana plant, reducing energy costs by approximately 35% compared to AGO. This structural cost advantage is not yet fully reflected in market expectations.\n\nWe forecast net profit of 180 billion for Q1 2026, representing 22% YoY growth. At the current price, the stock trades at 8.2x forward P/E, a discount to the 5-year average of 10.5x."},
   {id:2,status:"published",title:"Nigeria Inflation  March 2026 Review",ex:"Headline inflation moderated to 29.8% in March from 31.2%, driven by base effects and improved FX supply. We review the implications for monetary policy and fixed income positioning.",cat:"macro",aid:1,date:"2026-03-26",access:"free",body:"The National Bureau of Statistics reported that headline inflation declined to 29.8% in March 2026, the fourth consecutive month of moderation from the cycle peak of 34.8% in June 2025.\n\nFood inflation, the dominant driver, fell to 31.2% from 33.1% as improved FX allocation eased import costs. Core inflation at 24.1% remains elevated, reflecting sticky services prices.\n\nWe expect the CBN to hold rates at its next MPC meeting given the still-elevated inflation trajectory, though the tone may shift toward easing by H2 2026."},
   {id:3,status:"published",title:"Daily Market Wrap  25 March 2026",ex:"The NGX ASI gained 0.67% to close at 108,432 points. Banking stocks led gains with GTCO up 2.1%. Market breadth positive at 28 advances to 14 declines.",cat:"daily",aid:null,date:"2026-03-25",access:"free"},
-  {id:4,status:"published",title:"NGX Model Portfolio Update Q2 2026",ex:"We rebalance our model portfolio ahead of Q2, increasing exposure to banking and consumer goods while trimming energy. Net changes reflect our updated macro outlook.",cat:"sector-report",aid:1,date:"2026-03-22",access:"premium",body:"Our Q2 2026 model portfolio rebalancing reflects our view that the macro inflection is now underway. We increase banking to 28% (from 22%) and consumer goods to 18% (from 14%)."},
-  {id:5,status:"published",title:"FGN Bond Auction Review  March 2026",ex:"The DMO offered 450bn across three tenors. Stop rates declined across the curve, signalling improving investor appetite for duration amid moderating inflation.",cat:"fixed-income",aid:1,date:"2026-03-20",access:"registered"},
-  {id:6,status:"published",title:"Nigerian Banking Sector  2026 Outlook",ex:"We update our banking sector coverage with revised earnings estimates post-recapitalisation. Our top picks remain GTCO and Zenith on valuation and capital strength.",cat:"sector-report",aid:6,date:"2026-03-18",access:"premium",body:"The recapitalisation exercise has fundamentally reshaped the Nigerian banking landscape. We estimate total new capital raised at 2.1 trillion across the sector, with tier-1 banks comfortably exceeding minimum thresholds.\n\nWe revise our sector earnings estimates upward by 12% on average, reflecting higher capital bases, improved NIMs, and reduced provision charges as legacy NPLs are resolved."},
-  {id:7,status:"published",title:"Nigeria 2026 Full-Year Outlook",ex:"Our comprehensive 2026 outlook covers the macroeconomic landscape, equity market strategy, and fixed income positioning across all asset classes.",cat:"outlook",aid:1,date:"2026-01-10",access:"registered"},
+  {id:4,status:"published",title:"NGX Model Portfolio Update Q2 2026",ex:"We rebalance our model portfolio ahead of Q2, increasing exposure to banking and consumer goods while trimming energy. Net changes reflect our updated macro outlook.",cat:"strategy",aid:1,date:"2026-03-22",access:"premium",body:"Our Q2 2026 model portfolio rebalancing reflects our view that the macro inflection is now underway. We increase banking to 28% (from 22%) and consumer goods to 18% (from 14%)."},
+  {id:5,status:"published",title:"FGN Bond Auction Review  March 2026",ex:"The DMO offered 450bn across three tenors. Stop rates declined across the curve, signalling improving investor appetite for duration amid moderating inflation.",cat:"fixed-income",aid:1,date:"2026-03-20",access:"premium"},
+  {id:6,status:"published",title:"Nigerian Banking Sector  2026 Outlook",ex:"We update our banking sector coverage with revised earnings estimates post-recapitalisation. Our top picks remain GTCO and Zenith on valuation and capital strength.",cat:"equities",aid:6,date:"2026-03-18",access:"premium",body:"The recapitalisation exercise has fundamentally reshaped the Nigerian banking landscape. We estimate total new capital raised at 2.1 trillion across the sector, with tier-1 banks comfortably exceeding minimum thresholds.\n\nWe revise our sector earnings estimates upward by 12% on average, reflecting higher capital bases, improved NIMs, and reduced provision charges as legacy NPLs are resolved."},
+  {id:7,status:"published",title:"Nigeria 2026 Full-Year Outlook",ex:"Our comprehensive 2026 outlook covers the macroeconomic landscape, equity market strategy, and fixed income positioning across all asset classes.",cat:"outlook",aid:1,date:"2026-01-10",access:"premium"},
   {id:8,status:"published",title:"Research Desk  Macro to Market Dashboard",ex:"The research desk synthesises macro inputs, analyst colour, and client feedback into a short dashboard view of what changed this week.",cat:"macro",aid:8,date:"2026-04-14",access:"inherit",body:"This desk entry is maintained by the central research desk as an internal synthesis layer. It combines analyst drafts, intern submissions, and market context into a single customer-facing summary.\n\nUse this page when you need a quick desk view rather than a full analyst report."},
-  {id:9,status:"published",title:"Consumer Goods  Price Pass-Through Tracker",ex:"We track pricing power across major consumer names, highlighting where cost inflation is being pushed into shelf prices.",cat:"sector-report",aid:8,date:"2026-04-12",access:"inherit",body:"The desk tracker shows that selected consumer names have begun to recover margin through incremental price increases. Volume resilience remains uneven, but premium brands are holding up better than mass-market lines."},
+  {id:9,status:"published",title:"Consumer Goods  Price Pass-Through Tracker",ex:"We track pricing power across major consumer names, highlighting where cost inflation is being pushed into shelf prices.",cat:"equities",aid:8,date:"2026-04-12",access:"inherit",body:"The desk tracker shows that selected consumer names have begun to recover margin through incremental price increases. Volume resilience remains uneven, but premium brands are holding up better than mass-market lines."},
   {id:10,status:"published",title:"Market Opening Summary  April 2026",ex:"A compact morning brief assembled by the desk, combining overnight headlines, FX moves, and the most important analyst asks.",cat:"daily",aid:8,date:"2026-04-11",access:"inherit",body:"The morning brief is intentionally short and operational. It is designed for customers who want a quick read before opening their dashboards or checking their library."},
   {id:11,status:"published",title:"Equity Strategy  Portfolio Entry Points",ex:"A client-friendly equity note explaining when to add exposure, what to watch, and which names the desk prefers under current conditions.",cat:"equities",aid:8,date:"2026-04-08",access:"inherit",body:"This report is framed for client discussions and account manager follow-up. It is not a deep-dive valuation note, but a practical guide to entry points and positioning."},
   {id:12,status:"published",title:"Fixed Income Laddering Guide Q2 2026",ex:"A desk guide for customers who want a simpler way to think about duration, reinvestment, and monthly cash flow.",cat:"fixed-income",aid:8,date:"2026-04-05",access:"inherit",body:"The guide explains laddering across short, medium, and long tenors and how different client profiles can use the structure to match liquidity needs."},
-  {id:14,status:"published",title:"Banking Sector Pulse - Deposit Costs and NIMs",ex:"We review funding cost pressure across tier-1 banks and highlight where net interest margins remain best protected in Q2 2026.",cat:"sector-report",aid:6,date:"2026-04-22",access:"premium",body:"Deposit repricing remains the main watch item for bank earnings. Tier-1 banks with stronger CASA franchises should protect margins better than peers, while smaller banks may see faster pressure from wholesale deposits."},
-  {id:15,status:"published",title:"Oil and Gas Monitor - Downstream Margins",ex:"A short review of downstream pricing, inventory replacement cost, and working-capital pressure across covered energy names.",cat:"sector-report",aid:4,date:"2026-04-21",access:"registered",body:"Downstream operators continue to balance margin recovery with volume retention. The key swing factors are FX availability, landing cost movement, and the ability to reprice inventory without slowing demand."},
-  {id:16,status:"published",title:"Consumer Goods Tracker - Volume Recovery Watch",ex:"We assess early signs of volume recovery across staples, beverages, and household products after a difficult inflation cycle.",cat:"company-updates",aid:2,date:"2026-04-19",access:"premium",body:"Consumer names are showing mixed volume trends. Premium categories remain resilient, while mass-market products are still exposed to weak disposable income and tighter retail inventory cycles."},
-  {id:17,status:"published",title:"Cement Dispatches - Regional Demand Checks",ex:"Field checks point to firmer demand in Lagos, Abuja, and select northern markets as construction activity improves.",cat:"company-updates",aid:3,date:"2026-04-18",access:"registered",body:"Our channel checks suggest regional demand has improved from Q1 levels. We continue to monitor energy cost, logistics availability, and the timing of further price adjustments."},
-  {id:18,status:"published",title:"Treasury Bills Strategy - Reinvestment Notes",ex:"We outline reinvestment options for clients facing near-term maturities and compare bill yields with short bond alternatives.",cat:"fixed-income",aid:1,date:"2026-04-17",access:"registered",body:"Clients with near-term maturities should compare rollover yields against selected short bonds. The decision depends on liquidity needs, duration comfort, and expectations for policy-rate stability."},
+  {id:14,status:"published",title:"Banking Sector Pulse - Deposit Costs and NIMs",ex:"We review funding cost pressure across tier-1 banks and highlight where net interest margins remain best protected in Q2 2026.",cat:"equities",aid:6,date:"2026-04-22",access:"premium",body:"Deposit repricing remains the main watch item for bank earnings. Tier-1 banks with stronger CASA franchises should protect margins better than peers, while smaller banks may see faster pressure from wholesale deposits."},
+  {id:15,status:"published",title:"Oil and Gas Monitor - Downstream Margins",ex:"A short review of downstream pricing, inventory replacement cost, and working-capital pressure across covered energy names.",cat:"equities",aid:4,date:"2026-04-21",access:"premium",body:"Downstream operators continue to balance margin recovery with volume retention. The key swing factors are FX availability, landing cost movement, and the ability to reprice inventory without slowing demand."},
+  {id:16,status:"published",title:"Consumer Goods Tracker - Volume Recovery Watch",ex:"We assess early signs of volume recovery across staples, beverages, and household products after a difficult inflation cycle.",cat:"equities",aid:2,date:"2026-04-19",access:"premium",body:"Consumer names are showing mixed volume trends. Premium categories remain resilient, while mass-market products are still exposed to weak disposable income and tighter retail inventory cycles."},
+  {id:17,status:"published",title:"Cement Dispatches - Regional Demand Checks",ex:"Field checks point to firmer demand in Lagos, Abuja, and select northern markets as construction activity improves.",cat:"equities",aid:3,date:"2026-04-18",access:"premium",body:"Our channel checks suggest regional demand has improved from Q1 levels. We continue to monitor energy cost, logistics availability, and the timing of further price adjustments."},
+  {id:18,status:"published",title:"Treasury Bills Strategy - Reinvestment Notes",ex:"We outline reinvestment options for clients facing near-term maturities and compare bill yields with short bond alternatives.",cat:"fixed-income",aid:1,date:"2026-04-17",access:"premium",body:"Clients with near-term maturities should compare rollover yields against selected short bonds. The decision depends on liquidity needs, duration comfort, and expectations for policy-rate stability."},
   {id:19,status:"published",title:"Daily Market Wrap - 24 April 2026",ex:"The NGX closed modestly higher as banking and industrial names offset weakness in selected consumer counters.",cat:"daily",aid:8,date:"2026-04-24",access:"free",body:"Market breadth was mixed, but turnover improved across large-cap banking names. Fixed income trading remained selective as investors waited for clearer rate direction."},
-  {id:20,status:"published",title:"Macro Note - FX Liquidity and Import Cover",ex:"We discuss recent FX liquidity signals and what they imply for inflation expectations, imports, and investor sentiment.",cat:"macro",aid:1,date:"2026-04-23",access:"free",body:"Improved FX liquidity is important for inflation expectations and business confidence. We remain cautious on the pace of disinflation, but recent market signals suggest pressure may ease further if supply remains consistent."},
+  {id:20,status:"published",title:"Macro Note - FX Liquidity and Import Cover",ex:"We discuss recent FX liquidity signals and what they imply for inflation expectations, imports, and investor sentiment.",cat:"currency",aid:1,date:"2026-04-23",access:"free",body:"Improved FX liquidity is important for inflation expectations and business confidence. We remain cautious on the pace of disinflation, but recent market signals suggest pressure may ease further if supply remains consistent."},
   /* Demo: intern-submitted report awaiting approval */
-  {id:13,status:"pending",title:"Cement Sector Flash  Price Hikes Q2 2026",ex:"Cement prices across major markets have increased 12-15% in April, driven by supply tightness ahead of the construction season. We examine the implications for sector margins.",cat:"company-updates",aid:7,date:"2026-04-10",access:"registered",supervisorId:1,body:"Preliminary field checks indicate cement prices have risen to 8,800-9,200 per bag across Lagos and Abuja markets, representing a 12-15% increase month-on-month."},
+  {id:13,status:"pending",title:"Cement Sector Flash  Price Hikes Q2 2026",ex:"Cement prices across major markets have increased 12-15% in April, driven by supply tightness ahead of the construction season. We examine the implications for sector margins.",cat:"equities",aid:7,date:"2026-04-10",access:"premium",supervisorId:1,body:"Preliminary field checks indicate cement prices have risen to 8,800-9,200 per bag across Lagos and Abuja markets, representing a 12-15% increase month-on-month."},
 ];
 const DEFAULT_FEATURED_REPORT_IDS = INIT_REPORTS.filter(r=>r.status==="published").sort((a,b)=>new Date(b.date)-new Date(a.date)).slice(0,4).map(r=>r.id);
 const PRICES = [
@@ -267,6 +267,7 @@ const enrichFundData = fund => {
     sourceUrl:fund?.sourceUrl || fallback.sourceUrl,
   };
 };
+const normalizeFunds = rows => (rows || FUNDS).map(enrichFundData);
 
 const DEMO_ACCOUNTS = [
   {email:"admin@chapelhilldenham.com",      password:"password", name:"Research Desk Admin",    tier:"admin"},
@@ -276,9 +277,9 @@ const DEMO_ACCOUNTS = [
   {email:"bishola@chapelhilldenham.com",    password:"password", name:"Boluwatife Ishola",      tier:"analyst", analystId:2, title:"Research Analyst"},
   {email:"goshadumi@chapelhilldenham.com",  password:"password", name:"Gideon Oshadumi",        tier:"analyst", analystId:3, title:"Research Analyst"},
   {email:"intern@chapelhilldenham.com",     password:"password", name:"Research Intern",        tier:"intern",  analystId:7, title:"Research Intern"},
-  {email:"viewer@chapelhilldenham.com",     password:"password", name:"Customer Viewer",        tier:"free"},
-  {email:"client@chapelhilldenham.com",     password:"password", name:"Customer Client",        tier:"registered"},
-  {email:"premiumclient@chapelhilldenham.com", password:"password", name:"Premium Client",      tier:"premium"},
+  {email:"prospect@chapelhilldenham.com",   password:"password", name:"Prospective Client",     tier:"registered", accessState:"limited"},
+  {email:"subscriber@chapelhilldenham.com", password:"password", name:"Subscriber Client",      tier:"premium", accessState:"active"},
+  {email:"institution@chapelhilldenham.com", password:"password", name:"Institutional Client",  tier:"premium", accessState:"active", institutionId:1, institutionName:"ARM Securities"},
   /* PAYMENT MODULE DISABLED  see primary app for premium subscriber demo account */
 ];
 
@@ -289,7 +290,7 @@ const INIT_INSTITUTIONS = [
 
 const INIT_ACCESS_CODES = [
   {id:1,code:"CHD-IND-2026-001",type:"individual",tier:"premium",assignedEmail:"",usedBy:"",usedAt:"",active:true,expiresAt:"2026-12-31"},
-  {id:2,code:"CHD-IND-2026-002",type:"individual",tier:"registered",assignedEmail:"",usedBy:"",usedAt:"",active:true,expiresAt:"2026-12-31"},
+  {id:2,code:"CHD-IND-2026-002",type:"individual",tier:"premium",assignedEmail:"",usedBy:"",usedAt:"",active:true,expiresAt:"2026-12-31"},
   {id:3,code:"CHD-INST-ARM-001",type:"institution",tier:"premium",institutionId:1,seatLimit:12,seatsUsed:3,active:true,expiresAt:"2026-12-31"},
   {id:4,code:"CHD-INST-MER-001",type:"institution",tier:"premium",institutionId:2,seatLimit:8,seatsUsed:2,active:true,expiresAt:"2026-12-31"},
 ];
@@ -303,6 +304,12 @@ const longDate = d => {
   const dt = typeof d === "string" && d.length > 10 ? new Date(d) : new Date(`${d}T00:00:00`);
   return Number.isNaN(dt.getTime()) ? d : dt.toLocaleDateString("en-GB",{day:"numeric",month:"long",year:"numeric"});
 };
+const isoDateInDays = days => {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0,10);
+};
+const isExpiredDate = date => !!date && new Date(`${date}T23:59:59`).getTime() < Date.now();
 const pCats    = () => CATS.filter(c=>c.p===null);
 const childCats= pid => CATS.filter(c=>c.p===pid);
 const nextId   = arr => arr.reduce((m,x)=>x.id>m?x.id:m,0)+1;
@@ -327,11 +334,34 @@ const humanAccessState = user => {
 };
 const normalizePortalUser = raw => raw ? ({
   ...raw,
-  accessState: raw.accessState || (STAFF_TIERS.has(raw.tier) || raw.tier==="premium" ? "active" : raw.tier==="registered" ? "active" : "limited"),
+  accessState: raw.accessState || (STAFF_TIERS.has(raw.tier) || raw.tier==="premium" ? "active" : "limited"),
   institutionId: raw.institutionId || null,
   institutionName: raw.institutionName || null,
   activationHistory: raw.activationHistory || [],
 }) : raw;
+const normalizeAccessTier = access => access === "registered" ? "premium" : access;
+const normalizeCategoryId = cat => ({
+  "company-updates": "equities",
+  "sector-report": "equities",
+}[cat] || cat);
+const normalizeAnalysts = rows => (rows || INIT_ANALYSTS).map(analyst =>
+  analyst?.id === 6 || analyst?.name === "Nabila Mohammed"
+    ? {...analyst, photo:"/analysts/nabila.jpg"}
+    : analyst
+);
+const normalizeReports = rows => (rows || INIT_REPORTS).map(report => ({
+  ...report,
+  cat: normalizeCategoryId(report.cat),
+  access: normalizeAccessTier(report.access),
+}));
+const normalizeCategoryRules = rules => {
+  const merged = {...CATEGORY_ACCESS_DEFAULTS, ...(rules || {})};
+  return Object.fromEntries(Object.entries(merged).map(([key,value]) => [key, normalizeAccessTier(value)]));
+};
+const normalizeAccessCodes = codes => (codes || INIT_ACCESS_CODES).map(code => ({
+  ...code,
+  tier: normalizeAccessTier(code.tier),
+}));
 const fileUrl = filePath => publicAsset(filePath);
 const digestDownloadUrl = digest => {
   if(!digest) return "";
@@ -588,9 +618,12 @@ function Footer({nav}) {
   const lnk={background:"none",border:"none",color:"rgba(255,255,255,0.54)",cursor:"pointer",padding:0,fontFamily:sans,fontSize:".82rem",textAlign:"left",display:"block",marginBottom:9,transition:"color .15s"};
   const lnkH={color:"rgba(255,255,255,0.92)"};
   const researchLinks=[
-    ...pCats().map(c=>({l:c.name,a:()=>nav("reports",{cat:c.id})})),
-    {l:"Our Analysts",a:()=>nav("analysts")},
+    ...["macro","strategy","fixed-income","currency","equities","outlook","daily"].map(id=>{
+      const cat = gc(id);
+      return {l:cat?.name || id,a:()=>nav("reports",{cat:id})};
+    }),
     {l:"Price Lists",  a:()=>nav("pricelists")},
+    {l:"Our Analysts",a:()=>nav("analysts")},
   ];
   const companyLinks=[
     {l:"Chapel Hill Denham",a:()=>window.open("https://www.chapelhilldenham.com","_blank")},
@@ -767,9 +800,9 @@ function Pill({active,children,onClick}) {
 /*  ACCESS BADGE  PUBLIC SITE (ALL FREE)  */
 function AccessBadge({access}) {
   const map = {
-    free:       {label:"Free", bg:"#edf4ef", color:"#3b6b4f"},
-    registered: {label:"Members", bg:"#eef2f7", color:"#35506a"},
-    premium:    {label:"Premium", bg:"#f7eedf", color:"#9d601c"},
+    free:       {label:"Public", bg:"#edf4ef", color:"#3b6b4f"},
+    registered: {label:"Subscriber", bg:"#f7eedf", color:"#9d601c"},
+    premium:    {label:"Subscriber", bg:"#f7eedf", color:"#9d601c"},
     inherit:    {label:"Category", bg:C.g100, color:C.g700},
   };
   const a = map[access] || map.inherit;
@@ -778,7 +811,7 @@ function AccessBadge({access}) {
 
 /*  GATED OVERLAY  NOT USED (PUBLIC SITE)  */
 function GatedOverlay({access,user,nav}) {
-  const tierText = access==="premium" ? "premium" : "member";
+  const tierText = "subscriber";
   return (
     <div style={{marginTop:26,background:`linear-gradient(135deg,rgba(6,38,45,0.98) 0%,rgba(11,53,64,0.98) 100%)`,borderRadius:16,padding:"26px 24px",color:"#fff",display:"flex",justifyContent:"space-between",alignItems:"center",gap:18,flexWrap:"wrap",boxShadow:"0 20px 44px rgba(6,38,45,0.14)"}}>
       <div style={{display:"flex",gap:16,alignItems:"flex-start",maxWidth:680}}>
@@ -813,7 +846,7 @@ function RC({r,nav,user}) {
   const dc=cat?.p?`${pc?.name}  ${cat.name}`:cat?.name;
   const access=effectiveAccess(r,categoryRules);
   const locked=!canAccess(access,user);
-  const tierCta=access==="premium"?"Premium access":"Member access";
+  const tierCta="Subscriber access";
   const isPending=r.status==="pending";
   const isRejected=r.status==="rejected";
   const borderCol=isPending?"#fde047":isRejected?"#fca5a5":C.g200;
@@ -867,16 +900,17 @@ function DemoWidget({page,nav}) {
   const {setDemoFill}=useData();
   const [open,setOpen]=useState(false);
   const tiers=[
-    {tier:"admin",      color:"#a78bfa",bg:"#ede9fe",     d:DEMO_ACCOUNTS[0]},
-    {tier:"director",   color:"#f87171",bg:"#fee2e2",     d:DEMO_ACCOUNTS[1]},
-    {tier:"analyst",    color:"#86efac",bg:"#dcfce7",     d:DEMO_ACCOUNTS[2]},
-    {tier:"analyst",    color:"#86efac",bg:"#dcfce7",     d:DEMO_ACCOUNTS[3]},
-    {tier:"analyst",    color:"#86efac",bg:"#dcfce7",     d:DEMO_ACCOUNTS[4]},
-    {tier:"analyst",    color:"#86efac",bg:"#dcfce7",     d:DEMO_ACCOUNTS[5]},
-    {tier:"intern",     color:"#67e8f9",bg:"#cffafe",     d:DEMO_ACCOUNTS[6]},
-    {tier:"viewer",     color:"#60a5fa",bg:"#dbeafe",     d:DEMO_ACCOUNTS[7]},
-    {tier:"client",     color:"#f59e0b",bg:"#fef3c7",     d:DEMO_ACCOUNTS[8]},
-    {tier:"premium",    color:"#ec4899",bg:"#fce7f3",     d:DEMO_ACCOUNTS[9]},
+    {group:"Research Desk",items:[
+      {label:"Desk admin",desc:"Full governance console",color:"#7c3aed",bg:"#ede9fe",d:DEMO_ACCOUNTS[0]},
+      {label:"Director",desc:"Team oversight and approvals",color:"#b42318",bg:"#fee2e2",d:DEMO_ACCOUNTS[1]},
+      {label:"Analyst",desc:"Coverage workspace",color:"#166534",bg:"#dcfce7",d:DEMO_ACCOUNTS[2]},
+      {label:"Intern",desc:"Uploads and supervised submissions",color:"#0891b2",bg:"#cffafe",d:DEMO_ACCOUNTS[6]},
+    ]},
+    {group:"Client access",items:[
+      {label:"Prospect",desc:"Limited account, needs code",color:"#35506a",bg:"#eef2f7",d:DEMO_ACCOUNTS[7]},
+      {label:"Subscriber",desc:"Activated individual access",color:"#b45309",bg:"#fef3c7",d:DEMO_ACCOUNTS[8]},
+      {label:"Institution",desc:"Activated institutional seat",color:"#9d601c",bg:"#f7eedf",d:DEMO_ACCOUNTS[9]},
+    ]},
   ];
   const fill=acc=>{
     setDemoFill({email:acc.email,password:acc.password});
@@ -886,15 +920,31 @@ function DemoWidget({page,nav}) {
   return (
     <div style={{position:"fixed",bottom:24,right:24,zIndex:300}}>
       {open&&(
-        <div style={{background:C.white,border:`1px solid ${C.g200}`,borderRadius:12,padding:"14px 16px",marginBottom:10,boxShadow:"0 20px 50px rgba(17,37,48,0.15)",minWidth:300}}>
-          <div style={{fontSize:".7rem",fontWeight:700,color:C.g500,textTransform:"uppercase",letterSpacing:.6,marginBottom:10}}>Demo accounts - click to auto-fill</div>
-          {tiers.map(t=>(
-            <div key={t.d.email} onClick={()=>fill(t.d)} style={{display:"flex",alignItems:"center",gap:10,padding:"8px 10px",borderRadius:8,cursor:"pointer",marginBottom:4,transition:"background .12s",...s({background:"transparent"},{background:C.g100})}}>
-              <span style={{background:t.bg,color:t.color,fontSize:".6rem",fontWeight:700,padding:"2px 7px",borderRadius:3,textTransform:"uppercase",letterSpacing:.5,flexShrink:0,minWidth:60,textAlign:"center"}}>{t.tier}</span>
-              <span style={{fontSize:".78rem",color:C.navy,fontWeight:500,flex:1}}>{t.d.email}</span>
-              <span style={{fontSize:".7rem",color:C.g500,fontFamily:"monospace"}}>{t.d.password}</span>
+        <div style={{background:C.white,border:`1px solid ${C.g200}`,borderRadius:16,padding:"16px",marginBottom:10,boxShadow:"0 20px 50px rgba(17,37,48,0.15)",width:360,maxWidth:"calc(100vw - 36px)"}}>
+          <div style={{display:"flex",justifyContent:"space-between",gap:12,alignItems:"flex-start",marginBottom:12}}>
+            <div>
+              <div style={{fontSize:".68rem",fontWeight:900,color:C.gold,textTransform:"uppercase",letterSpacing:1.8,marginBottom:4}}>Demo access</div>
+              <div style={{fontSize:".78rem",lineHeight:1.45,color:C.g500}}>Choose a realistic role or client state.</div>
+            </div>
+            <button onClick={()=>setOpen(false)} style={{background:C.g100,border:"none",borderRadius:999,width:28,height:28,cursor:"pointer",color:C.g700,fontFamily:sans,fontWeight:800}}>x</button>
+          </div>
+          {tiers.map(group=>(
+            <div key={group.group} style={{marginTop:group.group==="Client access"?14:0}}>
+              <div style={{fontSize:".62rem",fontWeight:900,color:C.g500,textTransform:"uppercase",letterSpacing:1.6,margin:"0 2px 7px"}}>{group.group}</div>
+              <div style={{display:"grid",gap:6}}>
+                {group.items.map(t=>(
+                  <button key={t.d.email} onClick={()=>fill(t.d)} style={{display:"grid",gridTemplateColumns:"82px 1fr",gap:10,alignItems:"center",padding:"9px 10px",borderRadius:10,cursor:"pointer",border:`1px solid ${C.g200}`,background:C.offWhite,textAlign:"left",fontFamily:sans}}>
+                    <span style={{background:t.bg,color:t.color,fontSize:".58rem",fontWeight:900,padding:"4px 7px",borderRadius:999,textTransform:"uppercase",letterSpacing:.45,textAlign:"center"}}>{t.label}</span>
+                    <span>
+                      <span style={{display:"block",fontSize:".78rem",color:C.navy,fontWeight:800,lineHeight:1.25}}>{t.d.name}</span>
+                      <span style={{display:"block",fontSize:".68rem",color:C.g500,lineHeight:1.35}}>{t.desc}</span>
+                    </span>
+                  </button>
+                ))}
+              </div>
             </div>
           ))}
+          <div style={{marginTop:12,paddingTop:10,borderTop:`1px solid ${C.g100}`,fontSize:".68rem",color:C.g500}}>Password for all demo accounts: <strong style={{color:C.navy}}>password</strong></div>
         </div>
       )}
       <button onClick={()=>setOpen(o=>!o)} style={{background:open?C.navy:C.white,color:open?C.white:C.navy,border:`1px solid ${C.g200}`,borderRadius:20,padding:"8px 16px",fontSize:".76rem",fontWeight:600,cursor:"pointer",fontFamily:sans,boxShadow:"0 4px 20px rgba(17,37,48,0.12)",display:"flex",alignItems:"center",gap:6,transition:"all .15s"}}>
@@ -913,7 +963,7 @@ function AuthPage({mode,nav,onLogin}) {
   const [submitting,setSubmitting]=useState(false);
   const normalizeUser = useCallback((raw)=>({
     ...raw,
-    accessState: raw?.accessState || (STAFF_TIERS.has(raw?.tier) || raw?.tier==="premium" ? "active" : raw?.tier==="registered" ? "active" : "limited"),
+    accessState: raw?.accessState || (STAFF_TIERS.has(raw?.tier) || raw?.tier==="premium" ? "active" : "limited"),
     institutionId: raw?.institutionId || null,
     institutionName: raw?.institutionName || null,
     activationHistory: raw?.activationHistory || [],
@@ -1097,7 +1147,19 @@ function AuthPage({mode,nav,onLogin}) {
             ))}
           </div>
         </Surface>
-        <ActivationPanel user={user} onActivate={activateAccessCode} nav={nav} compact/>
+        {user ? (
+          <ActivationPanel user={user} onActivate={activateAccessCode} nav={nav} compact/>
+        ) : (
+          <SectionFrame title="Activation starts after sign-in" style={{padding:"22px"}}>
+            <p style={{fontSize:".84rem",lineHeight:1.75,color:C.g500,marginBottom:16}}>
+              Codes are tied to a named account for audit, entitlement, and institutional seat control. Create an account or sign in first, then enter the code issued by research.
+            </p>
+            <div style={{display:"flex",gap:10,flexWrap:"wrap"}}>
+              <button onClick={()=>{setIsRequest(true);setError("");}} style={{...premiumButton,background:C.gold,color:"#fff"}}>Create account</button>
+              <button onClick={()=>{setIsRequest(false);setError("");}} style={{...premiumButton,background:"transparent",color:C.navy,border:`1px solid ${C.g200}`}}>Sign in</button>
+            </div>
+          </SectionFrame>
+        )}
       </div>
       </div>
     </div>
@@ -1359,9 +1421,9 @@ function Home({nav,user}) {
       duration:10,
       metrics:[{l:"Published",v:published.length},{l:"Analysts",v:analysts.filter(a=>a.role!=="intern").length},{l:"Funds",v:funds.length}],
       cards:[
-        {badge:"Member", title:"Contact your office", text:"Your account manager issues the access code.", tag:"registered", color:"#60a5fa"},
+        {badge:"Subscriber", title:"Contact your office", text:"Your account manager issues the access code.", tag:"subscriber", color:"#60a5fa"},
         {badge:"Portal", title:"Unlock the library", text:"Sign in to see your tailored reading list and archive.", tag:"portal", color:C.gold},
-        {badge:"Tier", title:"Choose the right level", text:"Access is grouped by customer tier and category.", tag:"control", color:"#22c55e"},
+        {badge:"Code", title:"Activate once approved", text:"Individual and institutional codes are handled separately.", tag:"control", color:"#22c55e"},
       ],
     },
     {
@@ -1375,10 +1437,10 @@ function Home({nav,user}) {
       ctaLabel:"Meet the team",
       ctaRoute:"analysts",
       duration:10,
-      metrics:[{l:"Free",v:"1 layer"},{l:"Registered",v:"2 layer"},{l:"Premium",v:"3 layer"}],
+      metrics:[{l:"Public",v:"open"},{l:"Subscriber",v:"approved"},{l:"Desk",v:"governed"}],
       cards:[
         {badge:"Macro", title:"Rates and FX", text:"Simple market notes and morning colour for customers.", tag:"free", color:"#22c55e"},
-        {badge:"Equity", title:"Named coverage", text:"Single-stock reports and portfolio ideas by sector.", tag:"member", color:"#60a5fa"},
+        {badge:"Equity", title:"Named coverage", text:"Single-stock reports and portfolio ideas by sector.", tag:"subscriber", color:"#60a5fa"},
         {badge:"Desk", title:"Support layer", text:"A central desk keeps the coverage flow organised.", tag:"desk", color:C.gold},
       ],
     },
@@ -1737,7 +1799,9 @@ function ReportSingle({id,nav,user}) {
   if(!r) return <div style={{padding:80,textAlign:"center",color:C.g500}}>Report not found.</div>;
   const cat=gc(r.cat),pc=gpc(r.cat),a=r.aid?ga(r.aid,analysts):null;
   const dc=cat?.p?`${pc?.name}  ${cat.name}`:cat?.name;
-  const has=canAccess(effectiveAccess(r,categoryRules),user);
+  const reportAccess = effectiveAccess(r,categoryRules);
+  const has=canAccess(reportAccess,user);
+  const accessLabel = reportAccess === "free" ? "Public" : "Subscriber";
   return (<>
     <section style={{background:`linear-gradient(160deg,${C.navy} 0%,${C.navyMid} 100%)`,padding:"48px 0",position:"relative"}}>
       <div style={{position:"absolute",bottom:0,left:0,right:0,height:1,background:`linear-gradient(90deg,transparent,${C.goldGlow},transparent)`}}/>
@@ -1748,7 +1812,7 @@ function ReportSingle({id,nav,user}) {
     </section>
     <div style={{maxWidth:760,margin:"0 auto",padding:"44px 24px"}}>
       <div style={{display:"flex",flexWrap:"wrap",gap:28,marginBottom:28,paddingBottom:22,borderBottom:`1px solid ${C.g200}`}}>
-        {[{l:"Published",v:fd(r.date)},a&&{l:"Analyst",v:a.name},{l:"Category",v:dc},{l:"Access",v:effectiveAccess(r,categoryRules)==="premium"?"Research Team":effectiveAccess(r,categoryRules)==="registered"?"Members":"Free"}].filter(Boolean).map((m,i)=>(
+        {[{l:"Published",v:fd(r.date)},a&&{l:"Analyst",v:a.name},{l:"Category",v:dc},{l:"Access",v:accessLabel}].filter(Boolean).map((m,i)=>(
           <div key={i}><span style={{color:C.g500,display:"block",fontSize:".7rem",textTransform:"uppercase",letterSpacing:.4,marginBottom:2,fontWeight:500}}>{m.l}</span><span style={{color:C.navy,fontWeight:600,fontSize:".86rem"}}>{m.v}</span></div>
         ))}
       </div>
@@ -1758,7 +1822,7 @@ function ReportSingle({id,nav,user}) {
         {has&&<><h3 style={{fontFamily:serif,color:C.navy,fontSize:"1.2rem",marginTop:28,marginBottom:10,fontWeight:600}}>Key Highlights</h3><ul style={{paddingLeft:20,lineHeight:2,maxWidth:720}}><li>Revenue growth driven by robust demand</li><li>Improved margins reflecting operational efficiencies</li><li>Favourable policy environment supporting sector</li></ul></>}
         {!has&&<p style={{marginTop:16,color:C.g500}}>The full analysis covers earnings drivers, margin expansion, competitive positioning, and valuation methodology</p>}
       </div>
-      {!has&&<GatedOverlay access={effectiveAccess(r,categoryRules)} user={user} nav={nav}/>}
+      {!has&&<GatedOverlay access={reportAccess} user={user} nav={nav}/>}
       {has&&<div style={{background:C.g100,border:`1px solid ${C.g200}`,borderRadius:10,padding:22,display:"flex",alignItems:"center",justifyContent:"space-between",gap:14,flexWrap:"wrap",marginTop:36}}>
         <div style={{display:"flex",alignItems:"center",gap:12}}>
           <div style={{width:40,height:40,background:C.navy,borderRadius:7,display:"flex",alignItems:"center",justifyContent:"center",color:C.white,fontSize:".68rem",fontWeight:800}}>PDF</div>
@@ -1807,7 +1871,7 @@ function ReportsPage({nav,user,initCat}) {
     if(sort==="date_desc") base.sort((a,b)=>new Date(b.date)-new Date(a.date));
     else if(sort==="date_asc") base.sort((a,b)=>new Date(a.date)-new Date(b.date));
     else if(sort==="title_asc") base.sort((a,b)=>a.title.localeCompare(b.title));
-    else if(sort==="access") base.sort((a,b)=>["free","registered","premium"].indexOf(effectiveAccess(a,categoryRules))-["free","registered","premium"].indexOf(effectiveAccess(b,categoryRules)));
+    else if(sort==="access") base.sort((a,b)=>["free","premium"].indexOf(effectiveAccess(a,categoryRules))-["free","premium"].indexOf(effectiveAccess(b,categoryRules)));
     return base;
   },[f,visible,q,sort,analysts,categoryRules]);
   const hasFilter=f!=="all"||q.trim();
@@ -2065,7 +2129,7 @@ function AnalystProfilePage({id,nav,user}) {
             <div style={{flex:1}}>
               <p style={{color:C.gold,fontSize:".72rem",textTransform:"uppercase",letterSpacing:1.5,fontWeight:700,marginBottom:8}}>{a.role==="director"?"Research Director":"Research Analyst"}</p>
               <h1 style={{fontFamily:serif,fontSize:"2.25rem",color:C.white,fontWeight:500,marginBottom:6,lineHeight:1.05}}>{a.name}</h1>
-              <p style={{color:"rgba(255,255,255,0.68)",fontSize:".9rem",lineHeight:1.7,maxWidth:680}}>{a.title}. Coverage includes {a.cov}.</p>
+              <p style={{color:"rgba(255,255,255,0.68)",fontSize:".9rem",lineHeight:1.7,maxWidth:680}}>{a.title}. Focus areas: {a.cov}.</p>
             </div>
           </div>
           <div style={{display:"grid",gridTemplateColumns:"repeat(3,minmax(0,1fr))",gap:12}}>
@@ -2074,8 +2138,8 @@ function AnalystProfilePage({id,nav,user}) {
               <div style={{fontSize:".73rem",fontWeight:700,color:"rgba(255,255,255,0.72)"}}>Published notes</div>
             </Surface>
             <Surface style={{padding:"18px 16px",background:"rgba(255,255,255,0.05)",border:"1px solid rgba(255,255,255,0.08)"}}>
-              <div style={{fontFamily:serif,fontSize:"1.45rem",fontWeight:600,color:"#fff",lineHeight:1,marginBottom:5}}>{a.role==="director"?"Desk":"Sector"}</div>
-              <div style={{fontSize:".73rem",fontWeight:700,color:"rgba(255,255,255,0.72)"}}>Coverage mandate</div>
+              <div style={{fontFamily:serif,fontSize:"1.45rem",fontWeight:600,color:"#fff",lineHeight:1,marginBottom:5}}>{a.role==="director"?"Desk":"Focus"}</div>
+              <div style={{fontSize:".73rem",fontWeight:700,color:"rgba(255,255,255,0.72)"}}>Research role</div>
             </Surface>
             <div style={{display:"flex",alignItems:"stretch"}}>
               <button onClick={()=>nav("contact")} style={{...premiumButton,background:C.gold,color:"#fff",width:"100%"}}>Contact research</button>
@@ -3528,7 +3592,7 @@ function OverviewTab({reports,analysts,categoryRules}) {
   const rejectedReports = reports.filter(r=>r.status==="rejected");
   const stats=[
     {l:"Total Reports",v:reports.length,sub:"Published",c:C.navy,bg:"#eef2f7"},
-    {l:"Team Access",v:reports.filter(r=>effectiveAccess(r,categoryRules)==="free").length,sub:"Free or inherited",c:C.green,bg:"#edf4ef"},
+    {l:"Public Reports",v:reports.filter(r=>effectiveAccess(r,categoryRules)==="free").length,sub:"Open access",c:C.green,bg:"#edf4ef"},
     {l:"Analysts",v:analysts.length,sub:"Active contributors",c:C.gold,bg:"#f7eedf"},
     {l:"Pending Review",v:pendingReports.length,sub:"Awaiting action",c:C.red,bg:"#fef2f2"},
   ];
@@ -3585,7 +3649,7 @@ function OverviewTab({reports,analysts,categoryRules}) {
           <h3 style={{fontFamily:serif,fontSize:"1.05rem",color:C.navy,marginBottom:18,fontWeight:600}}>Recent Reports</h3>
           {reports.slice(0,5).map(r=>(
             <div key={r.id} style={{display:"flex",alignItems:"center",gap:10,marginBottom:12,paddingBottom:12,borderBottom:`1px solid ${C.g100}`}}>
-              <div style={{width:34,height:34,borderRadius:7,background:effectiveAccess(r,categoryRules)==="premium"?"#fef3c7":effectiveAccess(r,categoryRules)==="registered"?"#dbeafe":"#dcfce7",display:"flex",alignItems:"center",justifyContent:"center",fontSize:".6rem",fontWeight:700,color:effectiveAccess(r,categoryRules)==="premium"?"#d97706":effectiveAccess(r,categoryRules)==="registered"?"#2563eb":C.green,flexShrink:0}}>{effectiveAccess(r,categoryRules)==="premium"?"SUB":effectiveAccess(r,categoryRules)==="registered"?"MEM":"FREE"}</div>
+              <div style={{width:34,height:34,borderRadius:7,background:effectiveAccess(r,categoryRules)==="free"?"#dcfce7":"#fef3c7",display:"flex",alignItems:"center",justifyContent:"center",fontSize:".6rem",fontWeight:700,color:effectiveAccess(r,categoryRules)==="free"?C.green:"#d97706",flexShrink:0}}>{effectiveAccess(r,categoryRules)==="free"?"PUB":"SUB"}</div>
               <div style={{flex:1,minWidth:0}}><div style={{fontSize:".82rem",fontWeight:600,color:C.navy,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{r.title}</div><div style={{fontSize:".7rem",color:C.g500,marginTop:1}}>{fd(r.date)}</div></div>
             </div>
           ))}
@@ -3728,7 +3792,7 @@ function AccessRulesTab({categoryRules,setCategoryRules}) {
     setCategoryRules(prev => ({ ...prev, [id]: access }));
   };
   const badge = access => <AccessBadge access={access} />;
-  const options = ["free", "registered", "premium"];
+  const options = ["free", "premium"];
   return (
     <div>
       <SH title="Category Paywalls" sub="Set the default access tier for each report category. Reports can still be overridden individually." />
@@ -3752,7 +3816,7 @@ function AccessRulesTab({categoryRules,setCategoryRules}) {
         ))}
       </div>
       <div style={{marginTop:16,background:"#f8fafc",border:`1px solid ${C.g200}`,borderRadius:12,padding:"14px 16px",fontSize:".8rem",color:C.g700,lineHeight:1.7}}>
-        Changing these rules affects reports created with the <strong>Category default</strong> access setting. Use the Reports tab if you want to override one report manually.
+        Changing these rules affects reports created with the <strong>Category default</strong> access setting. Use the Reports tab if you want to override one report manually. The production access model is intentionally simple: public reports are open; subscriber reports require approved activation.
       </div>
     </div>
   );
@@ -4003,8 +4067,8 @@ function ReportsTab({reports,analysts,setReports,showToast}) {
     setReports(p=>p.map(r=>r.id===id?{...r,access}:r));showToast("Access tier updated.");setEditAccessId(null);
     api.reports.changeAccess(id,access).catch(()=>{});
   };
-  const accOpts=["inherit","free","registered","premium"];
-  const accLabel={inherit:"Category",free:"Free",registered:"Members",premium:"Subscribers"};
+  const accOpts=["inherit","free","premium"];
+  const accLabel={inherit:"Category",free:"Public",premium:"Subscriber"};
   /* Sort newest first, then filter by search */
   const sorted=[...reports].sort((a,b)=>new Date(b.date)-new Date(a.date));
   const filtered=search.trim()?sorted.filter(r=>r.title.toLowerCase().includes(search.toLowerCase())||r.ex?.toLowerCase().includes(search.toLowerCase())):sorted;
@@ -4089,9 +4153,8 @@ function AddReportTab({analysts,reports,setReports,showToast,onDone}) {
   const anaOpts=[{v:"",l:" Research Desk (no analyst) "},...analysts.map(a=>({v:String(a.id),l:a.name}))];
   const accessOpts=[
     {v:"inherit",l:"Use category default"},
-    {v:"free",l:"Free"},
-    {v:"registered",l:"Members"},
-    {v:"premium",l:"Premium"},
+    {v:"free",l:"Public"},
+    {v:"premium",l:"Subscriber"},
   ];
   return (
     <div style={{maxWidth:700}}>
@@ -4586,15 +4649,15 @@ function UsersTab({showToast}) {
 }
 
 function SubscriberAccessTab({showToast}) {
-  const {institutions,setInstitutions,accessRequests,setAccessRequests,accessCodes}=useData();
+  const {institutions,setInstitutions,accessRequests,setAccessRequests,accessCodes,setAccessCodes}=useData();
   const [demoUsers,setDemoUsersState]=useState(()=>lsGet(LS.demoUsers)||[]);
   const limitedUsers = demoUsers.filter(u=>!STAFF_TIERS.has(u.tier) && u.accessState !== "active" && u.tier !== "premium");
   const markRequest = (id,status) => {
     setAccessRequests(prev=>prev.map(req=>req.id===id?{...req,status,reviewedAt:new Date().toISOString()}:req));
     showToast(status==="approved" ? "Access request approved for code issuance." : "Access request updated.");
   };
-  const activateManually = (id,tier="premium")=>{
-    const updated=demoUsers.map(u=>u.id===id?{...u,tier,accessState:"active"}:u);
+  const activateManually = id=>{
+    const updated=demoUsers.map(u=>u.id===id?{...u,tier:"premium",accessState:"active"}:u);
     lsSet(LS.demoUsers,updated);
     setDemoUsersState(updated);
     showToast("Subscriber access updated.");
@@ -4608,6 +4671,14 @@ function SubscriberAccessTab({showToast}) {
   const updateSeats = (id,delta)=>{
     setInstitutions(prev=>prev.map(inst=>inst.id===id?{...inst,seatsUsed:Math.max(0,Math.min(inst.seatLimit,(inst.seatsUsed||0)+delta))}:inst));
   };
+  const issueIndividualCode = req => {
+    const id = Date.now();
+    const suffix = String(id).slice(-4);
+    const next = {id,code:`CHD-IND-2026-${suffix}`,type:"individual",tier:"premium",assignedEmail:req.email || "",usedBy:"",usedAt:"",active:true,expiresAt:isoDateInDays(90),issuedFor:req.id,issuedAt:new Date().toISOString()};
+    setAccessCodes(prev=>[next,...prev]);
+    setAccessRequests(prev=>prev.map(item=>item.id===req.id?{...item,status:"code_issued",issuedCode:next.code,reviewedAt:new Date().toISOString()}:item));
+    showToast("Individual access code issued and linked to the request.");
+  };
   return (
     <div>
       <SH title="Subscriber Access" sub="Review account requests, issue activation codes, and watch institutional seat usage."/>
@@ -4615,14 +4686,16 @@ function SubscriberAccessTab({showToast}) {
         {accessRequests.length===0 ? <div style={{padding:"14px 0",fontSize:".82rem",color:C.g500}}>No access requests yet.</div> : (
           <div style={{display:"grid",gap:10}}>
             {accessRequests.map(req=>(
-              <div key={req.id} style={{display:"grid",gridTemplateColumns:"1fr auto",gap:14,alignItems:"center",padding:"14px 16px",background:req.status==="approved"?"#f0fdf4":C.offWhite,border:`1px solid ${req.status==="approved"?"#bbf7d0":C.g200}`,borderRadius:14}}>
+              <div key={req.id} style={{display:"grid",gridTemplateColumns:"1fr auto",gap:14,alignItems:"center",padding:"14px 16px",background:req.status==="approved"||req.status==="code_issued"?"#f0fdf4":C.offWhite,border:`1px solid ${req.status==="approved"||req.status==="code_issued"?"#bbf7d0":C.g200}`,borderRadius:14}}>
                 <div>
                   <div style={{fontSize:".86rem",fontWeight:800,color:C.navy,marginBottom:3}}>{req.name}</div>
                   <div style={{fontSize:".75rem",color:C.g500,marginBottom:3}}>{req.company || "Individual subscriber"} - {req.role || "Subscriber"}</div>
                   <div style={{fontSize:".72rem",color:C.g500}}>Status: <strong style={{color:req.status==="approved"?C.green:"#b45309"}}>{req.status.replace(/_/g," ")}</strong> - Requested {req.createdAt ? new Date(req.createdAt).toLocaleDateString("en-GB") : "recently"}</div>
+                  {req.issuedCode&&<div style={{fontSize:".72rem",color:C.g500,marginTop:4}}>Linked code: <strong style={{color:C.navy}}>{req.issuedCode}</strong></div>}
                 </div>
                 <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"flex-end"}}>
                   <button onClick={()=>markRequest(req.id,"approved")} style={{padding:"8px 12px",background:"#dcfce7",color:"#166534",border:"1px solid #bbf7d0",borderRadius:999,fontSize:".72rem",fontWeight:800,cursor:"pointer",fontFamily:sans}}>Approve</button>
+                  <button onClick={()=>issueIndividualCode(req)} disabled={req.status==="closed"||req.status==="code_issued"} style={{padding:"8px 12px",background:req.status==="closed"||req.status==="code_issued"?C.g100:C.navy,color:req.status==="closed"||req.status==="code_issued"?C.g500:"#fff",border:"none",borderRadius:999,fontSize:".72rem",fontWeight:800,cursor:req.status==="closed"||req.status==="code_issued"?"default":"pointer",fontFamily:sans}}>Issue code</button>
                   <button onClick={()=>markRequest(req.id,"needs_information")} style={{padding:"8px 12px",background:"#fef3c7",color:"#92400e",border:"1px solid #fde68a",borderRadius:999,fontSize:".72rem",fontWeight:800,cursor:"pointer",fontFamily:sans}}>Need info</button>
                   <button onClick={()=>markRequest(req.id,"closed")} style={{padding:"8px 12px",background:C.g100,color:C.g700,border:`1px solid ${C.g200}`,borderRadius:999,fontSize:".72rem",fontWeight:800,cursor:"pointer",fontFamily:sans}}>Close</button>
                 </div>
@@ -4644,8 +4717,7 @@ function SubscriberAccessTab({showToast}) {
                     <div style={{fontSize:".73rem",color:C.g500}}>{u.company || "Prospect account"}  {u.role || "Subscriber"}</div>
                   </div>
                   <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"flex-end"}}>
-                    <button onClick={()=>activateManually(u.id,"registered")} style={{padding:"8px 12px",background:"#eff6ff",color:"#2563eb",border:"1px solid #bfdbfe",borderRadius:999,fontSize:".72rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>Member</button>
-                    <button onClick={()=>activateManually(u.id,"premium")} style={{padding:"8px 12px",background:"#fef3c7",color:"#b45309",border:"1px solid #fcd34d",borderRadius:999,fontSize:".72rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>Premium</button>
+                    <button onClick={()=>activateManually(u.id)} style={{padding:"8px 12px",background:"#fef3c7",color:"#b45309",border:"1px solid #fcd34d",borderRadius:999,fontSize:".72rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>Activate subscriber</button>
                   </div>
                 </div>
               ))}
@@ -4711,40 +4783,68 @@ function SubscriberAccessTab({showToast}) {
 
 function AccessCodesTab({showToast}) {
   const {accessCodes,setAccessCodes,institutions}=useData();
+  const [draft,setDraft]=useState({type:"individual",assignedEmail:"",institutionId:String(institutions[0]?.id || 1),seatLimit:10,expiresAt:isoDateInDays(90)});
+  const [demoUsers]=useState(()=>lsGet(LS.demoUsers)||[]);
+  const users = [...DEMO_ACCOUNTS, ...demoUsers].filter((u,index,arr)=>u?.email && arr.findIndex(x=>x.email===u.email)===index);
   const createCode = type => {
     const id = Date.now();
     const suffix = String(id).slice(-4);
     const next = type==="individual"
-      ? {id,code:`CHD-IND-2026-${suffix}`,type:"individual",tier:"premium",assignedEmail:"",usedBy:"",usedAt:"",active:true,expiresAt:"2026-12-31"}
-      : {id,code:`CHD-INST-2026-${suffix}`,type:"institution",tier:"premium",institutionId:institutions[0]?.id || 1,seatLimit:10,seatsUsed:0,active:true,expiresAt:"2026-12-31"};
+      ? {id,code:`CHD-IND-2026-${suffix}`,type:"individual",tier:"premium",assignedEmail:draft.assignedEmail.trim().toLowerCase(),usedBy:"",usedAt:"",active:true,expiresAt:draft.expiresAt || isoDateInDays(90),issuedAt:new Date().toISOString()}
+      : {id,code:`CHD-INST-2026-${suffix}`,type:"institution",tier:"premium",institutionId:Number(draft.institutionId)||institutions[0]?.id||1,seatLimit:Number(draft.seatLimit)||10,seatsUsed:0,active:true,expiresAt:draft.expiresAt || isoDateInDays(180),issuedAt:new Date().toISOString()};
     setAccessCodes([next,...accessCodes]);
     showToast("Access code created.");
   };
   const toggleActive = id => setAccessCodes(prev=>prev.map(code=>code.id===id?{...code,active:!code.active}:code));
+  const updateCode = (id,patch) => setAccessCodes(prev=>prev.map(code=>code.id===id?{...code,...patch}:code));
+  const statusFor = code => isExpiredDate(code.expiresAt) ? "Expired" : !code.active ? "Disabled" : code.type==="individual" && code.usedBy ? "Used" : "Available";
   return (
     <div>
       <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12,flexWrap:"wrap",marginBottom:20}}>
         <div>
           <h2 style={{fontFamily:serif,fontSize:"1.5rem",color:C.navy,fontWeight:600,marginBottom:4}}>Access Codes</h2>
-          <p style={{fontSize:".82rem",color:C.g500}}>Issue single-use individual access and master institutional access from one quiet control surface.</p>
-        </div>
-        <div style={{display:"flex",gap:10}}>
-          <button onClick={()=>createCode("individual")} style={{...premiumButton,background:C.navy,color:"#fff"}}>New individual code</button>
-          <button onClick={()=>createCode("institution")} style={{...premiumButton,background:C.gold,color:"#fff"}}>New institutional code</button>
+          <p style={{fontSize:".82rem",color:C.g500}}>Issue time-bound codes, assign them to users or institutions, and track current usage from one control surface.</p>
         </div>
       </div>
+      <SectionFrame title="Create access code" sub="CEO-safe rule: every code has a recipient, expiry date, status, and usage trail. Individual codes are one person only; institutional codes are seat-limited.">
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1.2fr 1fr 1fr",gap:12,alignItems:"end"}}>
+          <Inp label="Code type" value={draft.type} onChange={e=>setDraft({...draft,type:e.target.value})} as="select" options={[{v:"individual",l:"Individual subscriber"},{v:"institution",l:"Institution master"}]}/>
+          {draft.type==="individual" ? (
+            <Inp label="Assign to user/email" value={draft.assignedEmail} onChange={e=>setDraft({...draft,assignedEmail:e.target.value})} as="select" options={[{v:"",l:"Unassigned"},...users.filter(u=>!STAFF_TIERS.has(u.tier)).map(u=>({v:u.email,l:`${u.name} - ${u.email}`}))]}/>
+          ) : (
+            <Inp label="Institution" value={draft.institutionId} onChange={e=>setDraft({...draft,institutionId:e.target.value})} as="select" options={institutions.map(i=>({v:String(i.id),l:i.name}))}/>
+          )}
+          {draft.type==="institution" ? <Inp label="Seat limit" value={draft.seatLimit} onChange={e=>setDraft({...draft,seatLimit:e.target.value})} type="number"/> : <Inp label="Seat limit" value="1" onChange={()=>{}}/>}
+          <Inp label="Expiry date" value={draft.expiresAt} onChange={e=>setDraft({...draft,expiresAt:e.target.value})} type="date"/>
+        </div>
+        <div style={{display:"flex",gap:10,marginTop:14,flexWrap:"wrap"}}>
+          <button onClick={()=>createCode(draft.type)} style={{...premiumButton,background:C.navy,color:"#fff"}}>Issue {draft.type==="individual"?"individual":"institutional"} code</button>
+          <button onClick={()=>setDraft({...draft,expiresAt:isoDateInDays(30)})} style={{...premiumButton,background:C.g100,color:C.navy,border:`1px solid ${C.g200}`}}>30 days</button>
+          <button onClick={()=>setDraft({...draft,expiresAt:isoDateInDays(90)})} style={{...premiumButton,background:C.g100,color:C.navy,border:`1px solid ${C.g200}`}}>90 days</button>
+          <button onClick={()=>setDraft({...draft,expiresAt:isoDateInDays(365)})} style={{...premiumButton,background:C.g100,color:C.navy,border:`1px solid ${C.g200}`}}>1 year</button>
+        </div>
+      </SectionFrame>
+      <div style={{height:18}}/>
       <div style={{display:"grid",gap:12}}>
         {accessCodes.map(code=>{
           const inst = institutions.find(i=>i.id===code.institutionId);
+          const status = statusFor(code);
           return (
-            <SectionFrame key={code.id} title={code.code} sub={code.type==="individual" ? "Single-use activation for one subscriber account." : `Master institutional code${inst ? `  ${inst.name}` : ""}`}>
-              <div style={{display:"grid",gridTemplateColumns:"repeat(5,minmax(0,1fr))",gap:12}}>
+            <SectionFrame key={code.id} title={code.code} sub={code.type==="individual" ? "Single-use activation for one subscriber account." : `Master institutional code${inst ? ` - ${inst.name}` : ""}`}>
+              <div style={{display:"grid",gridTemplateColumns:"repeat(6,minmax(0,1fr))",gap:12}}>
                 <div><Eyebrow style={{marginBottom:4,color:C.g500}}>Type</Eyebrow><div style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>{code.type}</div></div>
-                <div><Eyebrow style={{marginBottom:4,color:C.g500}}>Tier</Eyebrow><div style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>{code.tier}</div></div>
-                <div><Eyebrow style={{marginBottom:4,color:C.g500}}>Expires</Eyebrow><div style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>{code.expiresAt}</div></div>
-                <div><Eyebrow style={{marginBottom:4,color:C.g500}}>Usage</Eyebrow><div style={{fontSize:".84rem",fontWeight:700,color:C.navy}}>{code.type==="individual" ? (code.usedBy || "Unused") : `${code.seatsUsed||0}/${code.seatLimit||0} seats`}</div></div>
+                <div><Eyebrow style={{marginBottom:4,color:C.g500}}>Status</Eyebrow><div style={{fontSize:".84rem",fontWeight:800,color:status==="Available"?C.green:status==="Expired"||status==="Disabled"?C.red:C.navy}}>{status}</div></div>
+                <div><Eyebrow style={{marginBottom:4,color:C.g500}}>Assigned to</Eyebrow><div style={{fontSize:".84rem",fontWeight:700,color:C.navy,overflowWrap:"anywhere"}}>{code.type==="individual" ? (code.assignedEmail || "Unassigned") : (inst?.name || "Institution")}</div></div>
+                <div><Eyebrow style={{marginBottom:4,color:C.g500}}>Expires</Eyebrow><input value={code.expiresAt||""} onChange={e=>updateCode(code.id,{expiresAt:e.target.value})} type="date" style={{width:"100%",padding:"7px 8px",border:`1px solid ${C.g200}`,borderRadius:8,fontFamily:sans,fontSize:".78rem",color:C.navy}}/></div>
+                <div><Eyebrow style={{marginBottom:4,color:C.g500}}>Usage</Eyebrow><div style={{fontSize:".84rem",fontWeight:700,color:C.navy,overflowWrap:"anywhere"}}>{code.type==="individual" ? (code.usedBy ? `${code.usedBy}${code.usedAt ? ` on ${new Date(code.usedAt).toLocaleDateString("en-GB")}` : ""}` : "Unused") : `${code.seatsUsed||0}/${code.seatLimit||0} seats`}</div></div>
                 <div style={{display:"flex",alignItems:"end",justifyContent:"flex-end"}}><button onClick={()=>toggleActive(code.id)} style={{padding:"8px 12px",background:code.active?C.g100:"#fef2f2",color:code.active?C.navy:C.red,border:"none",borderRadius:999,fontSize:".72rem",fontWeight:700,cursor:"pointer",fontFamily:sans}}>{code.active?"Disable":"Enable"}</button></div>
               </div>
+              {code.type==="individual"&&(
+                <div style={{display:"grid",gridTemplateColumns:"1fr auto",gap:10,alignItems:"end",marginTop:14,paddingTop:14,borderTop:`1px solid ${C.g100}`}}>
+                  <Inp label="Reassign individual code" value={code.assignedEmail||""} onChange={e=>updateCode(code.id,{assignedEmail:e.target.value})} as="select" options={[{v:"",l:"Unassigned"},...users.filter(u=>!STAFF_TIERS.has(u.tier)).map(u=>({v:u.email,l:`${u.name} - ${u.email}`}))]}/>
+                  <button onClick={()=>updateCode(code.id,{usedBy:"",usedAt:""})} style={{...premiumButton,background:C.g100,color:C.navy,border:`1px solid ${C.g200}`}}>Clear usage</button>
+                </div>
+              )}
             </SectionFrame>
           );
         })}
@@ -4869,18 +4969,18 @@ export default function App() {
   /* Initialize state from localStorage so data survives refresh */
   const [user,setUser]         = useState(()=>normalizePortalUser(lsGet(LS.user)));
   const [toast,setToast]       = useState("");
-  const [reports,setReports]   = useState(()=>lsGet(LS.reports)||INIT_REPORTS);
-  const [analysts,setAnalysts] = useState(()=>lsGet(LS.analysts)||INIT_ANALYSTS);
-  const [funds,setFunds]       = useState(()=>lsGet(LS.funds)||FUNDS);
+  const [reports,setReports]   = useState(()=>normalizeReports(lsGet(LS.reports)||INIT_REPORTS));
+  const [analysts,setAnalysts] = useState(()=>normalizeAnalysts(lsGet(LS.analysts)||INIT_ANALYSTS));
+  const [funds,setFunds]       = useState(()=>normalizeFunds(lsGet(LS.funds)||FUNDS));
   const [demoFill,setDemoFill] = useState(null);
   const [bioEdits,setBioEdits] = useState(()=>lsGet(LS.bioEdits)||[]);
   const [mailingList,setMailingList] = useState(()=>lsGet(LS.mailingList)||[]);
   const [library,setLibrary] = useState(()=>lsGet(LS.library)||INIT_LIBRARY);
-  const [categoryRules,setCategoryRules] = useState(()=>lsGet(LS.categoryRules)||CATEGORY_ACCESS_DEFAULTS);
+  const [categoryRules,setCategoryRules] = useState(()=>normalizeCategoryRules(lsGet(LS.categoryRules)||CATEGORY_ACCESS_DEFAULTS));
   const [accessRequests,setAccessRequests] = useState(()=>lsGet(LS.accessRequests)||[]);
   const [bannerMedia,setBannerMedia] = useState(()=>lsGet(LS.bannerMedia)||DEFAULT_BANNER_MEDIA);
   const [recentViews,setRecentViews] = useState(()=>lsGet(LS.recentViews)||[]);
-  const [accessCodes,setAccessCodes] = useState(()=>lsGet(LS.accessCodes)||INIT_ACCESS_CODES);
+  const [accessCodes,setAccessCodes] = useState(()=>normalizeAccessCodes(lsGet(LS.accessCodes)||INIT_ACCESS_CODES));
   const [institutions,setInstitutions] = useState(()=>lsGet(LS.institutions)||INIT_INSTITUTIONS);
   const [digest,setDigest] = useState(()=>lsGet(LS.digest)||INIT_DIGEST);
   const [featuredReportIds,setFeaturedReportIds] = useState(()=>lsGet(LS.featuredReports)||DEFAULT_FEATURED_REPORT_IDS);
@@ -4912,15 +5012,15 @@ export default function App() {
       .catch(()=>{}); /* stay with localStorage user in offline/demo mode */
 
     api.reports.list()
-      .then(rows=>{ if(rows?.length) setReports(rows); })
+      .then(rows=>{ if(rows?.length) setReports(normalizeReports(rows)); })
       .catch(()=>{});
 
     api.analysts.list()
-      .then(rows=>{ if(rows?.length) setAnalysts(rows); })
+      .then(rows=>{ if(rows?.length) setAnalysts(normalizeAnalysts(rows)); })
       .catch(()=>{});
 
     api.funds.list()
-      .then(rows=>{ if(rows?.length) setFunds(rows); })
+      .then(rows=>{ if(rows?.length) setFunds(normalizeFunds(rows)); })
       .catch(()=>{});
   },[]);
 
@@ -4981,6 +5081,8 @@ export default function App() {
     if(type==="individual"){
       const match = accessCodes.find(c=>c.type==="individual"&&c.code===code);
       if(!match || !match.active) return {ok:false,message:"This individual code is not valid."};
+      if(isExpiredDate(match.expiresAt)) return {ok:false,message:"This individual code has expired."};
+      if(match.assignedEmail && match.assignedEmail.toLowerCase() !== user.email.toLowerCase()) return {ok:false,message:"This code is assigned to another account."};
       if(match.usedBy) return {ok:false,message:"This individual code has already been used."};
       const upgraded = normalizePortalUser({...user,tier:match.tier,accessState:"active",activationHistory:[...(user.activationHistory||[]),{code,type,at:new Date().toISOString()}]});
       setAccessCodes(prev=>prev.map(c=>c.id===match.id?{...c,usedBy:user.email,usedAt:new Date().toISOString()}:c));
@@ -4996,6 +5098,7 @@ export default function App() {
     }
     const match = accessCodes.find(c=>c.type==="institution"&&c.code===code);
     if(!match || !match.active) return {ok:false,message:"This institutional code is not valid."};
+    if(isExpiredDate(match.expiresAt)) return {ok:false,message:"This institutional code has expired."};
     const institution = institutions.find(i=>i.id===match.institutionId);
     if(!institution || !institution.active) return {ok:false,message:"This institution is not active."};
     if((institution.seatsUsed||0) >= (institution.seatLimit||0)) return {ok:false,message:"All seats on this institutional code have been used."};
@@ -5178,7 +5281,7 @@ export default function App() {
           {page==="reports"    &&<ReportsPage nav={nav} user={user} initCat={pageData.cat}/>}
           {page==="digest"     &&<DigestPage nav={nav}/>}
           {page==="library"    &&user?.tier==="premium"&&<LibraryPage nav={nav} user={user}/>}
-          {page==="library"    &&user?.tier!=="premium"&&<div style={{padding:80,textAlign:"center",color:C.g500}}>My Library is available to premium subscribers.</div>}
+          {page==="library"    &&user?.tier!=="premium"&&<div style={{padding:80,textAlign:"center",color:C.g500}}>My Library is available to activated subscribers.</div>}
           {page==="report"     &&<ReportSingle id={pageData.id} nav={nav} user={user}/>}
           {page==="analysts"   &&<AnalystsPage nav={nav}/>}
           {page==="analyst"    &&<AnalystProfilePage id={pageData.id} nav={nav} user={user}/>}
