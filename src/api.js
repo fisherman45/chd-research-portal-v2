@@ -3,7 +3,7 @@
    All communication with the PHP backend goes through here.
    ═══════════════════════════════════════════════════════════ */
 
-const BASE = '/api';
+const BASE = (process.env.REACT_APP_API_BASE || '/api').replace(/\/$/, '');
 
 /* ── Core fetch wrapper ── */
 async function call(method, endpoint, body) {

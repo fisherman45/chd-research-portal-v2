@@ -53,6 +53,8 @@ const publicAsset = path => {
   const clean = path.startsWith("/") ? path : `/${path}`;
   return `${process.env.PUBLIC_URL || ""}${clean}`;
 };
+const API_BASE = (process.env.REACT_APP_API_BASE || "/api").replace(/\/$/, "");
+const apiEndpoint = path => `${API_BASE}/${path.replace(/^\//,"")}`;
 
 /*  LOCAL PHOTO HELPER  */
 /* Returns an object-URL for a File, or cleans up the old one */
@@ -267,7 +269,7 @@ const enrichFundData = fund => {
 };
 
 const DEMO_ACCOUNTS = [
-  {email:"admin@chapelhilldenham.com",      password:"password", name:"Portal Admin",           tier:"admin"},
+  {email:"admin@chapelhilldenham.com",      password:"password", name:"Research Desk Admin",    tier:"admin"},
   {email:"tiibrahim@chapelhilldenham.com",  password:"password", name:"Tajudeen Ibrahim",       tier:"director", analystId:1, title:"Director, Research"},
   {email:"nmohammed@chapelhilldenham.com",  password:"password", name:"Nabila Mohammed",        tier:"analyst", analystId:6, title:"Research Analyst"},
   {email:"bagboola@chapelhilldenham.com",   password:"password", name:"Bolade Agboola",         tier:"analyst", analystId:4, title:"Research Analyst"},
@@ -503,8 +505,8 @@ function Header({page,nav,goBack,canGoBack,user,onLogout}) {
     ...(user?.tier==="premium"?[{k:"library",l:"My Library"}]:[]),
     ...(user&&["director","analyst","intern"].includes(user.tier)?[{k:"docbank",l:"Research Library"}]:[]),
     /* PAYMENT MODULE DISABLED: subscribe nav item removed */
-    ...(isAdmin                   ?[{k:"manage",  l:"Administrator"}]:[]),
-    ...(isDirector||isAnalyst||isIntern       ?[{k:"myportal",l:"My Portal"}]:[]),
+    ...(isAdmin                   ?[{k:"manage",  l:"Research Desk"}]:[]),
+    ...(isDirector||isAnalyst||isIntern       ?[{k:"myportal",l:isIntern?"Desk Tasks":"My Desk"}]:[]),
   ];
   const isAct = k => page===k||(k==="reports"&&page==="report")||(k==="analysts"&&(page==="analyst"));
 
@@ -889,7 +891,7 @@ function DemoWidget({page,nav}) {
 
 /*  LOGIN / REGISTER  */
 function AuthPage({mode,nav,onLogin}) {
-  const {demoFill,setDemoFill,user,activateAccessCode}=useData();
+  const {demoFill,setDemoFill,user,activateAccessCode,accessRequests,setAccessRequests}=useData();
   const [isRequest,setIsRequest]=useState(mode==="register");
   const [form,setForm]=useState({name:"",email:"",company:"",phone:"",role:"Investor",password:"",confirmPassword:""});
   const [error,setError]=useState("");
@@ -936,9 +938,25 @@ function AuthPage({mode,nav,onLogin}) {
           institutionId:null,
           institutionName:null,
           activationHistory:[],
+          approvalStatus:"pending_research_review",
           createdAt:new Date().toISOString(),
         };
         lsSet(LS.demoUsers,[created,...existing]);
+        const accessRequest={
+          id:Date.now()+1,
+          userId:created.id,
+          name:created.name,
+          email:created.email,
+          company:created.company,
+          phone:created.phone,
+          role:created.role,
+          requestedTier:"premium",
+          requestType:"individual",
+          status:"new",
+          createdAt:created.createdAt,
+          notes:"Self-registered account awaiting Research Desk review and code issuance.",
+        };
+        setAccessRequests([accessRequest,...accessRequests]);
         onLogin(normalizeUser(created));
         nav("home");
       }catch(e){
@@ -981,14 +999,14 @@ function AuthPage({mode,nav,onLogin}) {
           <img src={publicAsset("/chd-logo.png")} alt="Chapel Hill Denham" style={{height:52,width:"auto",margin:"0 auto 14px",display:"block"}} onError={e=>{e.currentTarget.style.display="none";}}/>
           <div style={{fontFamily:sans,fontSize:".58rem",fontWeight:700,letterSpacing:3.5,textTransform:"uppercase",color:C.gold,marginBottom:10,opacity:.9}}>Chapel Hill Denham  Research</div>
           <h2 style={{fontFamily:serif,fontSize:"1.7rem",color:C.navy,marginBottom:5}}>{isRequest?"Create your account":"Sign in to the portal"}</h2>
-          <p style={{color:C.g500,fontSize:".85rem",lineHeight:1.7}}>{isRequest?"Create a basic account first. Full subscriber access is activated after the research team issues an individual or institutional code.":"Use your account details to enter the research portal and manage activation."}</p>
+          <p style={{color:C.g500,fontSize:".85rem",lineHeight:1.7}}>{isRequest?"Create a request profile first. The Research Desk reviews the request, confirms the commercial relationship, and issues an individual or institutional activation code.":"Use your account details to enter the research portal and manage activation."}</p>
         </div>
         {isRequest&&(
           <div className="auth-progress" style={{display:"grid",gridTemplateColumns:"repeat(3,1fr)",gap:10,marginBottom:18}}>
             {[
               ["Account","Create your profile"],
-              ["Approval","Research issues code"],
-              ["Access","Unlock the library"],
+              ["Desk review","Research validates access"],
+              ["Activation","Code unlocks library"],
             ].map(([title,sub],i)=>(
               <div key={title} style={{padding:"12px 10px",background:i===0?C.goldSoft:C.offWhite,border:`1px solid ${i===0?"rgba(185,114,49,0.22)":C.g200}`,borderRadius:12}}>
                 <div style={{fontSize:".62rem",fontWeight:900,color:i===0?C.gold:C.g500,textTransform:"uppercase",letterSpacing:1.3,marginBottom:4}}>Step {i+1}</div>
@@ -1015,7 +1033,7 @@ function AuthPage({mode,nav,onLogin}) {
               <Inp label="Confirm password" value={form.confirmPassword} onChange={e=>setForm({...form,confirmPassword:e.target.value})} placeholder="Repeat password" type="password" required/>
             </div>
             <div style={{background:C.goldSoft,border:`1px solid rgba(185,114,49,0.18)`,borderRadius:14,padding:"14px 14px",marginBottom:12,fontSize:".77rem",color:C.g700,lineHeight:1.7}}>
-              After this account is created, contact the research team for the correct activation code. Individual access uses one code per person; institutional access uses a master code for approved users.
+              After submission, the Research Desk reviews the request and issues the correct activation code. Individual access uses one code per person. Institutional access uses a master code with controlled seat usage.
             </div>
             <button onClick={handleSubmit} disabled={submitting} style={{width:"100%",padding:"13px",background:submitting?C.goldHover:C.gold,color:"#fff",border:"none",borderRadius:12,fontSize:".9rem",fontWeight:700,cursor:submitting?"default":"pointer",fontFamily:sans,marginBottom:14,transition:"background .15s"}}>{submitting?"Creating account...":"Create account"}</button>
             <p style={{textAlign:"center",fontSize:".82rem",color:C.g500}}>
@@ -1039,13 +1057,13 @@ function AuthPage({mode,nav,onLogin}) {
       <div className="auth-side" style={{display:"grid",gap:22}}>
         <Surface style={{padding:"34px 30px",background:"linear-gradient(180deg, rgba(8,26,34,0.94) 0%, rgba(6,38,45,0.94) 100%)",color:"#fff",border:"1px solid rgba(185,114,49,0.16)"}}>
           <Eyebrow style={{marginBottom:12}}>Access model</Eyebrow>
-          <h3 style={{fontFamily:serif,fontSize:"1.6rem",fontWeight:600,marginBottom:12}}>{isRequest?"What happens after signup":"Access follows your approval route"}</h3>
-          <p style={{fontSize:".88rem",lineHeight:1.8,color:"rgba(255,255,255,0.68)",marginBottom:18}}>{isRequest?"The account lets the research team identify you and match you to the right subscription path. Full library access starts only after a valid code is issued.":"Use the access code issued for your profile or institution. The portal keeps individual and institutional activation separate so access can be managed cleanly."}</p>
+          <h3 style={{fontFamily:serif,fontSize:"1.6rem",fontWeight:600,marginBottom:12}}>{isRequest?"Access is approved before it is activated":"Access follows your approval route"}</h3>
+          <p style={{fontSize:".88rem",lineHeight:1.8,color:"rgba(255,255,255,0.68)",marginBottom:18}}>{isRequest?"The signup form creates a limited account and a Research Desk review item. Full library access starts only after the desk or institution administrator issues a valid code.":"Use the access code issued for your profile or institution. The portal keeps individual and institutional activation separate so access can be managed cleanly."}</p>
           <div style={{display:"grid",gap:10}}>
             {[
-              isRequest?"Submit account details.":"Sign in with your approved account.",
-              "Receive an individual or institutional code.",
-              "Activate the full research library.",
+              isRequest?"Submit a profile and access request.":"Sign in with your approved account.",
+              "Research validates entitlement and issues the right code.",
+              "Activate the library and keep the account auditable.",
             ].map((item,i)=>(
               <div key={i} style={{display:"flex",gap:12,alignItems:"flex-start",padding:"12px 0",borderTop:i?`1px solid rgba(255,255,255,0.08)`:"none"}}>
                 <div style={{width:26,height:26,borderRadius:"50%",background:"rgba(185,114,49,0.16)",display:"flex",alignItems:"center",justifyContent:"center",color:C.gold,fontSize:".74rem",fontWeight:800,flexShrink:0}}>{i+1}</div>
@@ -1614,6 +1632,11 @@ function FundExpandedPanel({fund,onClose}) {
   const estimatedSize = fund.chartAum?.[Math.max(0,activeIndex)] || (Number.isFinite(sizeBase) && last ? `${String(fund.aum || "").trim().startsWith("N") ? "N" : ""}${(sizeBase * (active.value / last)).toFixed(1)}${sizeUnit}` : fund.aum);
   const growthFromStart = first ? (((active.value - first) / first) * 100) : 0;
   const rangeLabel = labels.length ? `${labels[0]} to ${labels[labels.length-1]}` : `Ending ${longDate(fund.dataAsAt)}`;
+  const tooltipStyle = active?.x < 110
+    ? {left:8,transform:"translateX(0)"}
+    : active?.x > width - 110
+      ? {right:8,transform:"translateX(0)"}
+      : {left:`${(active.x/width)*100}%`,transform:"translateX(-50%)"};
   return (
     <Surface className="fund-expanded-panel" style={{padding:0,marginTop:18,overflow:"hidden",border:`1px solid ${fund.riskColor}33`,boxShadow:"0 24px 60px rgba(6,38,45,0.08)"}}>
       <div style={{padding:"22px 24px 18px",borderBottom:`1px solid ${C.g200}`,display:"flex",justifyContent:"space-between",gap:16,alignItems:"flex-start",flexWrap:"wrap"}}>
@@ -1656,7 +1679,7 @@ function FundExpandedPanel({fund,onClose}) {
               ))}
             </svg>
             {active && (
-              <div style={{position:"absolute",top:8,left:`clamp(8px, ${(active.x/width)*100}%, calc(100% - 190px))`,transform:"translateX(-50%)",background:"#fff",border:`1px solid ${C.g200}`,boxShadow:"0 14px 34px rgba(6,38,45,0.14)",borderRadius:12,padding:"10px 12px",minWidth:170,pointerEvents:"none"}}>
+              <div style={{position:"absolute",top:8,...tooltipStyle,background:"#fff",border:`1px solid ${C.g200}`,boxShadow:"0 14px 34px rgba(6,38,45,0.14)",borderRadius:12,padding:"10px 12px",width:178,maxWidth:"calc(100% - 16px)",pointerEvents:"none",zIndex:2}}>
                 <div style={{fontSize:".62rem",fontWeight:800,textTransform:"uppercase",letterSpacing:1.4,color:C.gold,marginBottom:5}}>{active.label}</div>
                 <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
                   <div><div style={{fontSize:".58rem",color:C.g500,textTransform:"uppercase",fontWeight:800}}>Value</div><div style={{fontSize:".9rem",fontWeight:800,color:C.navy}}>{active.value}</div></div>
@@ -1717,6 +1740,10 @@ function ReportSingle({id,nav,user}) {
           <div><strong style={{fontSize:".88rem",color:C.navy}}>{r.title}</strong><br/><span style={{fontSize:".75rem",color:C.g500}}>Download full report</span></div>
         </div>
         <button onClick={async()=>{await generateReportPDF(r);}} style={{padding:"9px 22px",background:C.gold,color:"#fff",border:"none",borderRadius:7,fontSize:".8rem",fontWeight:600,cursor:"pointer",fontFamily:sans}}> Download PDF</button>
+      </div>}
+      {has&&<div style={{marginTop:18,padding:"18px 20px",background:"#fbfcfd",border:`1px solid ${C.g200}`,borderRadius:10}}>
+        <div style={{fontSize:".68rem",fontWeight:800,textTransform:"uppercase",letterSpacing:1.6,color:C.gold,marginBottom:8}}>Important disclosure</div>
+        <p style={{fontSize:".76rem",lineHeight:1.75,color:C.g500}}>This material is provided for information purposes only and is not an offer, solicitation, or personal investment recommendation. Chapel Hill Denham research views are based on information believed to be reliable at publication date, but accuracy and completeness are not guaranteed. Investors should consider suitability, risk, and independent professional advice before acting on any research view.</p>
       </div>}
       {a&&<div style={{marginTop:36,padding:"22px",background:C.offWhite,borderRadius:10,border:`1px solid ${C.g200}`,display:"flex",alignItems:"center",gap:16,cursor:"pointer",...s({opacity:1},{opacity:.85})}} onClick={()=>nav("analyst",{id:a.id})}>
         <AnalystAvatar analyst={a} size={48} fontSize="1.1rem"/>
@@ -2654,7 +2681,8 @@ function InternPortalPage({user,nav}) {
       {k:"submissions",l:"My Submissions"},
       {k:"activity",l:"Reader Activity"},
     ]},
-    {l:"Workflow",items:[
+    {l:"Desk Intake",items:[
+      {k:"files",l:"File Uploads"},
       {k:"pricelist",l:"Price Lists"},
     ]},
   ];
@@ -2737,6 +2765,7 @@ function InternPortalPage({user,nav}) {
           </div>
         )}
         {tab==="activity"&&<ReaderActivityTab nav={nav} sub="Track what is currently being opened so you can align drafts and follow-up with the active discussion."/>}
+        {tab==="files"&&<FileManagerTab showToast={showToast}/>}
         {tab==="pricelist"&&<PriceUploadTab isIntern={true} showToast={showToast}/>} 
       </PortalShell>
       {toast&&<div style={{position:"fixed",right:24,bottom:24,background:"#0891b2",color:"#fff",padding:"13px 18px",borderRadius:10,boxShadow:"0 16px 40px rgba(8,145,178,0.3)",fontSize:".83rem",zIndex:300,display:"flex",alignItems:"center",gap:8}}><span></span>{toast}</div>}
@@ -2746,18 +2775,7 @@ function InternPortalPage({user,nav}) {
 function FundsPage({nav}) {
   const {funds}=useData();
   const [selectedFund,setSelectedFund]=useState(null);
-  const enrichedFunds=(funds||[]).map(f=>{
-    const fallback=FUNDS.find(base=>base.id===f.id) || {};
-    return {
-      ...fallback,
-      ...f,
-      chart:Array.isArray(f.chart)&&f.chart.length ? f.chart : fallback.chart,
-      chartLabels:Array.isArray(f.chartLabels)&&f.chartLabels.length ? f.chartLabels : fallback.chartLabels,
-      chartAum:Array.isArray(f.chartAum)&&f.chartAum.length ? f.chartAum : fallback.chartAum,
-      sourceName:f.sourceName || fallback.sourceName,
-      sourceUrl:f.sourceUrl || fallback.sourceUrl,
-    };
-  });
+  const enrichedFunds=(funds||[]).map(enrichFundData);
   const sorted=[...enrichedFunds].sort((a,b)=>new Date(b.dataAsAt)-new Date(a.dataAsAt));
   const mutualFunds=sorted.filter(f=>f.id!=="nidf");
   const infraFund=sorted.find(f=>f.id==="nidf");
@@ -3400,12 +3418,13 @@ function DocumentBankPage({nav,user}) {
 
 /*  MANAGE PORTAL (admin)  */
 function ManagePage({nav}) {
-  const {reports,analysts,funds,setReports,setAnalysts,setFunds,bioEdits,setBioEdits,categoryRules,setCategoryRules}=useData();
+  const {reports,analysts,funds,setReports,setAnalysts,setFunds,bioEdits,setBioEdits,categoryRules,setCategoryRules,accessRequests}=useData();
   const [tab,setTab]=useState("overview");
   const [toast,setToast]=useState("");
   const showToast=msg=>{setToast(msg);setTimeout(()=>setToast(""),3000);};
   const pendingBioCount=bioEdits.filter(e=>e.status==="pending").length;
   const pendingReports=reports.filter(r=>r.status==="pending");
+  const openAccessRequests=accessRequests.filter(r=>r.status!=="approved"&&r.status!=="closed");
 
   useEffect(()=>{
     api.bioEdits.list().then(rows=>{ if(rows) setBioEdits(rows); }).catch(()=>{});
@@ -3415,7 +3434,7 @@ function ManagePage({nav}) {
     {k:"overview",l:"Overview"},
     {k:"pending",l:"Pending Reports",badge:pendingReports.length},
     {k:"reports",l:"Reports"},
-    {k:"addreport",l:"Publish Report"},
+    {k:"addreport",l:"Desk Publish"},
     {k:"digest",l:"Digest"},
     {k:"banner",l:"Banner Media"},
     {k:"files",l:"File Library"},
@@ -3423,18 +3442,19 @@ function ManagePage({nav}) {
     {k:"addanalyst",l:"Add Analyst"},
     {k:"addintern",l:"Add Intern"},
     {k:"users",l:"User Accounts"},
-    {k:"subscribers",l:"Subscriber Access"},
+    {k:"subscribers",l:"Access Requests",badge:openAccessRequests.length},
     {k:"codes",l:"Access Codes"},
     {k:"access",l:"Paywalls"},
+    {k:"governance",l:"Governance"},
     {k:"funds",l:"Funds"},
-    {k:"settings",l:"Portal Settings"},
+    {k:"settings",l:"Backend Readiness"},
   ];
   const tabGroups=[
-    {l:"Dashboard",items:[tabs[0],tabs[1]]},
+    {l:"Command",items:[tabs[0],tabs[1],tabs[14]]},
     {l:"Content",items:[tabs[2],tabs[3],tabs[4],tabs[5],tabs[6]]},
     {l:"People",items:[tabs[7],tabs[8],tabs[9],tabs[10]]},
     {l:"Access",items:[tabs[11],tabs[12],tabs[13]]},
-    {l:"Governance",items:[tabs[14],tabs[15]]},
+    {l:"Data",items:[tabs[15],tabs[16]]},
   ];
 
   return (
@@ -3446,13 +3466,13 @@ function ManagePage({nav}) {
         hero={{
           bg:'linear-gradient(135deg,#06262d 0%,#0b3540 52%,#134450 100%)',
           avatar:<div style={{width:48,height:48,borderRadius:12,background:'rgba(255,255,255,0.12)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:'1.2rem',color:'#fff'}}>AD</div>,
-          eyebrow:'Administrator Console',
-          title:'Research Portal CMS',
-          sub:'Publish reports, manage analysts, approve pending submissions, and maintain the portal.',
+          eyebrow:'Research Desk',
+          title:'Publishing, access, and governance command centre',
+          sub:'Run the operational side of the research portal: intake, approval, publishing, compliance controls, access codes, and backend readiness.',
           stats:[
             {l:'Pending Reports',v:pendingReports.length},
-            {l:'Published',v:reports.filter(r=>r.status==='published').length},
-            {l:'Team Members',v:analysts.length},
+            {l:'Access Requests',v:openAccessRequests.length},
+            {l:'Governance Items',v:5},
           ],
         }}>
         {tab==="overview"&&<OverviewTab reports={reports} analysts={analysts} categoryRules={categoryRules}/>}
@@ -3469,6 +3489,7 @@ function ManagePage({nav}) {
         {tab==="subscribers"&&<SubscriberAccessTab showToast={showToast}/>}
         {tab==="codes"&&<AccessCodesTab showToast={showToast}/>}
         {tab==="access"&&<AccessRulesTab categoryRules={categoryRules} setCategoryRules={setCategoryRules}/>}
+        {tab==="governance"&&<GovernanceTab reports={reports} analysts={analysts} categoryRules={categoryRules}/>}
         {tab==="funds"&&<FundsAdminTab funds={funds} setFunds={setFunds} showToast={showToast}/>}
         {tab==="settings"&&<SettingsTab showToast={showToast}/>}
       </PortalShell>
@@ -3575,6 +3596,98 @@ function OverviewTab({reports,analysts,categoryRules}) {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+function GovernanceTab({reports,analysts,categoryRules}) {
+  const pending = reports.filter(r=>r.status==="pending");
+  const missingAnalyst = reports.filter(r=>r.status==="published"&&!r.aid);
+  const premiumReports = reports.filter(r=>effectiveAccess(r,categoryRules)==="premium");
+  const workflow = [
+    {step:"1",title:"Intake",body:"Interns or desk staff upload drafts, archive files, price lists, and digest material into controlled queues."},
+    {step:"2",title:"Editorial review",body:"Assigned analysts review submissions. Directors and authorised desk users can approve broader team content."},
+    {step:"3",title:"Compliance check",body:"Each published report must carry attribution, date, access tier, source context, and disclaimer language."},
+    {step:"4",title:"Publish and distribute",body:"Approved items move live, optionally notify subscribers, and remain visible in the publishing calendar."},
+    {step:"5",title:"Archive and audit",body:"Superseded reports stay searchable with status, owner, date, and access history for future review."},
+  ];
+  const controlChecks = [
+    {label:"Pending items are separated from published reports",ok:true},
+    {label:"Intern submissions require supervisor approval",ok:true},
+    {label:"Access requests are reviewed before code issuance",ok:true},
+    {label:"Category paywalls define default entitlement",ok:true},
+    {label:"Published reports without a named analyst are attributed to the Research Desk",ok:true},
+  ];
+  const backendTables = [
+    "users",
+    "access_requests",
+    "access_codes",
+    "institutions",
+    "reports",
+    "report_versions",
+    "approvals",
+    "analysts",
+    "library_documents",
+    "digests",
+    "fund_snapshots",
+    "audit_log",
+  ];
+  return (
+    <div>
+      <SH title="Governance Model" sub="This is the operating model a CEO or research director should expect before the portal goes live with real clients."/>
+      <OverviewMetricGrid items={[
+        {l:"Pending Review",v:pending.length,sub:"Requires editorial action",c:"#b45309",bg:"#fef3c7"},
+        {l:"Subscriber Reports",v:premiumReports.length,sub:"Protected by access tier",c:C.gold,bg:"#f7eedf"},
+        {l:"Desk-attributed Reports",v:missingAnalyst.length,sub:"Owned by central desk",c:C.navy,bg:"#eef2f7"},
+        {l:"Active Contributors",v:analysts.filter(a=>a.role!=="intern").length,sub:"Public research owners",c:C.green,bg:"#edf4ef"},
+      ]}/>
+      <div className="portal-two-col" style={{display:"grid",gridTemplateColumns:"1.05fr .95fr",gap:22,marginBottom:22}}>
+        <SectionFrame title="Publishing workflow" sub="A live research desk needs a visible chain of responsibility, not just an upload button.">
+          <div style={{display:"grid",gap:12}}>
+            {workflow.map(item=>(
+              <div key={item.step} style={{display:"grid",gridTemplateColumns:"34px 1fr",gap:12,alignItems:"start",padding:"12px 0",borderBottom:`1px solid ${C.g100}`}}>
+                <div style={{width:28,height:28,borderRadius:"50%",background:C.goldSoft,color:C.gold,display:"flex",alignItems:"center",justifyContent:"center",fontSize:".75rem",fontWeight:900}}>{item.step}</div>
+                <div>
+                  <div style={{fontSize:".86rem",fontWeight:800,color:C.navy,marginBottom:3}}>{item.title}</div>
+                  <div style={{fontSize:".8rem",lineHeight:1.65,color:C.g700}}>{item.body}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </SectionFrame>
+        <SectionFrame title="Compliance controls" sub="These controls make the portal defensible for external research distribution.">
+          <div style={{display:"grid",gap:10}}>
+            {controlChecks.map(item=>(
+              <div key={item.label} style={{display:"flex",gap:10,alignItems:"center",padding:"11px 12px",background:C.offWhite,border:`1px solid ${C.g200}`,borderRadius:12}}>
+                <span style={{width:22,height:22,borderRadius:"50%",background:"#dcfce7",color:"#166534",display:"flex",alignItems:"center",justifyContent:"center",fontSize:".72rem",fontWeight:900}}>OK</span>
+                <span style={{fontSize:".8rem",lineHeight:1.5,color:C.navy,fontWeight:650}}>{item.label}</span>
+              </div>
+            ))}
+          </div>
+        </SectionFrame>
+      </div>
+      <SectionFrame title="cPanel / PHP backend readiness" sub="The front end is already shaped around API boundaries that can be backed by GoDaddy cPanel, PHP, MySQL, and file storage.">
+        <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:18}}>
+          <div style={{background:C.offWhite,border:`1px solid ${C.g200}`,borderRadius:14,padding:"18px"}}>
+            <Eyebrow>Recommended backend shape</Eyebrow>
+            <p style={{fontSize:".82rem",lineHeight:1.75,color:C.g700,marginBottom:12}}>Use PHP endpoints under <code>/api</code>, MySQL tables for workflow state, cPanel file storage for PDFs/images, session cookies for staff authentication, and an audit log for every approval, access-code, and publish action.</p>
+            <div style={{display:"flex",gap:8,flexWrap:"wrap"}}>
+              {backendTables.map(table=><span key={table} style={{padding:"6px 9px",background:C.white,border:`1px solid ${C.g200}`,borderRadius:999,fontSize:".68rem",fontWeight:800,color:C.navy}}>{table}</span>)}
+            </div>
+          </div>
+          <div style={{background:"linear-gradient(180deg,#06262d,#0b3540)",border:"1px solid rgba(185,114,49,0.22)",borderRadius:14,padding:"18px",color:"#fff"}}>
+            <Eyebrow>CEO readiness standard</Eyebrow>
+            <div style={{display:"grid",gap:11}}>
+              {[
+                "No report goes live without owner, date, category, access tier, and disclaimer.",
+                "Subscriber access is approved before activation and can be revoked.",
+                "Interns can handle uploads, but approvals remain with analysts, directors, or authorised desk owners.",
+                "Digest, banner, featured reports, funds, and library files have named maintenance surfaces.",
+              ].map(line=><div key={line} style={{fontSize:".82rem",lineHeight:1.65,color:"rgba(255,255,255,0.82)"}}>{line}</div>)}
+            </div>
+          </div>
+        </div>
+      </SectionFrame>
     </div>
   );
 }
@@ -4308,7 +4421,7 @@ function FileManagerTab({showToast}) {
   const FOLDERS=["reports","photos","prices","misc"];
   useEffect(()=>{
     setLoading(true);
-    fetch(`/api/files.php?folder=${folder}`,{credentials:"include"})
+    fetch(apiEndpoint(`files.php?folder=${folder}`),{credentials:"include"})
       .then(r=>r.json()).then(j=>{ if(j?.success) setFiles(j.data||[]); }).catch(()=>setFiles([]))
       .finally(()=>setLoading(false));
   },[folder]);
@@ -4317,7 +4430,7 @@ function FileManagerTab({showToast}) {
     setUploading(true);
     const fd=new FormData(); fd.append("file",file); fd.append("folder",folder);
     try{
-      const res=await fetch(`/api/files.php`,{method:"POST",credentials:"include",body:fd});
+      const res=await fetch(apiEndpoint("files.php"),{method:"POST",credentials:"include",body:fd});
       const j=await res.json();
       if(j?.success){ setFiles(p=>[j.data,...p]); showToast("File uploaded."); }
       else showToast(j?.error||"Upload failed.");
@@ -4327,7 +4440,7 @@ function FileManagerTab({showToast}) {
   const del=async(f)=>{
     if(!window.confirm(`Delete ${f.name}?`)) return;
     try{
-      await fetch(`/api/files.php`,{method:"DELETE",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify({path:f.path})});
+      await fetch(apiEndpoint("files.php"),{method:"DELETE",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify({path:f.path})});
       setFiles(p=>p.filter(x=>x.path!==f.path)); showToast("File deleted.");
     }catch{showToast("Delete failed.");}
   };
@@ -4448,9 +4561,13 @@ function UsersTab({showToast}) {
 }
 
 function SubscriberAccessTab({showToast}) {
-  const {institutions,setInstitutions}=useData();
+  const {institutions,setInstitutions,accessRequests,setAccessRequests,accessCodes}=useData();
   const [demoUsers,setDemoUsersState]=useState(()=>lsGet(LS.demoUsers)||[]);
   const limitedUsers = demoUsers.filter(u=>!STAFF_TIERS.has(u.tier) && u.accessState !== "active" && u.tier !== "premium");
+  const markRequest = (id,status) => {
+    setAccessRequests(prev=>prev.map(req=>req.id===id?{...req,status,reviewedAt:new Date().toISOString()}:req));
+    showToast(status==="approved" ? "Access request approved for code issuance." : "Access request updated.");
+  };
   const activateManually = (id,tier="premium")=>{
     const updated=demoUsers.map(u=>u.id===id?{...u,tier,accessState:"active"}:u);
     lsSet(LS.demoUsers,updated);
@@ -4468,7 +4585,28 @@ function SubscriberAccessTab({showToast}) {
   };
   return (
     <div>
-      <SH title="Subscriber Access" sub="Review limited accounts, adjust access state, and watch institutional seat usage."/>
+      <SH title="Subscriber Access" sub="Review account requests, issue activation codes, and watch institutional seat usage."/>
+      <SectionFrame title="Research Desk access queue" sub="Every self-registration creates a review item. Approve after commercial entitlement is confirmed, then issue an individual or institutional code.">
+        {accessRequests.length===0 ? <div style={{padding:"14px 0",fontSize:".82rem",color:C.g500}}>No access requests yet.</div> : (
+          <div style={{display:"grid",gap:10}}>
+            {accessRequests.map(req=>(
+              <div key={req.id} style={{display:"grid",gridTemplateColumns:"1fr auto",gap:14,alignItems:"center",padding:"14px 16px",background:req.status==="approved"?"#f0fdf4":C.offWhite,border:`1px solid ${req.status==="approved"?"#bbf7d0":C.g200}`,borderRadius:14}}>
+                <div>
+                  <div style={{fontSize:".86rem",fontWeight:800,color:C.navy,marginBottom:3}}>{req.name}</div>
+                  <div style={{fontSize:".75rem",color:C.g500,marginBottom:3}}>{req.company || "Individual subscriber"} - {req.role || "Subscriber"}</div>
+                  <div style={{fontSize:".72rem",color:C.g500}}>Status: <strong style={{color:req.status==="approved"?C.green:"#b45309"}}>{req.status.replace(/_/g," ")}</strong> - Requested {req.createdAt ? new Date(req.createdAt).toLocaleDateString("en-GB") : "recently"}</div>
+                </div>
+                <div style={{display:"flex",gap:8,flexWrap:"wrap",justifyContent:"flex-end"}}>
+                  <button onClick={()=>markRequest(req.id,"approved")} style={{padding:"8px 12px",background:"#dcfce7",color:"#166534",border:"1px solid #bbf7d0",borderRadius:999,fontSize:".72rem",fontWeight:800,cursor:"pointer",fontFamily:sans}}>Approve</button>
+                  <button onClick={()=>markRequest(req.id,"needs_information")} style={{padding:"8px 12px",background:"#fef3c7",color:"#92400e",border:"1px solid #fde68a",borderRadius:999,fontSize:".72rem",fontWeight:800,cursor:"pointer",fontFamily:sans}}>Need info</button>
+                  <button onClick={()=>markRequest(req.id,"closed")} style={{padding:"8px 12px",background:C.g100,color:C.g700,border:`1px solid ${C.g200}`,borderRadius:999,fontSize:".72rem",fontWeight:800,cursor:"pointer",fontFamily:sans}}>Close</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </SectionFrame>
+      <div style={{height:20}}/>
       <div style={{display:"grid",gridTemplateColumns:"1.05fr .95fr",gap:20}}>
         <SectionFrame title="Accounts awaiting full access" sub="These users created accounts but have not completed activation.">
           {limitedUsers.length===0 ? <div style={{padding:"14px 0",fontSize:".82rem",color:C.g500}}>No limited-access subscriber accounts at the moment.</div> : (
@@ -4512,6 +4650,22 @@ function SubscriberAccessTab({showToast}) {
           </div>
         </SectionFrame>
       </div>
+      <div style={{height:20}}/>
+      <SectionFrame title="Code issuance control" sub="Codes are issued only after an access request is approved or an institutional mandate is confirmed.">
+        <div style={{display:"grid",gridTemplateColumns:"repeat(3,minmax(0,1fr))",gap:12}}>
+          {[
+            {l:"Approved requests",v:accessRequests.filter(r=>r.status==="approved").length,sub:"Ready for code issuance"},
+            {l:"Active individual codes",v:accessCodes.filter(c=>c.type==="individual"&&c.active&&!c.usedBy).length,sub:"Unused single-person codes"},
+            {l:"Institutional codes",v:accessCodes.filter(c=>c.type==="institution"&&c.active).length,sub:"Master codes with seat limits"},
+          ].map(item=>(
+            <div key={item.l} style={{padding:"16px",background:C.offWhite,border:`1px solid ${C.g200}`,borderRadius:14}}>
+              <div style={{fontFamily:serif,fontSize:"1.45rem",fontWeight:700,color:C.navy,marginBottom:3}}>{item.v}</div>
+              <div style={{fontSize:".8rem",fontWeight:800,color:C.navy,marginBottom:2}}>{item.l}</div>
+              <div style={{fontSize:".72rem",color:C.g500}}>{item.sub}</div>
+            </div>
+          ))}
+        </div>
+      </SectionFrame>
       <div style={{height:20}}/>
       <SectionFrame title="Activated subscriber accounts" sub="Review and reset access when needed.">
         <div style={{display:"grid",gap:10}}>
@@ -4580,14 +4734,14 @@ function SettingsTab({showToast}) {
   const [loading,setLoading]=useState(true);
   const [saving,setSaving]=useState(false);
   useEffect(()=>{
-    fetch("/api/settings.php",{credentials:"include"})
+    fetch(apiEndpoint("settings.php"),{credentials:"include"})
       .then(r=>r.json()).then(j=>{ if(j?.success&&j.data) setSettings(s=>({...s,...j.data})); }).catch(()=>{})
       .finally(()=>setLoading(false));
   },[]);
   const save=async()=>{
     setSaving(true);
     try{
-      await fetch("/api/settings.php",{method:"PUT",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify(settings)});
+      await fetch(apiEndpoint("settings.php"),{method:"PUT",credentials:"include",headers:{"Content-Type":"application/json"},body:JSON.stringify(settings)});
       showToast("Settings saved.");
     }catch{showToast("Saved locally  will sync when backend is live.");}
     finally{setSaving(false);}
@@ -4596,14 +4750,30 @@ function SettingsTab({showToast}) {
   if(loading) return <div style={{padding:40,textAlign:"center",color:C.g500}}>Loading</div>;
   return (
     <div style={{maxWidth:640}}>
-      <h2 style={{fontFamily:serif,fontSize:"1.4rem",color:C.navy,fontWeight:600,marginBottom:4}}>Portal Settings</h2>
-      <p style={{fontSize:".8rem",color:C.g500,marginBottom:28}}>Configure portal metadata.</p>
+      <h2 style={{fontFamily:serif,fontSize:"1.4rem",color:C.navy,fontWeight:600,marginBottom:4}}>Backend Readiness</h2>
+      <p style={{fontSize:".8rem",color:C.g500,marginBottom:28}}>Keep the frontend aligned with the eventual cPanel/PHP backend. The API base can be changed with <code>REACT_APP_API_BASE</code> when the GoDaddy backend is ready.</p>
 
       <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"24px",marginBottom:22}}>
         <h3 style={{fontSize:".88rem",fontWeight:700,color:C.navy,textTransform:"uppercase",letterSpacing:.4,marginBottom:16}}>Portal Metadata</h3>
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:16}}>
           <Inp label="Site Name" value={settings.site_name} onChange={f("site_name")}/>
           <Inp label="Contact Email" value={settings.contact_email} onChange={f("contact_email")} type="email"/>
+        </div>
+      </div>
+      <div style={{background:C.white,borderRadius:12,border:`1px solid ${C.g200}`,padding:"24px",marginBottom:22}}>
+        <h3 style={{fontSize:".88rem",fontWeight:700,color:C.navy,textTransform:"uppercase",letterSpacing:.4,marginBottom:16}}>Production API Contract</h3>
+        <div style={{display:"grid",gap:10}}>
+          {[
+            {l:"Authentication",v:"auth.php, change-password.php, forgot_password.php"},
+            {l:"Research workflow",v:"reports.php, bio_edits.php, library.php, upload.php"},
+            {l:"Access control",v:"users.php, access_requests.php, access_codes.php, institutions.php"},
+            {l:"Market data",v:"funds.php, price_lists.php, digest.php, settings.php"},
+          ].map(row=>(
+            <div key={row.l} style={{padding:"12px 14px",background:C.offWhite,border:`1px solid ${C.g200}`,borderRadius:10}}>
+              <div style={{fontSize:".76rem",fontWeight:800,color:C.navy,marginBottom:3}}>{row.l}</div>
+              <div style={{fontSize:".74rem",color:C.g500,fontFamily:"monospace"}}>{row.v}</div>
+            </div>
+          ))}
         </div>
       </div>
 
