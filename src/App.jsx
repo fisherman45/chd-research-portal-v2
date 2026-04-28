@@ -243,8 +243,18 @@ const FUNDS = [
     dataAsAt:"2024-09-30",
   },
 ];
+const fundFallbackFor = fund => {
+  const key = `${fund?.id || ""} ${fund?.abbr || ""} ${fund?.name || ""} ${fund?.type || ""}`.toLowerCase();
+  return FUNDS.find(base=>base.id===fund?.id)
+    || FUNDS.find(base=>base.abbr?.toLowerCase()===fund?.abbr?.toLowerCase())
+    || (key.includes("money") ? FUNDS.find(base=>base.id==="mmf") : null)
+    || (key.includes("fixed") || key.includes("bond") || key.includes("chdfif") ? FUNDS.find(base=>base.id==="nbf") : null)
+    || (key.includes("paramount") || key.includes("equity") || key.includes("chdpef") ? FUNDS.find(base=>base.id==="pf") : null)
+    || (key.includes("infrastructure") || key.includes("nid") ? FUNDS.find(base=>base.id==="nidf") : null)
+    || {};
+};
 const enrichFundData = fund => {
-  const fallback = FUNDS.find(base=>base.id===fund?.id) || {};
+  const fallback = fundFallbackFor(fund);
   return {
     ...fallback,
     ...(fund || {}),
@@ -966,7 +976,7 @@ function AuthPage({mode,nav,onLogin}) {
   return (
     <div className="auth-page" style={{minHeight:"82vh",display:"flex",alignItems:"center",justifyContent:"center",background:`radial-gradient(circle at 10% 10%, rgba(185,114,49,0.16), transparent 25%), linear-gradient(160deg,${C.navy} 0%,${C.navyMid} 52%,#091d24 100%)`,padding:"60px 20px"}}>
       <div className="auth-grid" style={{maxWidth:1180,width:"100%",display:"grid",gridTemplateColumns:isRequest?"1fr .82fr":"1.02fr .98fr",gap:22,alignItems:"stretch"}}>
-        <Surface className="auth-card" style={{padding:"42px 38px",background:"linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%)"}}>
+        <Surface className="auth-card" style={{padding:isRequest?"36px 38px":"34px 38px",background:"linear-gradient(180deg, rgba(255,255,255,0.98) 0%, rgba(248,250,252,0.98) 100%)",alignSelf:"start"}}>
         <div style={{textAlign:"center",marginBottom:24}}>
           <img src={publicAsset("/chd-logo.png")} alt="Chapel Hill Denham" style={{height:52,width:"auto",margin:"0 auto 14px",display:"block"}} onError={e=>{e.currentTarget.style.display="none";}}/>
           <div style={{fontFamily:sans,fontSize:".58rem",fontWeight:700,letterSpacing:3.5,textTransform:"uppercase",color:C.gold,marginBottom:10,opacity:.9}}>Chapel Hill Denham  Research</div>
@@ -1431,10 +1441,10 @@ function Home({nav,user}) {
     <section style={{padding:"0 0 68px",background:C.offWhite}}>
       <div style={{maxWidth:1320,margin:"0 auto",padding:"0 40px"}}>
         <div className="analyst-grid-mobile" style={{display:"grid",gridTemplateColumns:"1.08fr .92fr",gap:24,alignItems:"start"}}>
-          <SectionFrame title="Meet the research team" sub="Named sector coverage sits alongside the central desk so clients know who is driving the view and where the brief is coming from." actions={<button onClick={()=>nav("analysts")} style={{...compactButton,padding:"8px 14px",background:C.navy,color:"#fff",border:`1px solid ${C.navy}`,whiteSpace:"nowrap",minWidth:116}}>View analysts</button>}>
+          <SectionFrame title="Meet the research team" sub="Named sector coverage sits alongside the central desk so clients know who is driving the view and where the brief is coming from." style={{minHeight:506}} actions={<button onClick={()=>nav("analysts")} style={{...compactButton,padding:"8px 14px",background:C.navy,color:"#fff",border:`1px solid ${C.navy}`,whiteSpace:"nowrap",minWidth:116}}>View analysts</button>}>
             <div className="analyst-grid-mobile" style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:18}}>
               {analysts.filter(a=>a.role!=="intern").slice(0,4).map(a=>(
-                <div key={a.id} onClick={()=>nav("analyst",{id:a.id})} style={{padding:"20px",borderRadius:16,background:C.offWhite,border:`1px solid ${C.g200}`,cursor:"pointer"}}>
+                <div key={a.id} onClick={()=>nav("analyst",{id:a.id})} style={{padding:"22px 20px",borderRadius:16,background:C.offWhite,border:`1px solid ${C.g200}`,cursor:"pointer",minHeight:154,display:"flex",flexDirection:"column",justifyContent:"center"}}>
                   <div style={{display:"flex",alignItems:"center",gap:12,marginBottom:12}}>
                     <AnalystAvatar analyst={a} size={50} fontSize="1rem"/>
                     <div>
@@ -1447,14 +1457,14 @@ function Home({nav,user}) {
               ))}
             </div>
           </SectionFrame>
-          <SectionFrame title="Investment products" sub="A short front-page summary of the current fund range, with the full product page reserved for details, source notes, and contact routing." actions={<button onClick={()=>nav("funds")} style={{...compactButton,padding:"8px 14px",background:C.navy,color:"#fff",border:`1px solid ${C.navy}`,whiteSpace:"nowrap",minWidth:116}}>View products</button>}>
+          <SectionFrame title="Investment products" sub="A short front-page summary of the current fund range, with the full product page reserved for details, source notes, and contact routing." style={{minHeight:506}} actions={<button onClick={()=>nav("funds")} style={{...compactButton,padding:"8px 14px",background:C.navy,color:"#fff",border:`1px solid ${C.navy}`,whiteSpace:"nowrap",minWidth:116}}>View products</button>}>
             <div style={{display:"grid",gap:14}}>
               <div style={{display:"grid",gridTemplateColumns:"repeat(2,1fr)",gap:14}}>
               {displayFunds.slice(0,4).map(f=>{
                 const ret=(f.perf&&f.perf["YTD"])||0;
                 const pos=ret>=0;
                 return (
-                  <div key={f.id} onClick={()=>nav("funds")} style={{background:C.offWhite,borderRadius:16,border:`1px solid ${C.g200}`,padding:"18px",cursor:"pointer"}}>
+                  <div key={f.id} onClick={()=>nav("funds")} style={{background:C.offWhite,borderRadius:16,border:`1px solid ${C.g200}`,padding:"18px",cursor:"pointer",minHeight:214,display:"flex",flexDirection:"column",justifyContent:"space-between"}}>
                     <div style={{fontSize:".6rem",color:C.g500,textTransform:"uppercase",letterSpacing:1.8,marginBottom:6,fontWeight:800}}>{f.type}</div>
                     <div style={{fontFamily:serif,fontSize:"1.02rem",color:C.navy,fontWeight:600,lineHeight:1.25,marginBottom:6}}>{f.abbr}</div>
                     <FundSparkline fund={f}/>
@@ -1510,7 +1520,7 @@ function DigestPage({nav}) {
       </section>
       <section style={{padding:"34px 0 58px",background:"linear-gradient(180deg,#f5f7fa 0%,#ffffff 34%)"}}>
         <div style={{maxWidth:1240,margin:"0 auto",padding:"0 40px"}}>
-          <div style={{display:"grid",gridTemplateColumns:"1.05fr .95fr",gap:22}}>
+          <div className="digest-detail-grid" style={{display:"grid",gridTemplateColumns:"1.05fr .95fr",gap:22}}>
             <SectionFrame title="What the digest covers" sub="Use the digest as a briefing layer before diving into the full stream of notes, sector reports, and fixed-income pieces.">
               <div style={{display:"grid",gap:12}}>
                 {(digest?.highlights || []).map((item,index)=>(
@@ -1545,7 +1555,7 @@ function DigestPage({nav}) {
 
 function FundSparkline({fund,height=54}) {
   const pts = fund?.chart || [];
-  if(pts.length < 2) return null;
+  if(pts.length < 2) return <div style={{height,margin:"12px 0 2px",borderRadius:12,background:"linear-gradient(180deg,#eef2f7 0%,#f8fafc 100%)"}}/>;
   const width = 220;
   const pad = 7;
   const min = Math.min(...pts);
@@ -4899,6 +4909,9 @@ export default function App() {
             .contact-map-head h2{font-size:1.12rem !important}
             .contact-map-head p{font-size:.8rem !important}
             .digest-grid,.funds-hero-grid,.infra-fund-grid,.analyst-hero-grid,.analyst-profile-grid,.fund-modal-metrics{grid-template-columns:1fr !important}
+            .digest-detail-grid{grid-template-columns:1fr !important;gap:16px !important}
+            .digest-grid h1{font-size:1.9rem !important;line-height:1.1 !important}
+            .digest-grid a,.digest-grid button{width:100% !important}
             .mutual-funds-grid{grid-template-columns:1fr !important}
             .fund-expanded-panel{margin-top:14px !important}
             .fund-expanded-panel svg text{font-size:10px !important}
